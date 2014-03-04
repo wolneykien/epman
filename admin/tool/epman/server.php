@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,7 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The front page of the educational process management module.
+ * REST web service entry point for the embedded apps of the
+ * educational process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -23,16 +25,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// disable moodle specific debug messages and any errors in output
+define('NO_DEBUG_DISPLAY', true);
+define('NO_MOODLE_COOKIES', true);
+
 require('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/externallib.php');
+require_once("$CFG->dirroot/webservice/rest/locallib.php");
 
-admin_externalpage_setup('toolepman');
-$PAGE->set_pagelayout('maintenance');
+if (!webservice_protocol_is_enabled('rest')) {
+  debugging('The server died because the web services or the REST protocol are not enable', DEBUG_DEVELOPER);
+  die;
+}
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
-$token = external_create_service_token('epman_programs', $sitecontext);
-echo "<h4>Token: $token</h4>\n";
-echo $OUTPUT->footer();
+$restformat = optional_param('moodlewsrestformat', 'json', PARAM_ALPHA);
+if(isset($_POST['moodlewsrestformat'])) {
+    unset($_POST['moodlewsrestformat']);
+}
+
+$server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_SESSION_TOKEN, $restformat);
+$server->run();
+die;

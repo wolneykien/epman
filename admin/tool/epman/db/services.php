@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The front page of the educational process management module.
+ * Here are defined the core web services of the educational process
+ * management module.
  *
  * @package    tool
  * @subpackage epman
@@ -23,16 +24,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/externallib.php');
+$services = array(
+    'epman_programs' => array(
+        'functions' => array ('tool_epman_get_programs'),
+        'requiredcapability' => '',
+        'restrictedusers' => 0,
+        'shortname' => 'epman_programs',
+        'enabled' => 1,
+    ),
+);
 
-admin_externalpage_setup('toolepman');
-$PAGE->set_pagelayout('maintenance');
-
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
-$token = external_create_service_token('epman_programs', $sitecontext);
-echo "<h4>Token: $token</h4>\n";
-echo $OUTPUT->footer();
+$functions = array(
+    'tool_epman_get_programs' => array(
+        'classname'   => 'epman_external',
+        'methodname'  => 'list_programs',
+        'classpath'   => 'admin/tool/epman/externallib.php',
+        'description' => 'Returns the list of educational programs defined in the system',
+        'type'        => 'read',
+    )
+);
