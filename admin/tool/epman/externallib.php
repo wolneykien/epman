@@ -27,9 +27,11 @@
 require_once("$CFG->libdir/externallib.php");
 
 class epman_external extends external_api {
+
+  /* Define the `list_programs` implementation functions. */
   
   /**
-   * Returns description of the `list_programs` method
+   * Returns the description of the `list_programs` method's
    * parameters.
    *
    * @return external_function_parameters
@@ -52,11 +54,9 @@ class epman_external extends external_api {
     public static function list_programs($userid = 0) {
       global $USER;
 
-      //Parameter validation
-      //REQUIRED
       $params = self::validate_parameters(
-          self::list_programs_parameters(),
-          array('userid' => $userid)
+        self::list_programs_parameters(),
+        array('userid' => $userid)
       );
 
       $programs = array();
@@ -65,7 +65,7 @@ class epman_external extends external_api {
     }
 
     /**
-     * Returns description of the `list_programs` method
+     * Returns the description of the `list_programs` method's
      * return value.
      *
      * @return external_description
@@ -75,13 +75,13 @@ class epman_external extends external_api {
         new external_single_structure(array(
           'id' => new external_value(
             PARAM_INT,
-            'education program ID'),
+            'Education program ID'),
           'name' => new external_value(
             PARAM_TEXT,
-            'education program name'),
+            'Education program name'),
           'description' => new external_value(
             PARAM_TEXT,
-            'short description of the program'),
+            'Short description of the program'),
           'responsibleid' => new external_value(
             PARAM_INT,
             'ID of the responsible user'),
@@ -96,6 +96,76 @@ class epman_external extends external_api {
               'Assistant user ID')
           ),
         )));
+    }
+
+
+    /* Define the `create_program` implementation functions. */
+
+    /**
+     * Returns the description of the `create_programs` method's
+     * parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function create_program_parameters() {
+      return new external_function_parameters(array(
+        'name' => new external_value(
+          PARAM_TEXT,
+          'Education program name'),
+        'description' => new external_value(
+          PARAM_TEXT,
+          'Short description of the program',
+          VALUE_DEFAULT,
+          ''),
+        'responsibleid' => new external_value(
+          PARAM_INT,
+          'ID of the responsible user'),
+        'modules' => new external_multiple_structure(
+          new external_value(
+            PARAM_INT,
+            'Program module ID'),
+          VALUE_DEFAULT,
+          array()
+        ),
+        'assistants' => new external_multiple_structure(
+          new external_value(
+            PARAM_INT,
+            'Assistant user ID'),
+          VALUE_DEFAULT,
+          array()
+        ),
+      ));
+    }
+
+    /**
+     * Creates a new education program.
+     *
+     * @return int new program ID
+     */
+    public static function create_program($name, $desc = '', $respip, $modules = array(), $assistants = array()) {
+      global $USER;
+
+      $params = self::validate_parameters(
+        self::create_program_parameters(),
+        array('name' => $name, 'description' => $desc, 'responsibleid' => $respip, 'modules' => $modules, 'assistants' => $assistants)
+      );
+
+      $program = new stdCalss();
+      
+      return $program->id;
+    }
+
+    /**
+     * Returns the description of the `create_program` method's
+     * return value.
+     *
+     * @return external_description
+     */
+    public static function create_program_returns() {
+      return new external_value(
+        PARAM_INT,
+        'Education program ID'
+      );
     }
 
 }

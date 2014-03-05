@@ -26,7 +26,13 @@
 
 $services = array(
     'epman_programs' => array(
-        'functions' => array ('tool_epman_get_programs'),
+        'functions' => array (
+            'tool_epman_get_programs',
+            'tool_epman_create_program',
+            'tool_epman_get_program',
+            'tool_epman_update_program',
+            'tool_epman_delete_program',
+        ),
         'requiredcapability' => '',
         'restrictedusers' => 0,
         'shortname' => 'epman_programs',
@@ -41,6 +47,34 @@ $functions = array(
         'classpath'   => 'admin/tool/epman/externallib.php',
         'description' => 'Returns the list of education programs defined in the system',
         'type'        => 'read',
-    )
+    ),
+    'tool_epman_create_program' => array(
+        'classname'   => 'epman_external',
+        'methodname'  => 'create_program',
+        'classpath'   => 'admin/tool/epman/externallib.php',
+        'description' => 'Add to the system a new education program with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_program' => array(
+        'classname'   => 'epman_external',
+        'methodname'  => 'get_program',
+        'classpath'   => 'admin/tool/epman/externallib.php',
+        'description' => 'Returns the full definition of the specified education program',
+        'type'        => 'read',
+    ),
+    'tool_epman_update_program' => array(
+        'classname'   => 'epman_external',
+        'methodname'  => 'update_program',
+        'classpath'   => 'admin/tool/epman/externallib.php',
+        'description' => 'Updates the specified education program definition',
+        'type'        => 'write',
+    ),
+    'tool_epman_delete_program' => array(
+        'classname'   => 'epman_external',
+        'methodname'  => 'delete_program',
+        'classpath'   => 'admin/tool/epman/externallib.php',
+        'description' => 'Deletes the definition of the specified education program',
+        'type'        => 'write',
+    ),
 );
 ?>
