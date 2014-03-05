@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,7 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Defines the capabilities used by the education process management
+ * module.
  *
  * @package    tool
  * @subpackage epman
@@ -25,7 +27,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014030502; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011092100; // Requires this Moodle version
-$plugin->component = 'tool_epman'; // Full name of the plugin (used for diagnostics)
+$capabilities = array(
+
+    /* Grants the user the general read access to the education process
+     * management module. */
+    'tool/epman:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ),
+    ),
+
+    /* Allows the user to create, modify and delete any education
+     * program. */
+    'tool/epman:editprogram' => array(
+        'riskbitmask' => RISK_CONFIG | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        ),
+    ),
+
+);
 ?>

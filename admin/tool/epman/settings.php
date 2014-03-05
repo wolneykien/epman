@@ -25,7 +25,5 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($hassiteconfig) {
-  $ADMIN->add('root', new admin_externalpage('toolepman', get_string('pluginname', 'tool_epman'), $CFG->wwwroot.'/'.$CFG->admin.'/tool/epman/index.php', 'moodle/site:config'));
-}
+$ADMIN->add('root', new admin_externalpage('toolepman', get_string('pluginname', 'tool_epman'), $CFG->wwwroot.'/'.$CFG->admin.'/tool/epman/index.php', 'tool/epman:view'));
 ?>
