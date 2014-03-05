@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The front page of the educational process management module.
+ * The front page of the education process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -36,3 +36,4 @@ $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 $token = external_create_service_token('epman_programs', $sitecontext);
 echo "<h4>Token: $token</h4>\n";
 echo $OUTPUT->footer();
+?>

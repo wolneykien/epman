@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Here are defined the core web services of the educational process
+ * Here are defined the core web services of the education process
  * management module.
  *
  * @package    tool
@@ -39,7 +39,8 @@ $functions = array(
         'classname'   => 'epman_external',
         'methodname'  => 'list_programs',
         'classpath'   => 'admin/tool/epman/externallib.php',
-        'description' => 'Returns the list of educational programs defined in the system',
+        'description' => 'Returns the list of education programs defined in the system',
         'type'        => 'read',
     )
 );
+?>

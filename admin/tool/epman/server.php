@@ -17,7 +17,7 @@
 
 /**
  * REST web service entry point for the embedded apps of the
- * educational process management module.
+ * education process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -45,3 +45,4 @@ if(isset($_POST['moodlewsrestformat'])) {
 $server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_SESSION_TOKEN, $restformat);
 $server->run();
 die;
+?>

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Menu integration for the educational process management module.
+ * Menu integration for the education process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -28,3 +28,4 @@ defined('MOODLE_INTERNAL') || die;
 if ($hassiteconfig) {
   $ADMIN->add('root', new admin_externalpage('toolepman', get_string('pluginname', 'tool_epman'), $CFG->wwwroot.'/'.$CFG->admin.'/tool/epman/index.php', 'moodle/site:config'));
 }
+?>
