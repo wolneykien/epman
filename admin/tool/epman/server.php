@@ -30,7 +30,6 @@ define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require('../../../config.php');
-require_once($CFG->libdir.'/externallib.php');
 require_once("$CFG->dirroot/webservice/rest/locallib.php");
 
 class epman_rest_server extends webservice_rest_server {
