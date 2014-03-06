@@ -25,7 +25,7 @@
  */
 
 $services = array(
-    'epman_programs' => array(
+    'epman' => array(
         'functions' => array (
             'tool_epman_get_programs',
             'tool_epman_create_program',
@@ -35,7 +35,7 @@ $services = array(
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
-        'shortname' => 'epman_programs',
+        'shortname' => 'epman',
         'enabled' => 1,
     ),
 );

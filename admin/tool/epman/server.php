@@ -30,19 +30,32 @@ define('NO_DEBUG_DISPLAY', true);
 define('NO_MOODLE_COOKIES', true);
 
 require('../../../config.php');
+require_once($CFG->libdir.'/externallib.php');
 require_once("$CFG->dirroot/webservice/rest/locallib.php");
+
+class epman_rest_server extends webservice_rest_server {
+
+  public function __construct() {
+    parent::__construct(WEBSERVICE_AUTHMETHOD_SESSION_TOKEN);
+    $this->wsname = 'epman';
+    $this->restformat = 'json';
+  }
+
+}
 
 if (!webservice_protocol_is_enabled('rest')) {
   debugging('The server died because the web services or the REST protocol are not enable', DEBUG_DEVELOPER);
   die;
 }
 
-$restformat = optional_param('moodlewsrestformat', 'json', PARAM_ALPHA);
+if(isset($_GET['moodlewsrestformat'])) {
+    unset($_GET['moodlewsrestformat']);
+}
 if(isset($_POST['moodlewsrestformat'])) {
     unset($_POST['moodlewsrestformat']);
 }
 
-$server = new webservice_rest_server(WEBSERVICE_AUTHMETHOD_SESSION_TOKEN, $restformat);
+$server = new epman_rest_server();
 $server->run();
 die;
 ?>
