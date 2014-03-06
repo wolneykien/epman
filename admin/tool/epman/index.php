@@ -25,15 +25,40 @@
 
 require('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/externallib.php');
 
 admin_externalpage_setup('toolepman');
 $PAGE->set_pagelayout('maintenance');
 
+function get_token() {
+  global $DB, $USER;
+
+  $service = $DB->get_record('external_services', array('shortname' => 'epman'));
+  if (empty($service)) {
+    throw new webservice_access_exception(get_string('servicenotavailable', 'webservice'));
+  }
+
+  $token = $DB->get_record(
+      'external_tokens',
+      array(
+          'userid' => $USER->id,
+          'creatorid' => $USER->id,
+          'sid' => session_id(),
+          'externalserviceid' => $service->id,
+      )
+  );
+
+  if (empty($token)) {
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $tokenhash = external_create_service_token('epman', $sitecontext);
+    return $tokenhash;
+  } else {
+    return $token->token;
+  }
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
-$sitecontext = get_context_instance(CONTEXT_SYSTEM);
-$token = external_create_service_token('epman_programs', $sitecontext);
+$token = get_token();
 echo "<h4>Token: $token</h4>\n";
 echo $OUTPUT->footer();
 ?>
