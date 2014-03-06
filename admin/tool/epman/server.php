@@ -32,12 +32,50 @@ define('NO_MOODLE_COOKIES', true);
 require('../../../config.php');
 require_once("$CFG->dirroot/webservice/rest/locallib.php");
 
+class wshelper extends webservice {
+
+  public function __construct($serviceid) {
+    $this->capabilities = $this->get_service_required_capabilities($serviceid);
+    $this->systemctx = get_context_instance(CONTEXT_SYSTEM);
+  }
+
+  public function check_function_access($userid, $functionname) {
+    $caps = $this->capabilities[$functionname];
+    if (!empty($caps)) {
+      foreach ($caps as $cap) {
+        if (!has_capability($cap, $this->systemctx, $userid)) {
+          throw new webservice_access_exception(get_string('missingrequiredcapability', 'webservice', $cap));
+        }
+      }
+    }
+  }
+
+}
+
 class epman_rest_server extends webservice_rest_server {
 
   public function __construct() {
+    global $DB;
+
     parent::__construct(WEBSERVICE_AUTHMETHOD_SESSION_TOKEN);
     $this->wsname = 'epman';
     $this->restformat = 'json';
+
+    $service = $DB->get_record('external_services', array('shortname' => 'epman'));
+    if (!empty($service) && isset($service->id)) {
+      $this->serviceid = $service->id;
+      $this->wshelper = new wshelper($this->serviceid);
+    }
+  }
+
+  public function authenticate_user() {
+    parent::authenticate_user();
+
+    if (isset($this->wshelper)) {
+      $this->wshelper->check_function_access($this->userid, $this->functionname);
+    } else {
+      throw new webservice_access_exception(get_string('servicenotavailable', 'webservice'));
+    }
   }
 
 }
