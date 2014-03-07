@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/epman/db" VERSION="20140307" COMMENT="XMLDB file for Moodle admin/tool/epman"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_epman_program" COMMENT="Education programs" NEXT="tool_epman_module">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="256" NOTNULL="true"
+               SEQUENCE="false" COMMENT="Name of the education program" PREVIOUS="id" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" LENGTH="big"
+               NOTNULL="true" SEQUENCE="false"
+               COMMENT="Description of the education program" PREVIOUS="name" NEXT="responsibleid"/>
+        <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The ID of the responsible user" PREVIOUS="description" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_responsible"/>
+        <KEY NAME="fk_responsible" TYPE="foreign" FIELDS="responsibleid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_name" UNIQUE="true" FIELDS="name" COMMENT="Name of an education program must be unique"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_epman_module" COMMENT="Education program modules" PREVIOUS="tool_epman_program" NEXT="tool_epman_program_module">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="length"/>
+        <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="id" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_epman_program_module" COMMENT="Connects education programs with modules" PREVIOUS="tool_epman_module" NEXT="tool_epman_module_course">
+      <FIELDS>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" NEXT="moduleid"/>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" PREVIOUS="programid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="programid, moduleid"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_module" NEXT="tool_epman_module_course">
+      <FIELDS>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="programid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="programid, userid" NEXT="fk_assistant" />
+        <KEY NAME="fk_assistant" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant">
+      <FIELDS>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" PREVIOUS="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="moduleid, courseid" NEXT="fk_course" />
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
