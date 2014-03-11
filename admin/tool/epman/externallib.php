@@ -108,6 +108,8 @@ class epman_external extends external_api {
      * @return external_function_parameters
      */
     public static function create_program_parameters() {
+      global $USER;
+
       return new external_function_parameters(array(
         'name' => new external_value(
           PARAM_TEXT,
@@ -119,7 +121,9 @@ class epman_external extends external_api {
           ''),
         'responsibleid' => new external_value(
           PARAM_INT,
-          'ID of the responsible user'),
+          'ID of the responsible user',
+          VALUE_DEFAULT,
+          $USER->id),
         'modules' => new external_multiple_structure(
           new external_value(
             PARAM_INT,
@@ -142,15 +146,28 @@ class epman_external extends external_api {
      *
      * @return int new program ID
      */
-    public static function create_program($name, $desc = '', $respip, $modules = array(), $assistants = array()) {
-      global $USER;
+    public static function create_program($name, $desc = '', $respid, $modules = array(), $assistants = array()) {
+      global $USER, $DB;
+
+      if (!isset($respid)) {
+        $respid = $USER->id;
+      }
 
       $params = self::validate_parameters(
         self::create_program_parameters(),
-        array('name' => $name, 'description' => $desc, 'responsibleid' => $respip, 'modules' => $modules, 'assistants' => $assistants)
+        array('name' => $name, 'description' => $desc, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
       );
 
-      $program = new stdCalss();
+      if (!$DB->record_exists('user', array('id' => $respid))) {
+        throw new invalid_parameter_exception("Responsible user doesn't exist: $respid");
+      }
+
+      $program = new stdClass();
+      $program->name = $name;
+      $program->description = $desc;
+      $program->responsibleid = $respid;
+
+      $program->id = $DB->insert_record('tool_epman_program', $program);
       
       return $program->id;
     }
