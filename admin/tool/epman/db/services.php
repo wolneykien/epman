@@ -68,7 +68,6 @@ $functions = array(
         'methodname'  => 'update_program',
         'classpath'   => 'admin/tool/epman/externallib.php',
         'description' => 'Updates the specified education program definition',
-        'capabilities' => 'tool/epman:editprogram',
         'type'        => 'write',
     ),
     'tool_epman_delete_program' => array(
@@ -76,7 +75,6 @@ $functions = array(
         'methodname'  => 'delete_program',
         'classpath'   => 'admin/tool/epman/externallib.php',
         'description' => 'Deletes the definition of the specified education program',
-        'capabilities' => 'tool/epman:editprogram',
         'type'        => 'write',
     ),
 );
