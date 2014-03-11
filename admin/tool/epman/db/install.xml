@@ -6,7 +6,7 @@
     <TABLE NAME="tool_epman_program" COMMENT="Education programs" NEXT="tool_epman_module">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="256" NOTNULL="true"
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"
                SEQUENCE="false" COMMENT="Name of the education program" PREVIOUS="id" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="big"
                NOTNULL="true" SEQUENCE="false"
