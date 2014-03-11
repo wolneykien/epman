@@ -43,7 +43,7 @@
     </TABLE>
     <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_program_module" NEXT="tool_epman_module_course">
       <FIELDS>
-        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="userid"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="programid"/>
       </FIELDS>
       <KEYS>
@@ -54,7 +54,7 @@
     </TABLE>
     <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant">
       <FIELDS>
-        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" PREVIOUS="courseid"/>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid"/>
       </FIELDS>
       <KEYS>
