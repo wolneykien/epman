@@ -11,7 +11,9 @@
         <FIELD NAME="description" TYPE="text" LENGTH="big"
                NOTNULL="true" SEQUENCE="false"
                COMMENT="Description of the education program" PREVIOUS="name" NEXT="responsibleid"/>
-        <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the responsible user" PREVIOUS="description" />
+        <FIELD NAME="year" TYPE="int" LENGTH="10" NOTNULL="true"
+               UNSIGNED="true" SEQUENCE="false" PREVIOUS="description" NEXT="responsibleid" COMMENT="Formal learning year" />
+        <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the responsible user" PREVIOUS="year" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_responsible"/>

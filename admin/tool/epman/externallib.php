@@ -52,16 +52,32 @@ class epman_external extends external_api {
    * @return array of education programs
    */
     public static function list_programs($userid = 0) {
-      global $USER;
+      global $DB, $USER;
 
       $params = self::validate_parameters(
         self::list_programs_parameters(),
         array('userid' => $userid)
       );
 
-      $programs = array();
-      
-      return $programs;
+      if ($userid) {
+        return $DB->get_records_sql(
+            'select p.id, '.
+            'max(p.name) as name, '.
+            'max(p.description) as description, '.
+            'max(p.year) as year, '.
+            'max(p.responsibleid) as responsibleid , '.
+            'max(a.userid) as assistantid '.
+            'from {tool_epman_program} p left join '.
+            '{tool_epman_program_assistant} a '.
+            'on a.programid = p.id '.
+            'where p.responsibleid = ? '.
+            'or a.userid = ? '.
+            'group by p.id '.
+            'order by year, name',
+            array($userid, $userid));
+      } else {
+        return $DB->get_records('tool_epman_program', null, 'year, name');
+      }
     }
 
     /**
@@ -82,9 +98,12 @@ class epman_external extends external_api {
           'description' => new external_value(
             PARAM_TEXT,
             'Short description of the program'),
+          'year' => new external_value(
+            PARAM_INT,
+            'Formal learning year'),
           'responsibleid' => new external_value(
             PARAM_INT,
-            'ID of the responsible user'),
+            'ID of the responsible user')/*,
           'modules' => new external_multiple_structure(
             new external_value(
               PARAM_INT,
@@ -94,7 +113,7 @@ class epman_external extends external_api {
             new external_value(
               PARAM_INT,
               'Assistant user ID')
-          ),
+          ),*/
         )));
     }
 
@@ -119,6 +138,9 @@ class epman_external extends external_api {
           'Short description of the program',
           VALUE_DEFAULT,
           ''),
+        'year' => new external_value(
+          PARAM_INT,
+          'Formal learning year'),
         'responsibleid' => new external_value(
           PARAM_INT,
           'ID of the responsible user',
@@ -146,7 +168,7 @@ class epman_external extends external_api {
      *
      * @return int new program ID
      */
-    public static function create_program($name, $desc = '', $respid, array $modules = array(), array $assistants = array()) {
+    public static function create_program($name, $desc = '', $year, $respid, array $modules = array(), array $assistants = array()) {
       global $USER, $DB;
 
       if (!isset($respid)) {
@@ -155,7 +177,7 @@ class epman_external extends external_api {
 
       $params = self::validate_parameters(
         self::create_program_parameters(),
-        array('name' => $name, 'description' => $desc, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
+        array('name' => $name, 'description' => $desc, 'year' => $year, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
       );
 
       user_exists($respid);
@@ -163,6 +185,7 @@ class epman_external extends external_api {
       $program = new stdObject(array(
           'name' => $name,
           'description' => $desc,
+          'year' => $year,
           'responsibleid' => $respid));
 
       $program->id = $DB->insert_record('tool_epman_program', $program);
