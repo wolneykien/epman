@@ -60,6 +60,24 @@ function get_token() {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
 $token = get_token();
-echo "<h4>Token: $token</h4>\n";
+?>
+<form action="server.php" method="POST">
+  <input type="hidden" name="wstoken" value="<?php echo $token; ?>" />
+  <input type="text" name="id"></input>
+  <select name="wsfunction">
+    <option value="tool_epman_update_program">update_program</option>
+    <option value="tool_epman_create_program">create_program</option>
+  </select>
+  <textarea name="model"></textarea>
+  <input type="submit" />
+</form>
+<a href="server.php?wstoken=<?php echo $token; ?>&wsfunction=tool_epman_get_programs">List programs</a>
+<form action="server.php" method="GET">
+  <input type="hidden" name="wstoken" value="<?php echo $token; ?>" />
+  <input type="text" name="id"></input>
+  <input type="hidden" name="wsfunction" value="tool_epman_get_program" />
+  <input type="submit" />
+</form>
+<?php
 echo $OUTPUT->footer();
 ?>
