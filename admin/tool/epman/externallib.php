@@ -136,16 +136,18 @@ class epman_external extends external_api {
       global $DB, $USER;
 
       $params = self::validate_parameters(
-        self::list_programs_parameters(),
+        self::get_program_parameters(),
         array('id' => $id)
       );
 
       $courses = $DB->get_records_sql(
         'select p.*, pm.position, pm.moduleid, '.
-        'mc.courseid, c.fullname '.
+        'm.length, mc.courseid, c.fullname '.
         'from {tool_epman_program} p left join '.
         '{tool_epman_program_module} pm '.
         'on pm.programid = p.id '.
+        'left join {tool_epman_module} m '.
+        'on m.id = pm.moduleid '.
         'left join {tool_epman_module_course} mc '.
         'on mc.moduleid = pm.moduleid '.
         'left join {course} c on c.id = mc.courseid '.
@@ -154,7 +156,7 @@ class epman_external extends external_api {
         array('id' => $id));
 
       foreach ($courses as $rec) {
-        if (isset($program)) {
+        if (!isset($program)) {
           $program = array(
             'id' => $rec->id,
             'name' => $rec->name,
@@ -164,7 +166,7 @@ class epman_external extends external_api {
             'modules' => array());
         }
         $module = end($program['modules']);
-        if (!$module || $module['id'] != $rec->moduleid) {
+        if ($rec->moduleid && (!$module || $module['id'] != $rec->moduleid)) {
           $module = array(
             'id' => $rec->moduleid,
             'length' => $rec->length,
@@ -177,12 +179,14 @@ class epman_external extends external_api {
       }
 
       $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
-      $program['responsible'] = array(
-        'id' => $responsible->id,
-        'username' => $responsible->username,
-        'firstname' => $responsible->firstname,
-        'lastname' => $responsible->lastname,
-        'email' => $responsible->email);
+      if ($responsible) {
+        $program['responsible'] = array(
+          'id' => $responsible->id,
+          'username' => $responsible->username,
+          'firstname' => $responsible->firstname,
+          'lastname' => $responsible->lastname,
+          'email' => $responsible->email);
+      }
 
       $assistants = $DB->get_records_sql(
         'select p.id, pa.userid, u.username, '.
@@ -191,7 +195,7 @@ class epman_external extends external_api {
         '{tool_epman_program_assistant} pa '.
         'on pa.programid = p.id '.
         'left join {user} u on u.id = pa.userid '.
-        'where p.id = ? '.
+        'where p.id = ? and pa.userid is not null '.
         'order by u.username',
         array('id' => $id));
 
@@ -215,7 +219,7 @@ class epman_external extends external_api {
      * @return external_description
      */
     public static function get_program_returns() {
-        new external_single_structure(array(
+      return new external_single_structure(array(
           'id' => new external_value(
             PARAM_INT,
             'Education program ID'),
