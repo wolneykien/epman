@@ -43,6 +43,10 @@
         <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_module" />
         <KEY NAME="fk_module" TYPE="foreign" FIELDS="moduleid" REFTABLE="tool_epman_module" REFFIELDS="id" PREVIOUS="fk_program"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_position" UNIQUE="true" FIELDS="programid, position"
+               COMMENT="Position of a module within the education program must be unique"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_program_module" NEXT="tool_epman_module_course">
       <FIELDS>
