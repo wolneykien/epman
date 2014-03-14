@@ -66,12 +66,11 @@ class epman_external extends external_api {
             'max(p.description) as description, '.
             'max(p.year) as year, '.
             'max(p.responsibleid) as responsibleid , '.
-            'max(a.userid) as assistantid '.
-            'from {tool_epman_program} p left join '.
-            '{tool_epman_program_assistant} a '.
-            'on a.programid = p.id '.
-            'where p.responsibleid = ? '.
-            'or a.userid = ? '.
+            'max(pa.userid) as assistantid '.
+            'from {tool_epman_program} p '.
+            'left join {tool_epman_program_assistant} pa '.
+            'on pa.programid = p.id '.
+            'where p.responsibleid = ? or pa.userid = ? '.
             'group by p.id '.
             'order by year, name',
             array($userid, $userid));
@@ -103,17 +102,184 @@ class epman_external extends external_api {
             'Formal learning year'),
           'responsibleid' => new external_value(
             PARAM_INT,
-            'ID of the responsible user')/*,
+            'ID of the responsible user'),
+        )));
+    }
+
+
+    /**
+     * Returns the description of the `get_program` method's
+     * parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_program_parameters() {
+      return new external_function_parameters(array(
+        'id' => new external_value(
+          PARAM_INT,
+          'The ID of the education program to get'),
+    ));
+  }
+
+  /**
+   * Returns the complete education program's data.
+   *
+   * @return array (education program)
+   */
+    public static function get_program($id) {
+      global $DB, $USER;
+
+      $params = self::validate_parameters(
+        self::list_programs_parameters(),
+        array('id' => $id)
+      );
+
+      $program = new stdClass();
+
+      $courses = $DB->get_records_sql(
+        'select p.*, pm.position, pm.moduleid, '.
+        'mc.courseid, c.fullname '.
+        'from {tool_epman_program} p left join '.
+        '{tool_epman_program_module} pm '.
+        'on pm.programid = p.id '.
+        'left join {tool_epman_module_course} mc '.
+        'on mc.moduleid = pm.moduleid '.
+        'left join {course} c on c.id = mc.courseid '.
+        'where p.id = ? '.
+        'order by pm.position, c.fullname',
+        array('id' => $id));
+
+      foreach ($courses => $rec) {
+        if (!isset($program->id)) {
+          $program->id = $rec->id;
+          $program->name = $rec->name;
+          $program->description = $rec->description;
+          $program->year = $rec->year;
+          $program->responsible = new stdObject(array(
+            'id' => $rec->responsibleid));
+        }
+        if (!isset($program->modules)) {
+          $program->modules = array();
+        }
+        $module = end($program->modules);
+        if (!$module || $module->id != $rec->moduleid) {
+          $module = new stdObject(array(
+            'id' => $rec->moduleid,
+            'length' => $rec->length,
+            'courses' => array()));
+          $program->modules[] = $module;
+        }
+        $module->courses[] = new stdObject(array(
+          'id' => $rec->courseid,
+          'name' => $rec->fullname));
+      }
+
+      $responsible = $DB->get_record('user', array('id' => $program->responsible->id));
+      $program->responsible = new stdObject(array(
+        'id' => $responsible->id,
+        'username' => $responsible->username,
+        'firstname' => $responsible->firstname,
+        'lastname' => $responsible->lastname,
+        'email' => $responsible->email));
+
+      $assistants = $DB->get_records_sql(
+        'select p.id, pa.userid, u.username, '.
+        'u.firstname, u.lastname, u.email '.
+        'from {tool_epman_program} p left join '.
+        '{tool_epman_program_assistant} pa '.
+        'on pa.programid = p.id '.
+        'left join {user} u on u.id = pa.userid '.
+        'where p.id = ? '.
+        'order by u.username',
+        array('id' => $id));
+
+      $program->assistants = array();
+      foreach ($assistants => $rec) {
+        $program->assistants[] = new stdObject(array(
+          'id' => $rec->userid,
+          'username' => $rec->username,
+          'firstname' => $rec->firstname,
+          'lastname' => $rec->lastname,
+          'email' => $rec->email));
+      }
+
+      return $program;
+    }
+
+    /**
+     * Returns the description of the `get_program` method's
+     * return value.
+     *
+     * @return external_description
+     */
+    public static function get_program_returns() {
+      return new external_multiple_structure(
+        new external_single_structure(array(
+          'id' => new external_value(
+            PARAM_INT,
+            'Education program ID'),
+          'name' => new external_value(
+            PARAM_TEXT,
+            'Education program name'),
+          'description' => new external_value(
+            PARAM_TEXT,
+            'Short description of the program'),
+          'year' => new external_value(
+            PARAM_INT,
+            'Formal learning year'),
+          'responsible' => new external_single_structure(array(
+            'id' => new external_value(
+              PARAM_INT,
+              'ID of the responsible user'),
+            'username' => new external_value(
+              PARAM_TEXT,
+              'System name of the responsible user'),
+            'firstname' => new external_value(
+              PARAM_TEXT,
+              'First name of the responsible user'),
+            'lastname' => new external_value(
+              PARAM_TEXT,
+              'Last name of the responsible user'),
+            'email' => new external_value(
+              PARAM_TEXT,
+              'E-mail of the responsible user'),
+          )),
           'modules' => new external_multiple_structure(
-            new external_value(
-              PARAM_INT,
-              'Program module ID')
-          ),
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the module'),
+              'length' => new external_value(
+                PARAM_INT,
+                'Length of the module (days)'),
+              'courses' => new external_multiple_structure(
+                new external_single_structure(array(
+                  'id' => new external_value(
+                    PARAM_INT,
+                    'ID of the course'),
+                  'name' => new external_value(
+                    PARAM_INT,
+                    'Name of the course'),
+              ))),
+          ))),
           'assistants' => new external_multiple_structure(
-            new external_value(
-              PARAM_INT,
-              'Assistant user ID')
-          ),*/
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the assistant user'),
+              'username' => new external_value(
+                PARAM_TEXT,
+                'System name of the assistant user'),
+              'firstname' => new external_value(
+                PARAM_TEXT,
+                'First name of the assistant user'),
+              'lastname' => new external_value(
+                PARAM_TEXT,
+                'Last name of the assistant user'),
+              'email' => new external_value(
+                PARAM_TEXT,
+                'E-mail of the assistant user'),
+            ))),
         )));
     }
 
