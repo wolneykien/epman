@@ -60,7 +60,7 @@ class epman_external extends external_api {
       );
 
       if ($userid) {
-        return $DB->get_records_sql(
+        $programs = $DB->get_records_sql(
             'select p.id, '.
             'max(p.name) as name, '.
             'max(p.description) as description, '.
@@ -74,8 +74,15 @@ class epman_external extends external_api {
             'order by year, name',
             array($userid, $userid));
       } else {
-        return $DB->get_records('tool_epman_program', null, 'year, name');
+        $programs = $DB->get_records('tool_epman_program', null, 'year, name');
       }
+
+      return array_map(
+        function($program) {
+          return (array) $program;
+        },
+        $programs
+      );
     }
 
     /**
@@ -133,8 +140,6 @@ class epman_external extends external_api {
         array('id' => $id)
       );
 
-      $program = new stdClass();
-
       $courses = $DB->get_records_sql(
         'select p.*, pm.position, pm.moduleid, '.
         'mc.courseid, c.fullname '.
@@ -149,37 +154,35 @@ class epman_external extends external_api {
         array('id' => $id));
 
       foreach ($courses as $rec) {
-        if (!isset($program->id)) {
-          $program->id = $rec->id;
-          $program->name = $rec->name;
-          $program->description = $rec->description;
-          $program->year = $rec->year;
-          $program->responsible = new stdObject(array(
-            'id' => $rec->responsibleid));
+        if (isset($program)) {
+          $program = array(
+            'id' => $rec->id,
+            'name' => $rec->name,
+            'description' => $rec->description,
+            'year' => $rec->year,
+            'responsible' => array('id' => $rec->responsibleid),
+            'modules' => array());
         }
-        if (!isset($program->modules)) {
-          $program->modules = array();
-        }
-        $module = end($program->modules);
-        if (!$module || $module->id != $rec->moduleid) {
-          $module = new stdObject(array(
+        $module = end($program['modules']);
+        if (!$module || $module['id'] != $rec->moduleid) {
+          $module = array(
             'id' => $rec->moduleid,
             'length' => $rec->length,
-            'courses' => array()));
-          $program->modules[] = $module;
+            'courses' => array());
+          $program['modules'][] = $module;
         }
-        $module->courses[] = new stdObject(array(
+        $module['courses'][] = array(
           'id' => $rec->courseid,
-          'name' => $rec->fullname));
+          'name' => $rec->fullname);
       }
 
-      $responsible = $DB->get_record('user', array('id' => $program->responsible->id));
-      $program->responsible = new stdObject(array(
+      $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
+      $program['responsible'] = array(
         'id' => $responsible->id,
         'username' => $responsible->username,
         'firstname' => $responsible->firstname,
         'lastname' => $responsible->lastname,
-        'email' => $responsible->email));
+        'email' => $responsible->email);
 
       $assistants = $DB->get_records_sql(
         'select p.id, pa.userid, u.username, '.
@@ -192,14 +195,14 @@ class epman_external extends external_api {
         'order by u.username',
         array('id' => $id));
 
-      $program->assistants = array();
+      $program['assistants'] = array();
       foreach ($assistants as $rec) {
-        $program->assistants[] = new stdObject(array(
+        $program['assistants'][] = array(
           'id' => $rec->userid,
           'username' => $rec->username,
           'firstname' => $rec->firstname,
           'lastname' => $rec->lastname,
-          'email' => $rec->email));
+          'email' => $rec->email);
       }
 
       return $program;
@@ -212,7 +215,6 @@ class epman_external extends external_api {
      * @return external_description
      */
     public static function get_program_returns() {
-      return new external_multiple_structure(
         new external_single_structure(array(
           'id' => new external_value(
             PARAM_INT,
@@ -279,7 +281,7 @@ class epman_external extends external_api {
                 PARAM_TEXT,
                 'E-mail of the assistant user'),
             ))),
-        )));
+        ));
     }
 
 
