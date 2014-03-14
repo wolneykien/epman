@@ -40,7 +40,11 @@ class wshelper extends webservice {
   }
 
   public function check_function_access($userid, $functionname) {
-    $caps = $this->capabilities[$functionname];
+    $caps = null;
+    if (isset($this->capabilities) &&
+        isset($this->capabilities[$functionname])) {
+      $caps = $this->capabilities[$functionname];
+    }
     if (!empty($caps)) {
       foreach ($caps as $cap) {
         if (!has_capability($cap, $this->systemctx, $userid)) {
@@ -76,6 +80,22 @@ class epman_rest_server extends webservice_rest_server {
     } else {
       throw new webservice_access_exception(get_string('servicenotavailable', 'webservice'));
     }
+  }
+
+  protected function parse_request() {
+    $params = array_merge($_GET,$_POST);
+    if (isset($params['model'])) {
+      //debugging('JSON: '.$params['model']);
+      $model = json_decode($params['model'], true);
+      //debugging('Model: '.json_encode($model));
+      $_POST['model'] = $model;
+      unset($_GET['model']);
+    }
+    if (isset($params['id']) && $params['id'] == '') {
+      unset($_GET['id']);
+      unset($_POST['id']);
+    }
+    return parent::parse_request();
   }
 
 }
