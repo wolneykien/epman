@@ -457,8 +457,8 @@ class epman_external extends external_api {
             throw new moodle_exception("You don't have right to modify this education program");
           } else {
             $assistants0 = get_program_assistants($id);
-            if (!empty(array_diff($assistants0, $assistants)) ||
-                !empty(array_diff($assistants, $assistants0))) {
+            if (count(array_diff($assistants0, $assistants)) ||
+                count(array_diff($assistants, $assistants0))) {
               throw new moodle_exception("You don't have right to change the set of assistant users of this education program");
             } else {
               $change_assistants = false;
