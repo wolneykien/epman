@@ -39,10 +39,10 @@ class epman_external extends external_api {
   public static function list_programs_parameters() {
     return new external_function_parameters(array(
       'userid' => new external_value(
-          PARAM_INT,
-          'Output only the programs editable by the given user (id)',
-          VALUE_DEFAULT,
-          0),
+        PARAM_INT,
+        'Output only the programs editable by the given user (id)',
+        VALUE_DEFAULT,
+        0),
     ));
   }
 
@@ -51,8 +51,8 @@ class epman_external extends external_api {
    *
    * @return array of education programs
    */
-    public static function list_programs($userid = 0) {
-      global $DB, $USER;
+    public static function list_programs($userid) {
+      global $DB;
 
       $params = self::validate_parameters(
         self::list_programs_parameters(),
@@ -65,8 +65,7 @@ class epman_external extends external_api {
             'max(p.name) as name, '.
             'max(p.description) as description, '.
             'max(p.year) as year, '.
-            'max(p.responsibleid) as responsibleid , '.
-            'max(pa.userid) as assistantid '.
+            'max(p.responsibleid) as responsibleid '.
             'from {tool_epman_program} p '.
             'left join {tool_epman_program_assistant} pa '.
             'on pa.programid = p.id '.
@@ -149,7 +148,7 @@ class epman_external extends external_api {
         'order by pm.position, c.fullname',
         array('id' => $id));
 
-      foreach ($courses => $rec) {
+      foreach ($courses as $rec) {
         if (!isset($program->id)) {
           $program->id = $rec->id;
           $program->name = $rec->name;
@@ -194,7 +193,7 @@ class epman_external extends external_api {
         array('id' => $id));
 
       $program->assistants = array();
-      foreach ($assistants => $rec) {
+      foreach ($assistants as $rec) {
         $program->assistants[] = new stdObject(array(
           'id' => $rec->userid,
           'username' => $rec->username,
@@ -357,13 +356,13 @@ class epman_external extends external_api {
       $program->id = $DB->insert_record('tool_epman_program', $program);
 
       if (!empty($modules)) {
-        foreach ($modules => $moduleid) {
+        foreach ($modules as $moduleid) {
           add_module($program->id, $moduleid);
         }
       }
 
       if (!empty($assistants)) {
-        foreach ($assistants => $userid) {
+        foreach ($assistants as $userid) {
           add_assistant($program->id, $userid);
         }
       }
@@ -477,7 +476,7 @@ class epman_external extends external_api {
 
       clear_program_modules($id);
       if (!empty($modules)) {
-        foreach ($modules => $moduleid) {
+        foreach ($modules as $moduleid) {
           add_module($program->id, $moduleid);
         }
       }
@@ -485,7 +484,7 @@ class epman_external extends external_api {
       if ($change_assistants) {
         clear_program_assistants($id);
         if (!empty($assistants)) {
-          foreach ($assistants => $userid) {
+          foreach ($assistants as $userid) {
             add_assistant($program->id, $userid);
           }
         }
