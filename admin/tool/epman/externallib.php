@@ -345,7 +345,7 @@ class epman_external extends external_api {
         array('name' => $name, 'description' => $desc, 'year' => $year, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
       );
 
-      user_exists($respid);
+      self::user_exists($respid);
 
       $program = new stdObject(array(
           'name' => $name,
@@ -357,13 +357,13 @@ class epman_external extends external_api {
 
       if (!empty($modules)) {
         foreach ($modules as $moduleid) {
-          add_module($program->id, $moduleid);
+          self::add_module($program->id, $moduleid);
         }
       }
 
       if (!empty($assistants)) {
         foreach ($assistants as $userid) {
-          add_assistant($program->id, $userid);
+          self::add_assistant($program->id, $userid);
         }
       }
       
@@ -446,17 +446,17 @@ class epman_external extends external_api {
         array('id' => $id, 'name' => $name, 'description' => $desc, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
       );
 
-      program_exists($id);
+      self::program_exists($id);
 
       $program = $DB->get_record('tool_epman_program', array('id' => $id));
 
       $change_assistants = true;
-      if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        if (!program_responsible($id, $USER->id)) {
-          if (!program_assistant($id, $USER->id)) {
+      if (!self::has_sys_capability('tool/epman:editprogram', $USER->id)) {
+        if (!self::program_responsible($id, $USER->id)) {
+          if (!self::program_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this education program");
           } else {
-            $assistants0 = get_program_assistants($id);
+            $assistants0 = self::get_program_assistants($id);
             if (count(array_diff($assistants0, $assistants)) ||
                 count(array_diff($assistants, $assistants0))) {
               throw new moodle_exception("You don't have right to change the set of assistant users of this education program");
@@ -469,23 +469,23 @@ class epman_external extends external_api {
           throw new moodle_exception("You don't have right to change the responsible user of this education program");
         }
       } else {
-        user_exists($respid);
+        self::user_exists($respid);
       }
 
       $DB->update_record('tool_epman_program', $program);
 
-      clear_program_modules($id);
+      self::clear_program_modules($id);
       if (!empty($modules)) {
         foreach ($modules as $moduleid) {
-          add_module($program->id, $moduleid);
+          self::add_module($program->id, $moduleid);
         }
       }
 
       if ($change_assistants) {
-        clear_program_assistants($id);
+        self::clear_program_assistants($id);
         if (!empty($assistants)) {
           foreach ($assistants as $userid) {
-            add_assistant($program->id, $userid);
+            self::add_assistant($program->id, $userid);
           }
         }
       }
@@ -543,9 +543,9 @@ class epman_external extends external_api {
         throw new moodle_exception("You don't have right to delete this education program");
       }
 
-      program_exists($id);
-      clear_program_modules($id);
-      clear_program_assistants($id);
+      self::program_exists($id);
+      self::clear_program_modules($id);
+      self::clear_program_assistants($id);
       $DB->delete_record('tool_epman_program', array('id' => $id));
       
       return true;
@@ -574,7 +574,7 @@ class epman_external extends external_api {
     public static function clear_program_assistants($programid) {
       global $DB;
 
-      program_exists($programid);
+      self::program_exists($programid);
       $DB->delete_records('tool_epman_program_assistant', array('programid' => $programid));
     }
 
@@ -584,7 +584,7 @@ class epman_external extends external_api {
     public static function clear_program_modules($programid) {
       global $DB;
 
-      program_exists($programid);
+      self::program_exists($programid);
       $DB->delete_records('tool_epman_program_module', array('programid' => $programid));
     }
     
@@ -596,8 +596,8 @@ class epman_external extends external_api {
     public static function add_module($programid, $moduleid) {
       global $DB;
 
-      program_exists($programid);
-      module_exists($moduleid);
+      self::program_exists($programid);
+      self::module_exists($moduleid);
 
       $DB->insert_record('tool_epman_program_module',
                          array('programid' => $programid,
@@ -612,7 +612,7 @@ class epman_external extends external_api {
     public static function get_program_modules($id) {
       global $DB;
 
-      program_exists($id);
+      self::program_exists($id);
 
       return $DB->get_fieldset('tool_epman_program_module', 'moduleid', 'programid = ?', $id);
     }
@@ -625,8 +625,8 @@ class epman_external extends external_api {
     public static function add_assistant($programid, $userid) {
       global $DB;
 
-      program_exists($programid);
-      user_exists($userid);
+      self::program_exists($programid);
+      self::user_exists($userid);
 
       $DB->insert_record('tool_epman_program_assistant',
                          array('programid' => $programid,
@@ -641,7 +641,7 @@ class epman_external extends external_api {
     public static function get_program_assistants($id) {
       global $DB;
 
-      program_exists($id);
+      self::program_exists($id);
 
       return $DB->get_fieldset('tool_epman_program_assistant', 'userid', 'programid = ?', $id);
     }
@@ -695,7 +695,7 @@ class epman_external extends external_api {
         $userid = $USER->id;
       }
 
-      user_exists($userid);
+      self::user_exists($userid);
       $systemctx = get_context_instance(CONTEXT_SYSTEM);
       return has_capability($capability, $systemctx, $userid);
     }
@@ -711,8 +711,8 @@ class epman_external extends external_api {
         $userid = $USER->id;
       }
 
-      program_exists($programid);
-      user_exists($userid);
+      self::program_exists($programid);
+      self::user_exists($userid);
 
       return $DB->record_exists(
           'tool_epman_program',
@@ -734,8 +734,8 @@ class epman_external extends external_api {
         $userid = $USER->id;
       }
 
-      program_exists($programid);
-      user_exists($userid);
+      self::program_exists($programid);
+      self::user_exists($userid);
 
       return $DB->record_exists(
           'tool_epman_program_assistant',
