@@ -448,7 +448,7 @@ class epman_external extends external_api {
       }
 
       $params = self::validate_parameters(
-        self::create_program_parameters(),
+        self::update_program_parameters(),
         array('id' => $id, 'name' => $name, 'description' => $desc, 'responsibleid' => $respid, 'modules' => $modules, 'assistants' => $assistants)
       );
 
@@ -540,7 +540,7 @@ class epman_external extends external_api {
       global $USER, $DB;
 
       $params = self::validate_parameters(
-        self::create_program_parameters(),
+        self::delete_program_parameters(),
         array('id' => $id)
       );
 
