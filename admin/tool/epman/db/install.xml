@@ -9,7 +9,7 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"
                SEQUENCE="false" COMMENT="Name of the education program" PREVIOUS="id" NEXT="description"/>
         <FIELD NAME="description" TYPE="text" LENGTH="big"
-               NOTNULL="true" SEQUENCE="false"
+               NOTNULL="false" SEQUENCE="false"
                COMMENT="Description of the education program" PREVIOUS="name" NEXT="year"/>
         <FIELD NAME="year" TYPE="int" LENGTH="10" NOTNULL="true"
                UNSIGNED="true" SEQUENCE="false" COMMENT="Formal learning year" PREVIOUS="description" NEXT="responsibleid" />
