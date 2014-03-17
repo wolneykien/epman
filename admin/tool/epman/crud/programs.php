@@ -25,10 +25,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/externallib.php");
+require_once("base.php");
 require_once("helpers.php");
 
-class epman_program_external extends external_api {
+class epman_program_external extends crud_external_api {
 
   /* Define the `list_programs` implementation functions. */
   
@@ -68,21 +68,42 @@ class epman_program_external extends external_api {
             'max(p.name) as name, '.
             'max(p.description) as description, '.
             'max(p.year) as year, '.
-            'max(p.responsibleid) as responsibleid '.
+            'max(p.responsibleid) as responsibleid, '.
+            'max(u.username) as username, '.
+            'max(u.firstname) as firstname, '.
+            'max(u.lastname) as lastname, '.
+            'max(u.email) as email, '.
             'from {tool_epman_program} p '.
             'left join {tool_epman_program_assistant} pa '.
             'on pa.programid = p.id '.
+            'left join {user} u '.
+            'on u.id = p.responsibleid '.
             'where p.responsibleid = ? or pa.userid = ? '.
             'group by p.id '.
             'order by year, name',
             array($userid, $userid));
       } else {
-        $programs = $DB->get_records('tool_epman_program', null, 'year, name');
+        $programs = $DB->get_records_sql(
+            'select p.*, u.username, '.
+            'u.firstname, u.lastname, u.email, '.
+            'from {tool_epman_program} p '.
+            'left join {user} u '.
+            'on u.id = p.responsibleid '.
+            'order by year, name');
       }
 
       return array_map(
         function($program) {
-          return (array) $program;
+          $program = (array) $program;
+          $program['responsible'] = array(
+            'id' => $program['responsibleid'],
+            'username' => $program['username'],
+            'firstname' => $program['firstname'],
+            'lastname' => $program['lastname'],
+            'email' => $program['email'],
+          );
+          unset($program['responsibleid']);
+          return $program;
         },
         $programs
       );
@@ -109,9 +130,27 @@ class epman_program_external extends external_api {
           'year' => new external_value(
             PARAM_INT,
             'Formal learning year'),
-          'responsibleid' => new external_value(
-            PARAM_INT,
-            'ID of the responsible user'),
+          'responsible' => new external_single_structure(array(
+            'id' => new external_value(
+              PARAM_INT,
+              'ID of the responsible user'),
+            'username' => new external_value(
+              PARAM_TEXT,
+              'System name of the responsible user',
+              VALUE_OPTIONAL),
+            'firstname' => new external_value(
+              PARAM_TEXT,
+              'First name of the responsible user',
+              VALUE_OPTIONAL),
+            'lastname' => new external_value(
+              PARAM_TEXT,
+              'Last name of the responsible user',
+              VALUE_OPTIONAL),
+            'email' => new external_value(
+              PARAM_TEXT,
+              'E-mail of the responsible user',
+              VALUE_OPTIONAL),
+          )),
         )));
     }
 

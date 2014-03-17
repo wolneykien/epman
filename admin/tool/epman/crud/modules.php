@@ -25,10 +25,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("$CFG->libdir/externallib.php");
+require_once("base.php");
 require_once("helpers.php");
 
-class epman_module_external extends external_api {
+class epman_module_external extends crud_external_api {
 
   /* Define the `list_modules` implementation functions. */
   
