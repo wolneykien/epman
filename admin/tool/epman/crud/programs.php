@@ -17,7 +17,7 @@
 /**
  * Functions implementing the core web services of the education
  * process management module. This module defines CRUD functions
- * education programs.
+ * for the education programs.
  *
  * @package    tool
  * @subpackage epman
@@ -143,6 +143,8 @@ class epman_program_external extends external_api {
         array('id' => $id)
       );
       $id = $params['id'];
+
+      program_exists($id);
 
       $courses = $DB->get_records_sql(
         'select p.*, m.position, m.id as moduleid, '.

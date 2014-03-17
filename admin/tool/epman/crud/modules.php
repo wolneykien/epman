@@ -17,7 +17,7 @@
 /**
  * Functions implementing the core web services of the education
  * process management module. This module defines CRUD functions
- * education program modules.
+ * for the education program modules.
  *
  * @package    tool
  * @subpackage epman
@@ -104,6 +104,9 @@ class epman_module_external extends external_api {
      */
     public static function get_module_parameters() {
       return new external_function_parameters(array(
+        'programid' => new external_value(
+          PARAM_INT,
+          'Education program ID'),
         'id' => new external_value(
           PARAM_INT,
           'The ID of the education program module to get'),
@@ -113,16 +116,20 @@ class epman_module_external extends external_api {
   /**
    * Returns the complete education program module's data.
    *
-   * @return array (education program)
+   * @return array (education program module)
    */
-    public static function get_module($id) {
+    public static function get_module($programid, $id) {
       global $DB;
 
       $params = self::validate_parameters(
         self::get_module_parameters(),
-        array('id' => $id)
+        array('programid' => $programid, 'id' => $id)
       );
+      $programid = $params['programid'];
       $id = $params['id'];
+
+      program_exists($programid);
+      module_exists($id);
 
       $courses = $DB->get_records_sql(
         'select m.*, mc.courseid, c.fullname '.
@@ -317,7 +324,7 @@ class epman_module_external extends external_api {
       $module['id'] = $id;
 
       program_exists($programid);
-      program_module_exists($id);
+      module_exists($id);
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
         if (!program_responsible($programid, $USER->id)) {
@@ -387,7 +394,7 @@ class epman_module_external extends external_api {
       $id = $params['id'];
 
       program_exists($programid);
-      program_module_exists($id);
+      module_exists($id);
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
         if (!program_responsible($programid, $USER->id)) {

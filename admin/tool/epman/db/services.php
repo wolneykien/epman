@@ -40,6 +40,13 @@ $services = array(
             'tool_epman_get_module',
             'tool_epman_update_module',
             'tool_epman_delete_module',
+
+            /* Program assistants */
+            'tool_epman_get_program_assistants',
+            'tool_epman_add_program_assistant',
+            'tool_epman_get_program_assistant',
+            /* no update */
+            'tool_epman_delete_program_assistant',
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
@@ -125,6 +132,38 @@ $functions = array(
         'methodname'  => 'delete_module',
         'classpath'   => 'admin/tool/epman/crud/modules.php',
         'description' => 'Deletes the definition of the specified education program module',
+        'type'        => 'write',
+    ),
+
+
+    /* Education program assistant users */
+    
+    'tool_epman_get_program_assistants' => array(
+        'classname'   => 'epman_program_assistant_external',
+        'methodname'  => 'list_program_assistants',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Returns the list of education program assistant users defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_add_program_assistant' => array(
+        'classname'   => 'epman_program_assistant_external',
+        'methodname'  => 'add_program_assistant',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Add to the system a new education program assistant user with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_program_assistant' => array(
+        'classname'   => 'epman_program_assistant_external',
+        'methodname'  => 'get_program_assistant',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Returns the full definition of the specified education program assistant user',
+        'type'        => 'read',
+    ),
+    'tool_epman_delete_program_assistant' => array(
+        'classname'   => 'epman_program_assistant_external',
+        'methodname'  => 'delete_program_assistant',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Deletes the definition of the specified education program assistant user',
         'type'        => 'write',
     ),
 );

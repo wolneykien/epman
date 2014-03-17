@@ -78,19 +78,6 @@ public function program_exists($programid) {
  *
  * @throw invalid_parameter_exception
  */
-public function program_module_exists($moduleid) {
-  global $DB;
-
-  if (!$DB->record_exists('tool_epman_module', array('id' => $moduleid))) {
-    throw new invalid_parameter_exception("Module doesn't exist: $moduleid");
-  }
-}
-
-/**
- * Checks if the education program module with the given ID exists.
- *
- * @throw invalid_parameter_exception
- */
 public function module_exists($moduleid) {
   global $DB;
   
