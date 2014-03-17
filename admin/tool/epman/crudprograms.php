@@ -28,7 +28,7 @@
 require_once("$CFG->libdir/externallib.php");
 require_once("crudhelpers.php");
 
-class epman_programs_external extends external_api {
+class epman_program_external extends external_api {
 
   /* Define the `list_programs` implementation functions. */
   
@@ -136,7 +136,7 @@ class epman_programs_external extends external_api {
    * @return array (education program)
    */
     public static function get_program($id) {
-      global $DB, $USER;
+      global $DB;
 
       $params = self::validate_parameters(
         self::get_program_parameters(),
@@ -145,18 +145,16 @@ class epman_programs_external extends external_api {
       $id = $params['id'];
 
       $courses = $DB->get_records_sql(
-        'select p.*, pm.position, pm.moduleid, '.
+        'select p.*, m.position, m.id as moduleid, '.
         'm.length, mc.courseid, c.fullname '.
         'from {tool_epman_program} p left join '.
-        '{tool_epman_program_module} pm '.
-        'on pm.programid = p.id '.
         'left join {tool_epman_module} m '.
-        'on m.id = pm.moduleid '.
+        'on m.programid = p.id '.
         'left join {tool_epman_module_course} mc '.
-        'on mc.moduleid = pm.moduleid '.
+        'on mc.moduleid = m.id '.
         'left join {course} c on c.id = mc.courseid '.
         'where p.id = ? '.
-        'order by pm.position, c.fullname',
+        'order by m.position, c.fullname',
         array('id' => $id));
 
       foreach ($courses as $rec) {

@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once("$CFG->libdir/externallib.php");
+
 
 /* Define the helper functions. */
 
@@ -31,7 +33,7 @@
  * Clears the assistant user set for the given education
  * program.
  */
-public static function clear_program_assistants($programid) {
+public function clear_program_assistants($programid) {
   global $DB;
   
   program_exists($programid);
@@ -41,7 +43,7 @@ public static function clear_program_assistants($programid) {
 /**
  * Clears the module set for the given education program.
  */
-public static function clear_program_modules($programid) {
+public function clear_program_modules($programid) {
   global $DB;
   
   program_exists($programid);
@@ -49,11 +51,21 @@ public static function clear_program_modules($programid) {
 }
 
 /**
+ * Clears the course set for the given education program module.
+ */
+public function clear_module_courses($moduleid) {
+  global $DB;
+  
+  program_module_exists($moduleid);
+  $DB->delete_records('tool_epman_module_course', array('moduleid' => $moduleid));
+}
+
+/**
  * Checks if the education program with the given ID exists.
  *
  * @throw invalid_parameter_exception
  */
-public static function program_exists($programid) {
+public function program_exists($programid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_program', array('id' => $programid))) {
@@ -66,7 +78,20 @@ public static function program_exists($programid) {
  *
  * @throw invalid_parameter_exception
  */
-public static function module_exists($moduleid) {
+public function program_module_exists($moduleid) {
+  global $DB;
+
+  if (!$DB->record_exists('tool_epman_module', array('id' => $moduleid))) {
+    throw new invalid_parameter_exception("Module doesn't exist: $moduleid");
+  }
+}
+
+/**
+ * Checks if the education program module with the given ID exists.
+ *
+ * @throw invalid_parameter_exception
+ */
+public function module_exists($moduleid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_modules', array('id' => $moduleid))) {
@@ -79,7 +104,7 @@ public static function module_exists($moduleid) {
  *
  * @throw invalid_parameter_exception
  */
-public static function user_exists($userid) {
+public function user_exists($userid) {
   global $DB;
   
   if (!$DB->record_exists('user', array('id' => $userid))) {
@@ -90,7 +115,7 @@ public static function user_exists($userid) {
 /**
  * Checks if the given user (id) has the given system capability.
  */
-public static function has_sys_capability($capability, $userid) {
+public function has_sys_capability($capability, $userid) {
   global $USER;
   
   if (!isset($userid)) {
@@ -106,7 +131,7 @@ public static function has_sys_capability($capability, $userid) {
  * Checks if the given user (id) is responsible for the
  * given education program (id).
  */
-public static function program_responsible($programid, $userid) {
+public function program_responsible($programid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -129,7 +154,7 @@ public static function program_responsible($programid, $userid) {
  * Checks if the given user (id) is responsible for the
  * given education program (id).
  */
-public static function program_assistant($programid, $userid) {
+public function program_assistant($programid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -146,6 +171,26 @@ public static function program_assistant($programid, $userid) {
       'uerid' => $userid
     )
   );
+}
+
+/**
+ * Returns the position for the next module within the given
+ * education program.
+ */
+public function get_next_module_position($programid) {
+  global $DB;
+
+  $position = $DB->get_record_sql(
+    'select max(position) from {tool_epman_module} '.
+    'where programid = ?',
+    array('programid' => $programid)
+  );
+
+  if ($position >= 0) {
+    return $position + 1;
+  } else {
+    return 0;
+  }
 }
 
 

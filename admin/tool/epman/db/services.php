@@ -27,11 +27,19 @@
 $services = array(
     'epman' => array(
         'functions' => array (
+            /* Programs */
             'tool_epman_get_programs',
             'tool_epman_create_program',
             'tool_epman_get_program',
             'tool_epman_update_program',
             'tool_epman_delete_program',
+
+            /* Modules */
+            'tool_epman_get_modules',
+            'tool_epman_create_module',
+            'tool_epman_get_module',
+            'tool_epman_update_module',
+            'tool_epman_delete_module',
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
@@ -41,6 +49,9 @@ $services = array(
 );
 
 $functions = array(
+
+    /* Education programs */
+
     'tool_epman_get_programs' => array(
         'classname'   => 'epman_program_external',
         'methodname'  => 'list_programs',
@@ -75,6 +86,45 @@ $functions = array(
         'methodname'  => 'delete_program',
         'classpath'   => 'admin/tool/epman/crudprograms.php',
         'description' => 'Deletes the definition of the specified education program',
+        'type'        => 'write',
+    ),
+
+
+    /* Education program modules */
+    
+    'tool_epman_get_modules' => array(
+        'classname'   => 'epman_module_external',
+        'methodname'  => 'list_modules',
+        'classpath'   => 'admin/tool/epman/crudmodules.php',
+        'description' => 'Returns the list of education program modules defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_create_module' => array(
+        'classname'   => 'epman_module_external',
+        'methodname'  => 'create_module',
+        'classpath'   => 'admin/tool/epman/crudmodules.php',
+        'description' => 'Add to the system a new education program module with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_module' => array(
+        'classname'   => 'epman_module_external',
+        'methodname'  => 'get_module',
+        'classpath'   => 'admin/tool/epman/crudmodules.php',
+        'description' => 'Returns the full definition of the specified education program module',
+        'type'        => 'read',
+    ),
+    'tool_epman_update_module' => array(
+        'classname'   => 'epman_module_external',
+        'methodname'  => 'update_module',
+        'classpath'   => 'admin/tool/epman/crudmodules.php',
+        'description' => 'Updates the specified education program module definition',
+        'type'        => 'write',
+    ),
+    'tool_epman_delete_module' => array(
+        'classname'   => 'epman_module_external',
+        'methodname'  => 'delete_module',
+        'classpath'   => 'admin/tool/epman/crudmodules.php',
+        'description' => 'Deletes the definition of the specified education program module',
         'type'        => 'write',
     ),
 );
