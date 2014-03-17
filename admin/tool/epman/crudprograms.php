@@ -16,7 +16,8 @@
 
 /**
  * Functions implementing the core web services of the education
- * process management module.
+ * process management module. This module defines CRUD functions
+ * education programs.
  *
  * @package    tool
  * @subpackage epman
@@ -25,8 +26,9 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
+require_once("crudhelpers.php");
 
-class epman_external extends external_api {
+class epman_programs_external extends external_api {
 
   /* Define the `list_programs` implementation functions. */
   
@@ -350,7 +352,7 @@ class epman_external extends external_api {
       );
       $program = $params['model'];
 
-      self::user_exists($program['responsibleid']);
+      user_exists($program['responsibleid']);
 
       $program['id'] = $DB->insert_record('tool_epman_program', $program);
 
@@ -430,13 +432,13 @@ class epman_external extends external_api {
       $program = $params['model'];
       $program['id'] = $id;
 
-      self::program_exists($id);
+      program_exists($id);
 
       $program0 = $DB->get_record('tool_epman_program', array('id' => $id));
 
-      if (!self::has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        if (!self::program_responsible($id, $USER->id)) {
-          if (!self::program_assistant($id, $USER->id)) {
+      if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
+        if (!program_responsible($id, $USER->id)) {
+          if (!program_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this education program");
           }
         }
@@ -446,7 +448,7 @@ class epman_external extends external_api {
         }
       } else {
         if (isset($program['responsibleid'])) {
-          self::user_exists($program['responsibleid']);
+          user_exists($program['responsibleid']);
         }
       }
 
@@ -516,9 +518,9 @@ class epman_external extends external_api {
         throw new moodle_exception("You don't have right to delete this education program");
       }
 
-      self::program_exists($id);
-      self::clear_program_modules($id);
-      self::clear_program_assistants($id);
+      program_exists($id);
+      clear_program_modules($id);
+      clear_program_assistants($id);
       $DB->delete_record('tool_epman_program', array('id' => $id));
       
       return true;
@@ -535,204 +537,6 @@ class epman_external extends external_api {
         PARAM_BOOL,
         'Successfull return flag'
       );
-    }
-
-
-    /* Define the helper functions. */
-
-    /**
-     * Clears the assistant user set for the given education
-     * program.
-     */
-    public static function clear_program_assistants($programid) {
-      global $DB;
-
-      self::program_exists($programid);
-      $DB->delete_records('tool_epman_program_assistant', array('programid' => $programid));
-    }
-
-    /**
-     * Clears the module set for the given education program.
-     */
-    public static function clear_program_modules($programid) {
-      global $DB;
-
-      self::program_exists($programid);
-      $DB->delete_records('tool_epman_program_module', array('programid' => $programid));
-    }
-    
-    /**
-     * Connects the module and the education program with the
-     * given IDs.
-     *
-     */
-    public static function add_module($programid, $moduleid) {
-      global $DB;
-
-      self::program_exists($programid);
-      self::module_exists($moduleid);
-
-      $DB->insert_record('tool_epman_program_module',
-                         array('programid' => $programid,
-                               'moduleid' => $moduleid),
-                         false);
-    }
-
-    /**
-     * Gets the array of modules (IDs) for the given education
-     * program.
-     */
-    public static function get_program_modules($id) {
-      global $DB;
-
-      self::program_exists($id);
-
-      return $DB->get_fieldset('tool_epman_program_module', 'moduleid', 'programid = ?', $id);
-    }
-    
-    /**
-     * Connects the assistant user and the education program with the
-     * given IDs.
-     *
-     */
-    public static function add_assistant($programid, $userid) {
-      global $DB;
-
-      self::program_exists($programid);
-      self::user_exists($userid);
-
-      $DB->insert_record('tool_epman_program_assistant',
-                         array('programid' => $programid,
-                               'userid' => $userid),
-                         false);
-    }
-
-    /**
-     * Gets the array of assistant users (IDs) for the given
-     * education program.
-     */
-    public static function get_program_assistants($id) {
-      global $DB;
-
-      self::program_exists($id);
-
-      return $DB->get_fieldset('tool_epman_program_assistant', 'userid', 'programid = ?', $id);
-    }
-
-    /**
-     * Checks if the education program with the given ID exists.
-     *
-     * @throw invalid_parameter_exception
-     */
-    public static function program_exists($programid) {
-      global $DB;
-
-      if (!$DB->record_exists('tool_epman_program', array('id' => $programid))) {
-        throw new invalid_parameter_exception("Program doesn't exist: $programid");
-      }
-    }
-
-    /**
-     * Checks if the education program module with the given ID exists.
-     *
-     * @throw invalid_parameter_exception
-     */
-    public static function module_exists($moduleid) {
-      global $DB;
-
-      if (!$DB->record_exists('tool_epman_modules', array('id' => $moduleid))) {
-        throw new invalid_parameter_exception("Module doesn't exist: $moduleid");
-      }
-    }
-
-    /**
-     * Checks if the user with the given ID exists.
-     *
-     * @throw invalid_parameter_exception
-     */
-    public static function user_exists($userid) {
-      global $DB;
-
-      if (!$DB->record_exists('user', array('id' => $userid))) {
-        throw new invalid_parameter_exception("Responsible user doesn't exist: $userid");
-      }
-    }
-
-    /**
-     * Checks if the given user (id) has the given system capability.
-     */
-    public static function has_sys_capability($capability, $userid) {
-      global $USER;
-
-      if (!isset($userid)) {
-        $userid = $USER->id;
-      }
-
-      self::user_exists($userid);
-      $systemctx = get_context_instance(CONTEXT_SYSTEM);
-      return has_capability($capability, $systemctx, $userid);
-    }
-
-    /**
-     * Checks if the given user (id) is responsible for the
-     * given education program (id).
-     */
-    public static function program_responsible($programid, $userid) {
-      global $DB, $USER;
-      
-      if (!isset($userid)) {
-        $userid = $USER->id;
-      }
-
-      self::program_exists($programid);
-      self::user_exists($userid);
-
-      return $DB->record_exists(
-          'tool_epman_program',
-          array(
-            'id' => $programid,
-            'responsibleid' => $userid
-          )
-      );
-    }
-
-    /**
-     * Checks if the given user (id) is responsible for the
-     * given education program (id).
-     */
-    public static function program_assistant($programid, $userid) {
-      global $DB, $USER;
-      
-      if (!isset($userid)) {
-        $userid = $USER->id;
-      }
-
-      self::program_exists($programid);
-      self::user_exists($userid);
-
-      return $DB->record_exists(
-          'tool_epman_program_assistant',
-          array(
-            'programid' => $programid,
-            'uerid' => $userid
-          )
-      );
-    }
-
-}
-
-/*
- * Simple stdClass creation.
- *
- */
-class stdObject {
-
-    public function __construct(array $arguments = array()) {
-        if (!empty($arguments)) {
-            foreach ($arguments as $property => $argument) {
-              $this->{$property} = $argument;
-            }
-        }
     }
 
 }

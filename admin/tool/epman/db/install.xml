@@ -25,23 +25,14 @@
     </TABLE>
     <TABLE NAME="tool_epman_module" COMMENT="Education program modules" PREVIOUS="tool_epman_program" NEXT="tool_epman_program_module">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="length"/>
-        <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="id" />
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="programid"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="length"/>
+        <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="programid" NEXT="position" />
+        <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module position" PREVIOUS="length"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="tool_epman_program_module" COMMENT="Connects education programs with modules" PREVIOUS="tool_epman_module" NEXT="tool_epman_program_assistant">
-      <FIELDS>
-        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" NEXT="moduleid"/>
-        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" PREVIOUS="programid" NEXT="position" />
-        <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module position" PREVIOUS="moduleid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="programid, moduleid" NEXT="fk_program" />
-        <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_module" />
-        <KEY NAME="fk_module" TYPE="foreign" FIELDS="moduleid" REFTABLE="tool_epman_module" REFFIELDS="id" PREVIOUS="fk_program"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_program" />
+        <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" />
       </KEYS>
       <INDEXES>
         <INDEX NAME="uq_position" UNIQUE="true" FIELDS="programid, position"
