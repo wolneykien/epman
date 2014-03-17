@@ -3,6 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd">
   <TABLES>
+    <!-- Programs and modules -->
     <TABLE NAME="tool_epman_program" COMMENT="Education programs" NEXT="tool_epman_module">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
@@ -59,6 +60,49 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="moduleid, courseid" NEXT="fk_module" />
         <KEY NAME="fk_module" TYPE="foreign" FIELDS="moduleid" REFTABLE="tool_epman_module" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_course"/>
         <KEY NAME="fk_course" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="fk_module"/>
+      </KEYS>
+    </TABLE>
+
+    <!-- Groups -->
+    <TABLE NAME="tool_epman_group" COMMENT="Academic groups" NEXT="tool_epman_group_student">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"
+               SEQUENCE="false" COMMENT="Name of the academic group" PREVIOUS="id" NEXT="programid"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="name" NEXT="year"/>
+        <FIELD NAME="year" TYPE="int" LENGTH="10" NOTNULL="true"
+               UNSIGNED="true" SEQUENCE="false" COMMENT="Actual learning year" PREVIOUS="description" NEXT="responsibleid" />
+        <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the responsible user" PREVIOUS="year" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_program"/>
+        <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_responsible" />
+        <KEY NAME="fk_responsible" TYPE="foreign" FIELDS="responsibleid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_program"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_name" UNIQUE="true" FIELDS="name" COMMENT="Name of an education program must be unique"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_epman_group_student" COMMENT="Connects academic groups with the students" PREVIOUS="tool_epman_group" NEXT="tool_epman_group_assistants">
+      <FIELDS>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="groupid, userid" NEXT="fk_group" />
+        <KEY NAME="fk_group" TYPE="foreign" FIELDS="groupid" REFTABLE="tool_epman_group" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_student" />
+        <KEY NAME="fk_student" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_group"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="tool_epman_group_assistant" COMMENT="Connects academic groups with assistant users" PREVIOUS="tool_epman_group_students">
+      <FIELDS>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="groupid, userid" NEXT="fk_group" />
+        <KEY NAME="fk_group" TYPE="foreign" FIELDS="groupid" REFTABLE="tool_epman_group" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_assistant" />
+        <KEY NAME="fk_assistant" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_group"/>
       </KEYS>
     </TABLE>
   </TABLES>

@@ -50,5 +50,16 @@ $capabilities = array(
         ),
     ),
 
+    /* Allows the user to create, modify and delete any academic
+     * group. */
+    'tool/epman:editgroup' => array(
+        'riskbitmask' => RISK_CONFIG | RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        ),
+    ),
+
 );
 ?>

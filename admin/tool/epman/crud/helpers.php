@@ -56,7 +56,7 @@ public function clear_program_modules($programid) {
 public function clear_module_courses($moduleid) {
   global $DB;
   
-  program_module_exists($moduleid);
+  module_exists($moduleid);
   $DB->delete_records('tool_epman_module_course', array('moduleid' => $moduleid));
 }
 
@@ -97,6 +97,41 @@ public function user_exists($userid) {
   if (!$DB->record_exists('user', array('id' => $userid))) {
     throw new invalid_parameter_exception("Responsible user doesn't exist: $userid");
   }
+}
+
+/**
+ * Checks if the academic group with the given ID exists.
+ *
+ * @throw invalid_parameter_exception
+ */
+public function group_exists($groupid) {
+  global $DB;
+  
+  if (!$DB->record_exists('tool_epman_group', array('id' => $programid))) {
+    throw new invalid_parameter_exception("Group doesn't exist: $groupid");
+  }
+}
+
+/**
+ * Clears the assistant user set for the given academic
+ * group.
+ */
+public function clear_group_assistants($groupid) {
+  global $DB;
+  
+  group_exists($groupid);
+  $DB->delete_records('tool_epman_group_assistant', array('groupid' => $groupid));
+}
+
+/**
+ * Clears the assistant user set for the given academic
+ * group.
+ */
+public function clear_group_students($groupid) {
+  global $DB;
+  
+  group_exists($groupid);
+  $DB->delete_records('tool_epman_group_student', array('groupid' => $groupid));
 }
 
 /**
@@ -178,6 +213,52 @@ public function get_next_module_position($programid) {
   } else {
     return 0;
   }
+}
+
+/**
+ * Checks if the given user (id) is responsible for the
+ * given academic group (id).
+ */
+public function group_responsible($groupid, $userid) {
+  global $DB, $USER;
+  
+  if (!isset($userid)) {
+    $userid = $USER->id;
+  }
+  
+  group_exists($groupid);
+  user_exists($userid);
+  
+  return $DB->record_exists(
+    'tool_epman_group',
+    array(
+      'id' => $groupid,
+      'responsibleid' => $userid
+    )
+  );
+}
+
+/**
+ * Checks if the given user (id) is a student of the
+ * given academic group (id).
+ */
+public function group_student($groupid, $userid) {
+  global $DB, $USER;
+  
+  if (!isset($userid)) {
+    $userid = $USER->id;
+  }
+  
+  group_exists($groupid);
+  user_exists($userid);
+  
+  return $DB->record_exists(
+    'tool_epman_group_student',
+    array(
+      'groupid' => $groupid,
+      'uerid' => $userid
+    )
+  );
 }
 
 
