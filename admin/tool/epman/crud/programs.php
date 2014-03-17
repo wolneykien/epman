@@ -411,16 +411,17 @@ class epman_program_external extends crud_external_api {
           'Education program ID'),
         'name' => new external_value(
           PARAM_TEXT,
-          'Education program name',
-          VALUE_OPTIONAL),
+          'Education program name'),
         'description' => new external_value(
           PARAM_TEXT,
           'Short description of the program',
           VALUE_OPTIONAL),
+        'year' => new external_value(
+          PARAM_INT,
+          'Formal learning year'),
         'responsibleid' => new external_value(
           PARAM_INT,
-          'ID of the responsible user',
-          VALUE_OPTIONAL),
+          'ID of the responsible user'),
       ));
     }
 
@@ -446,6 +447,10 @@ class epman_program_external extends crud_external_api {
           'description' => new external_value(
             PARAM_TEXT,
             'Short description of the program',
+            VALUE_OPTIONAL),
+          'year' => new external_value(
+            PARAM_INT,
+            'Formal learning year',
             VALUE_OPTIONAL),
           'responsibleid' => new external_value(
             PARAM_INT,
@@ -476,14 +481,14 @@ class epman_program_external extends crud_external_api {
       $program0 = $DB->get_record('tool_epman_program', array('id' => $id));
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
+        value_unchanged($program0, $program, 'responsibleid', 'responsible user of this education program');
         if (!program_responsible($id, $USER->id)) {
+          value_unchanged($program0, $program, 'name', 'name of this education program');
+          value_unchanged($program0, $program, 'year', 'year of this education program');
+          value_unchanged($program0, $program, 'description', 'description of this education program');
           if (!program_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this education program");
           }
-        }
-        if (isset($program['responsibleid']) &&
-            $program0['responsibleid'] != $program['responsibleid']) {
-          throw new moodle_exception("You don't have right to change the responsible user of this education program");
         }
       } else {
         if (isset($program['responsibleid'])) {
@@ -512,6 +517,10 @@ class epman_program_external extends crud_external_api {
           PARAM_TEXT,
           'Short description of the program',
           VALUE_OPTIONAL),
+        'year' => new external_value(
+          PARAM_INT,
+          'Formal learning year',
+          VALUE_OPTIONAL),
         'responsibleid' => new external_value(
           PARAM_INT,
           'ID of the responsible user',
@@ -539,9 +548,9 @@ class epman_program_external extends crud_external_api {
     }
 
     /**
-     * Deletes a new education program.
+     * Deletes the given education program.
      *
-     * @return int new program ID
+     * @return bool successful result flag
      */
     public static function delete_program($id) {
       global $USER, $DB;

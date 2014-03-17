@@ -294,14 +294,10 @@ class epman_module_external extends crud_external_api {
         'model' => new external_single_structure(array(
           'position' => new external_value(
             PARAM_INT,
-            'Module position',
-            VALUE_DEFAULT,
-            $programid ? get_next_module_position($programid) : 0),
+            'Module position'),
           'length' => new external_value(
             PARAM_INT,
-            'Module length, days',
-            VALUE_DEFAULT,
-            0),
+            'Module length, days'),
         )),
       ));
     }
@@ -379,11 +375,11 @@ class epman_module_external extends crud_external_api {
     }
 
     /**
-     * Deletes a new education program.
+     * Deletes the given education program module.
      *
-     * @return int new program ID
+     * @return bool successful result flag
      */
-    public static function delete_program($programid, $id) {
+    public static function delete_module($programid, $id) {
       global $USER, $DB;
 
       $params = self::validate_parameters(

@@ -239,6 +239,29 @@ public function group_responsible($groupid, $userid) {
 }
 
 /**
+ * Checks if the given user (id) is an assistant of the
+ * given academic group (id).
+ */
+public function group_assistant($groupid, $userid) {
+  global $DB, $USER;
+  
+  if (!isset($userid)) {
+    $userid = $USER->id;
+  }
+  
+  group_exists($groupid);
+  user_exists($userid);
+  
+  return $DB->record_exists(
+    'tool_epman_group_assistant',
+    array(
+      'groupid' => $groupid,
+      'uerid' => $userid
+    )
+  );
+}
+
+/**
  * Checks if the given user (id) is a student of the
  * given academic group (id).
  */
@@ -259,6 +282,16 @@ public function group_student($groupid, $userid) {
       'uerid' => $userid
     )
   );
+}
+
+/**
+ * Checks that the given field is not being modified.
+ */
+public function value_unchanged($currentmodel, $newmodel, $key, $title = $key) {
+  if (isset($newmodel[$key]) &&
+      $currentmodel[$key] != $newmodel[$key]) {
+    throw new moodle_exception("You don't have the right to change the $title");
+  }
 }
 
 

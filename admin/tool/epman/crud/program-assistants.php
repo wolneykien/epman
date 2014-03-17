@@ -293,11 +293,12 @@ class epman_program_assistant_external extends crud_external_api {
     }
 
     /**
-     * Deletes a new education program.
+     * Removes the given user from the set of assistants of
+     * the given education program.
      *
-     * @return int new program ID
+     * @return bool success flag
      */
-    public static function delete_program($programid, $id) {
+    public static function delete_program_assistant($programid, $id) {
       global $USER, $DB;
 
       $params = self::validate_parameters(
