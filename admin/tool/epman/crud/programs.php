@@ -26,7 +26,7 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
-require_once("crudhelpers.php");
+require_once("helpers.php");
 
 class epman_program_external extends external_api {
 
