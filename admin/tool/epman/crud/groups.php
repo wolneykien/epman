@@ -108,10 +108,14 @@ class epman_group_external extends crud_external_api {
       return array_map(
         function($group) {
           $group = (array) $group;
-          $group['program'] = array(
-            'id' => $group['programid'],
-            'name' => $group['programname'],
-          );
+          if ($group['programid']) {
+            $group['program'] = array(
+              'id' => $group['programid'],
+              'name' => $group['programname'],
+            );
+          } else {
+            $group['program'] = null;
+          }
           unset($group['programid']);
           $group['responsible'] = array(
             'id' => $group['responsibleid'],
@@ -149,7 +153,7 @@ class epman_group_external extends crud_external_api {
             'name' => new external_value(
               PARAM_TEXT,
               'Education program name'),
-          )),
+          ), VALUE_OPTIONAL),
           'year' => new external_value(
             PARAM_INT,
             'Actual learning year'),
@@ -289,7 +293,7 @@ class epman_group_external extends crud_external_api {
           'name' => new external_value(
             PARAM_TEXT,
             'Education program name'),
-        )),
+        ), VALUE_OPTIONAL),
         'year' => new external_value(
           PARAM_INT,
           'Actual learning year'),
@@ -379,10 +383,11 @@ class epman_group_external extends crud_external_api {
         'model' => new external_single_structure(array(
           'name' => new external_value(
             PARAM_TEXT,
-            'Education program name'),
+            'Academic group name'),
           'programid' => new external_value(
             PARAM_INT,
-            'Education program ID'),
+            'Education program ID',
+            VALUE_OPTIONAL),
           'year' => new external_value(
             PARAM_INT,
             'Actual learning year',
@@ -429,19 +434,17 @@ class epman_group_external extends crud_external_api {
       return new external_single_structure(array(
         'id' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
         'name' => new external_value(
           PARAM_TEXT,
-          'Education program name',
-          VALUE_OPTIONAL),
-        'description' => new external_value(
-          PARAM_TEXT,
-          'Short description of the program',
+          'Academic group name'),
+        'programid' => new external_value(
+          PARAM_INT,
+          'Education program ID',
           VALUE_OPTIONAL),
         'responsibleid' => new external_value(
           PARAM_INT,
-          'ID of the responsible user',
-          VALUE_OPTIONAL),
+          'ID of the responsible user'),
       ));
     }
 
@@ -462,11 +465,15 @@ class epman_group_external extends crud_external_api {
         'model' => new external_single_structure(array(
           'name' => new external_value(
             PARAM_TEXT,
-            'Education program name',
+            'Academic group name',
             VALUE_OPTIONAL),
-          'description' => new external_value(
-            PARAM_TEXT,
-            'Short description of the program',
+          'programid' => new external_value(
+            PARAM_INT,
+            'Education program ID',
+            VALUE_OPTIONAL),
+          'year' => new external_value(
+            PARAM_INT,
+            'Actual learning year',
             VALUE_OPTIONAL),
           'responsibleid' => new external_value(
             PARAM_INT,
@@ -489,32 +496,31 @@ class epman_group_external extends crud_external_api {
         array('id' => $id, 'model' => $model)
       );
       $id = $params['id'];
-      $program = $params['model'];
-      $program['id'] = $id;
+      $group = $params['model'];
+      $group['id'] = $id;
 
-      program_exists($id);
+      group_exists($id);
+      $group0 = $DB->get_record('tool_epman_group', array('id' => $id));
 
-      $program0 = $DB->get_record('tool_epman_group', array('id' => $id));
-
-      if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        if (!program_responsible($id, $USER->id)) {
-          if (!program_assistant($id, $USER->id)) {
-            throw new moodle_exception("You don't have right to modify this education program");
+      if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {
+        value_unchanged($group0, $group, 'responsibleid', 'responsible user of this academic group');
+        if (!group_responsible($id, $USER->id)) {
+          value_unchanged($group0, $group, 'name', 'name of this academic group');
+          value_unchanged($group0, $group, 'programid', 'education program of this academic group');
+          value_unchanged($group0, $group, 'year', 'year of this academic group');
+          if (!group_assistant($id, $USER->id)) {
+            throw new moodle_exception("You don't have right to modify this academic group");
           }
         }
-        if (isset($program['responsibleid']) &&
-            $program0['responsibleid'] != $program['responsibleid']) {
-          throw new moodle_exception("You don't have right to change the responsible user of this education program");
-        }
       } else {
-        if (isset($program['responsibleid'])) {
-          user_exists($program['responsibleid']);
+        if (isset($group['responsibleid'])) {
+          user_exists($group['responsibleid']);
         }
       }
 
-      $DB->update_record('tool_epman_group', $program);
+      $DB->update_record('tool_epman_group', $group);
 
-      return $program;
+      return $group;
     }
 
     /**
@@ -527,11 +533,15 @@ class epman_group_external extends crud_external_api {
       return new external_single_structure(array(
         'name' => new external_value(
           PARAM_TEXT,
-          'Education program name',
+          'Academic group name',
           VALUE_OPTIONAL),
-        'description' => new external_value(
-          PARAM_TEXT,
-          'Short description of the program',
+        'programid' => new external_value(
+          PARAM_INT,
+          'Education program ID',
+          VALUE_OPTIONAL),
+        'year' => new external_value(
+          PARAM_INT,
+          'Acutual learning year',
           VALUE_OPTIONAL),
         'responsibleid' => new external_value(
           PARAM_INT,
@@ -555,14 +565,14 @@ class epman_group_external extends crud_external_api {
       return new external_function_parameters(array(
         'id' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
       ));
     }
 
     /**
      * Deletes a new education program.
      *
-     * @return int new program ID
+     * @return bool successful result flag
      */
     public static function delete_group($id) {
       global $USER, $DB;
@@ -573,13 +583,13 @@ class epman_group_external extends crud_external_api {
       );
       $id = $params['id'];
 
-      if (!has_sys_capability('tool/epman:editprogram', $USER->id) &&
-          !program_responsible($id, $USER->id)) {
-        throw new moodle_exception("You don't have right to delete this education program");
+      if (!has_sys_capability('tool/epman:editgroup', $USER->id) &&
+          !group_responsible($id, $USER->id)) {
+        throw new moodle_exception("You don't have right to delete this academic group");
       }
 
-      program_exists($id);
-      clear_group_modules($id);
+      group_exists($id);
+      clear_group_students($id);
       clear_group_assistants($id);
       $DB->delete_record('tool_epman_group', array('id' => $id));
       

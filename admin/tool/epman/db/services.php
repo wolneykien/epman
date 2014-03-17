@@ -47,6 +47,13 @@ $services = array(
             'tool_epman_get_program_assistant',
             /* no update */
             'tool_epman_delete_program_assistant',
+
+            /* Groups */
+            'tool_epman_get_groups',
+            'tool_epman_create_group',
+            'tool_epman_get_group',
+            'tool_epman_update_group',
+            'tool_epman_delete_group',
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
@@ -164,6 +171,46 @@ $functions = array(
         'methodname'  => 'delete_program_assistant',
         'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
         'description' => 'Deletes the definition of the specified education program assistant user',
+        'type'        => 'write',
+    ),
+
+
+    /* Academic groups */
+
+    'tool_epman_get_groups' => array(
+        'classname'   => 'epman_group_external',
+        'methodname'  => 'list_groups',
+        'classpath'   => 'admin/tool/epman/crud/groups.php',
+        'description' => 'Returns the list of academic groups defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_create_group' => array(
+        'classname'   => 'epman_group_external',
+        'methodname'  => 'create_group',
+        'classpath'   => 'admin/tool/epman/crud/groups.php',
+        'description' => 'Add to the system a new academic group with the specified parameters',
+        'capabilities' => 'tool/epman:editgroup',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_group' => array(
+        'classname'   => 'epman_group_external',
+        'methodname'  => 'get_group',
+        'classpath'   => 'admin/tool/epman/crud/groups.php',
+        'description' => 'Returns the full definition of the specified academic group',
+        'type'        => 'read',
+    ),
+    'tool_epman_update_group' => array(
+        'classname'   => 'epman_group_external',
+        'methodname'  => 'update_group',
+        'classpath'   => 'admin/tool/epman/crud/groups.php',
+        'description' => 'Updates the specified academic group definition',
+        'type'        => 'write',
+    ),
+    'tool_epman_delete_group' => array(
+        'classname'   => 'epman_group_external',
+        'methodname'  => 'delete_group',
+        'classpath'   => 'admin/tool/epman/crud/groups.php',
+        'description' => 'Deletes the definition of the specified academic group',
         'type'        => 'write',
     ),
 );
