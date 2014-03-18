@@ -27,8 +27,10 @@
     <TABLE NAME="tool_epman_module" COMMENT="Education program modules" PREVIOUS="tool_epman_program" NEXT="tool_epman_program_module">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="programid"/>
-        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="length"/>
-        <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="programid" NEXT="position" />
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="period"/>
+        <FIELD NAME="period" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="New period start flag" PREVIOUS="programid" NEXT="startdate"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module start date" PREVIOUS="period" NEXT="length"/>
+        <FIELD NAME="length" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="startdate" NEXT="position" />
         <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module position" PREVIOUS="length"/>
       </FIELDS>
       <KEYS>
