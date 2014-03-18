@@ -65,7 +65,7 @@ class epman_group_student_external extends crud_external_api {
       $students = $DB->get_records_sql(
         'select u.id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
-        'ga.groupid, ga.userid '.
+        'ga.groupid, ga.userid, ga.periodnum '.
         'from {tool_epman_group_student} ga '.
         'left join {user} u on u.id = ga.userid '
         'where groupid = ? '.
@@ -115,6 +115,10 @@ class epman_group_student_external extends crud_external_api {
             PARAM_TEXT,
             'E-mail of the student user',
             VALUE_OPTIONAL),
+          'periodnum' => new external_value(
+            PARAM_INT,
+            'Education period number',
+            VALUE_OPTIONAL),
         )));
     }
 
@@ -153,24 +157,16 @@ class epman_group_student_external extends crud_external_api {
 
       group_exists($groupid);
 
-      if (group_student($groupid, $id)) {
-        $student = $DB->get_record('user', array('id' => $id));
-        if ($student) {
-          return array(
-            'id' => $student->id,
-            'groupid' = $groupid,
-            'username' => $student->username,
-            'firstname' => $student->firstname,
-            'lastname' => $student->lastname,
-            'email' => $student->email,
-          );
-        } else {
-          return array(
-            'id' => $id,
-            'groupid' = $groupid,
-          );
-        }
-      }
+      $student = $DB->get_records_sql(
+          'select u.id, u.username, '.
+          'u.firstname, u.lastname, u.email, '.
+          'ga.groupid, ga.userid, ga.periodnum '.
+          'from {tool_epman_group_student} ga '.
+          'left join {user} u on u.id = ga.userid '
+          'where userid = ?',
+          array('userid' => $id));
+
+      return (array) $student;
     }
 
     /**
@@ -206,6 +202,10 @@ class epman_group_student_external extends crud_external_api {
           PARAM_TEXT,
           'E-mail of the student user',
           VALUE_OPTIONAL),
+        'periodnum' => new external_value(
+          PARAM_INT,
+          'Education period number',
+          VALUE_OPTIONAL),
       ));
     }
 
@@ -227,6 +227,10 @@ class epman_group_student_external extends crud_external_api {
           'userid' => new external_value(
             PARAM_INT,
             'User ID'),
+          'periodnum' => new external_value(
+            PARAM_INT,
+            'Education period number',
+            VALUE_OPTIONAL),
         )),
       ));
     }

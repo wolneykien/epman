@@ -28,7 +28,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="programid"/>
         <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="period"/>
-        <FIELD NAME="period" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="New period start flag" PREVIOUS="programid" NEXT="startdate"/>
+        <FIELD NAME="period" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="New period start flag" PREVIOUS="programid" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module start date" PREVIOUS="period" NEXT="length"/>
         <FIELD NAME="length" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="startdate" NEXT="position" />
         <FIELD NAME="position" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module position" PREVIOUS="length"/>
@@ -88,7 +88,8 @@
     <TABLE NAME="tool_epman_group_student" COMMENT="Connects academic groups with the students" PREVIOUS="tool_epman_group" NEXT="tool_epman_group_assistants">
       <FIELDS>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid" NEXT="periodnum" />
+        <FIELD NAME="periodnum" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Education period number" PREVIOUS="userid" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="groupid, userid" NEXT="fk_group" />
