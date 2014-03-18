@@ -63,12 +63,12 @@ class epman_program_assistant_external extends crud_external_api {
       program_exists($programid);
 
       $assistants = $DB->get_records_sql(
-        'select u.id, u.username, '.
+        'select pa.userid as id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
         'pa.programid, pa.userid '.
         'from {tool_epman_program_assistant} pa '.
         'left join {user} u on u.id = pa.userid '
-        'where programid = ? '.
+        'where pa.programid = :programid '.
         'order by lastname, firstname, username',
         array('programid' => $programid)
       );
@@ -153,24 +153,17 @@ class epman_program_assistant_external extends crud_external_api {
 
       program_exists($programid);
 
-      if (program_assistant($programid, $id)) {
-        $assistant = $DB->get_record('user', array('id' => $id));
-        if ($assistant) {
-          return array(
-            'id' => $assistant->id,
-            'programid' = $programid,
-            'username' => $assistant->username,
-            'firstname' => $assistant->firstname,
-            'lastname' => $assistant->lastname,
-            'email' => $assistant->email,
-          );
-        } else {
-          return array(
-            'id' => $id,
-            'programid' = $programid,
-          );
-        }
-      }
+      
+      $assistant = $DB->get_record_sql(
+          'select pa.userid as id, u.username, '.
+          'u.firstname, u.lastname, u.email, '.
+          'pa.groupid, pa.userid, pa.period '.
+          'from {tool_epman_program_assistant} pa '.
+          'left join {user} u on u.id = pa.userid '
+          'where pa.userid = :userid',
+          array('userid' => $id));
+
+      return (array) $assistant;
     }
 
     /**

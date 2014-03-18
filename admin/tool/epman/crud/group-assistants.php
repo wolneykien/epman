@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Functions implementing the core web services of the academic
+ * Functions implementing the core web services of the education
  * process management module. This module defines CRUD functions
  * for the academic group assistant users.
  *
@@ -63,12 +63,12 @@ class epman_group_assistant_external extends crud_external_api {
       group_exists($groupid);
 
       $assistants = $DB->get_records_sql(
-        'select u.id, u.username, '.
+        'select ga.userid as id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
         'ga.groupid, ga.userid '.
         'from {tool_epman_group_assistant} ga '.
         'left join {user} u on u.id = ga.userid '
-        'where groupid = ? '.
+        'where ga.groupid = :groupid '.
         'order by lastname, firstname, username',
         array('groupid' => $groupid)
       );
@@ -153,24 +153,16 @@ class epman_group_assistant_external extends crud_external_api {
 
       group_exists($groupid);
 
-      if (group_assistant($groupid, $id)) {
-        $assistant = $DB->get_record('user', array('id' => $id));
-        if ($assistant) {
-          return array(
-            'id' => $assistant->id,
-            'groupid' = $groupid,
-            'username' => $assistant->username,
-            'firstname' => $assistant->firstname,
-            'lastname' => $assistant->lastname,
-            'email' => $assistant->email,
-          );
-        } else {
-          return array(
-            'id' => $id,
-            'groupid' = $groupid,
-          );
-        }
-      }
+      $assistant = $DB->get_record_sql(
+          'select ga.userid as id, u.username, '.
+          'u.firstname, u.lastname, u.email, '.
+          'ga.groupid, ga.userid, ga.period '.
+          'from {tool_epman_group_assistant} ga '.
+          'left join {user} u on u.id = ga.userid '
+          'where ga.userid = :userid',
+          array('userid' => $id));
+
+      return (array) $assistant;
     }
 
     /**

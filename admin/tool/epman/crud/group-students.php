@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Functions implementing the core web services of the academic
+ * Functions implementing the core web services of the education
  * process management module. This module defines CRUD functions
  * for the academic group student users.
  *
@@ -63,12 +63,12 @@ class epman_group_student_external extends crud_external_api {
       group_exists($groupid);
 
       $students = $DB->get_records_sql(
-        'select u.id, u.username, '.
+        'select gs.userid as id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
-        'ga.groupid, ga.userid, ga.period '.
-        'from {tool_epman_group_student} ga '.
+        'gs.groupid, gs.userid, gs.period '.
+        'from {tool_epman_group_student} gs '.
         'left join {user} u on u.id = ga.userid '
-        'where groupid = ? '.
+        'where gs.groupid = :groupid '.
         'order by lastname, firstname, username',
         array('groupid' => $groupid)
       );
@@ -157,13 +157,13 @@ class epman_group_student_external extends crud_external_api {
 
       group_exists($groupid);
 
-      $student = $DB->get_records_sql(
-          'select u.id, u.username, '.
+      $student = $DB->get_record_sql(
+          'select gs.userid as id, u.username, '.
           'u.firstname, u.lastname, u.email, '.
-          'ga.groupid, ga.userid, ga.period '.
-          'from {tool_epman_group_student} ga '.
-          'left join {user} u on u.id = ga.userid '
-          'where userid = ?',
+          'gs.groupid, gs.userid, gs.period '.
+          'from {tool_epman_group_student} gs '.
+          'left join {user} u on u.id = gs.userid '
+          'where gs.userid = :userid',
           array('userid' => $id));
 
       return (array) $student;
