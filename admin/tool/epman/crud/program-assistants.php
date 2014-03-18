@@ -235,7 +235,7 @@ class epman_program_assistant_external extends crud_external_api {
      * Adds the given user to the given education program
      * as an assistant.
      *
-     * @return int new record ID
+     * @return array assistant user
      */
     public static function add_program_assistant($programid, array $model) {
       global $DB, $USER;

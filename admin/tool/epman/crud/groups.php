@@ -403,9 +403,9 @@ class epman_group_external extends crud_external_api {
     }
 
     /**
-     * Creates a new education program.
+     * Creates a new academic group.
      *
-     * @return int new program ID
+     * @return array new group
      */
     public static function create_group(array $model) {
       global $USER, $DB;
@@ -501,6 +501,9 @@ class epman_group_external extends crud_external_api {
 
       group_exists($id);
       $group0 = $DB->get_record('tool_epman_group', array('id' => $id));
+      if ($group0) {
+        $group0 = (array) $group0;
+      }
 
       if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {
         value_unchanged($group0, $group, 'responsibleid', 'responsible user of this academic group');

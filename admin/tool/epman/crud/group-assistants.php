@@ -235,7 +235,7 @@ class epman_group_assistant_external extends crud_external_api {
      * Adds the given user to the given academic group
      * as an assistant.
      *
-     * @return int new record ID
+     * @return array assistant user
      */
     public static function add_group_assistant($groupid, array $model) {
       global $DB, $USER;

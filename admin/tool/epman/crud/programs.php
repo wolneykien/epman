@@ -380,7 +380,7 @@ class epman_program_external extends crud_external_api {
     /**
      * Creates a new education program.
      *
-     * @return int new program ID
+     * @return array new program
      */
     public static function create_program(array $model) {
       global $USER, $DB;
@@ -479,6 +479,9 @@ class epman_program_external extends crud_external_api {
       program_exists($id);
 
       $program0 = $DB->get_record('tool_epman_program', array('id' => $id));
+      if ($program0) {
+        $program0 = (array) $program0;
+      }
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
         value_unchanged($program0, $program, 'responsibleid', 'responsible user of this education program');
