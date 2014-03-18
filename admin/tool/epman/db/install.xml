@@ -56,7 +56,8 @@
     <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant">
       <FIELDS>
         <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid" NEXT="coursetype" />
+        <FIELD NAME="coursetype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course type" PREVIOUS="courseid" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="moduleid, courseid" NEXT="fk_module" />

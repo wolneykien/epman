@@ -52,6 +52,19 @@ public function clear_program_modules($programid) {
 }
 
 /**
+ * Checks if the course with the given ID exists.
+ *
+ * @throw invalid_parameter_exception
+ */
+public function course_exists($courseid) {
+  global $DB;
+  
+  if (!$DB->record_exists('course', array('id' => $courseid))) {
+    throw new invalid_parameter_exception("Course doesn't exist: $courseid");
+  }
+}
+
+/**
  * Clears the course set for the given education program module.
  */
 public function clear_module_courses($moduleid) {
@@ -108,7 +121,7 @@ public function user_exists($userid) {
 public function group_exists($groupid) {
   global $DB;
   
-  if (!$DB->record_exists('tool_epman_group', array('id' => $programid))) {
+  if (!$DB->record_exists('tool_epman_group', array('id' => $groupid))) {
     throw new invalid_parameter_exception("Group doesn't exist: $groupid");
   }
 }

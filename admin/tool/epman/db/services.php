@@ -41,6 +41,13 @@ $services = array(
             'tool_epman_update_module',
             'tool_epman_delete_module',
 
+            /* Module courses */
+            'tool_epman_get_module_courses',
+            'tool_epman_add_module_course',
+            'tool_epman_get_module_course',
+            'tool_epman_update_module_course',
+            'tool_epman_delete_module_course',
+
             /* Program assistants */
             'tool_epman_get_program_assistants',
             'tool_epman_add_program_assistant',
@@ -153,6 +160,45 @@ $functions = array(
         'methodname'  => 'delete_module',
         'classpath'   => 'admin/tool/epman/crud/modules.php',
         'description' => 'Deletes the definition of the specified education program module',
+        'type'        => 'write',
+    ),
+
+
+    /* Education program module courses */
+    
+    'tool_epman_get_module_courses' => array(
+        'classname'   => 'epman_module_course_external',
+        'methodname'  => 'list_module_courses',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Returns the list of education program module courses defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_add_module_course' => array(
+        'classname'   => 'epman_module_course_external',
+        'methodname'  => 'add_module_course',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Add to the system a new education program module course with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_module_course' => array(
+        'classname'   => 'epman_module_course_external',
+        'methodname'  => 'get_module_course',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Returns the full definition of the specified education program module course',
+        'type'        => 'read',
+    ),
+    'tool_epman_update_module_course' => array(
+        'classname'   => 'epman_module_course_external',
+        'methodname'  => 'update_module_course',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Updates the given education program module course',
+        'type'        => 'write',
+    ),
+    'tool_epman_delete_module_course' => array(
+        'classname'   => 'epman_module_course_external',
+        'methodname'  => 'delete_module_course',
+        'classpath'   => 'admin/tool/epman/crud/program-assistants.php',
+        'description' => 'Deletes the definition of the specified education program module course',
         'type'        => 'write',
     ),
 
