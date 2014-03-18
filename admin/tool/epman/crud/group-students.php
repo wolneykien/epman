@@ -65,7 +65,7 @@ class epman_group_student_external extends crud_external_api {
       $students = $DB->get_records_sql(
         'select u.id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
-        'ga.groupid, ga.userid, ga.periodnum '.
+        'ga.groupid, ga.userid, ga.period '.
         'from {tool_epman_group_student} ga '.
         'left join {user} u on u.id = ga.userid '
         'where groupid = ? '.
@@ -115,7 +115,7 @@ class epman_group_student_external extends crud_external_api {
             PARAM_TEXT,
             'E-mail of the student user',
             VALUE_OPTIONAL),
-          'periodnum' => new external_value(
+          'period' => new external_value(
             PARAM_INT,
             'Education period number',
             VALUE_OPTIONAL),
@@ -160,7 +160,7 @@ class epman_group_student_external extends crud_external_api {
       $student = $DB->get_records_sql(
           'select u.id, u.username, '.
           'u.firstname, u.lastname, u.email, '.
-          'ga.groupid, ga.userid, ga.periodnum '.
+          'ga.groupid, ga.userid, ga.period '.
           'from {tool_epman_group_student} ga '.
           'left join {user} u on u.id = ga.userid '
           'where userid = ?',
@@ -202,7 +202,7 @@ class epman_group_student_external extends crud_external_api {
           PARAM_TEXT,
           'E-mail of the student user',
           VALUE_OPTIONAL),
-        'periodnum' => new external_value(
+        'period' => new external_value(
           PARAM_INT,
           'Education period number',
           VALUE_OPTIONAL),
@@ -227,7 +227,7 @@ class epman_group_student_external extends crud_external_api {
           'userid' => new external_value(
             PARAM_INT,
             'User ID'),
-          'periodnum' => new external_value(
+          'period' => new external_value(
             PARAM_INT,
             'Education period number',
             VALUE_OPTIONAL),
@@ -239,7 +239,7 @@ class epman_group_student_external extends crud_external_api {
      * Adds the given user to the given academic group
      * as an student.
      *
-     * @return int new record ID
+     * @return array student
      */
     public static function add_group_student($groupid, array $model) {
       global $DB, $USER;
@@ -276,6 +276,81 @@ class epman_group_student_external extends crud_external_api {
      */
     public static function add_group_student_returns() {
       return self::get_group_student_returns();
+    }
+
+
+    /* Define the `update_group_student` implementation functions. */
+
+    /**
+     * Returns the description of the `update_group_student` method's
+     * parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function update_group_student_parameters() {
+      return new external_function_parameters(array(
+        'groupid' => new external_value(
+          PARAM_INT,
+          'Academic group ID'),
+        'model' => new external_single_structure(array(
+          'period' => new external_value(
+            PARAM_INT,
+            'Education period number',
+            VALUE_OPTIONAL),
+        )),
+      ));
+    }
+
+    /**
+     * Updates the membership info for the given student user.
+     *
+     * @return array student (updated fields)
+     */
+    public static function update_group_student($groupid, array $model) {
+      global $DB, $USER;
+
+      $params = self::validate_parameters(
+        self::update_group_student_parameters(),
+        array('groupid' => $groupid, 'model' => $model)
+      );
+      $groupid = $params['groupid'];
+      $student = $params['model'];
+
+      group_exists($groupid);
+      user_exists($student['userid']);
+
+      $student['groupid'] = $groupid;
+      $student0 = $DB->get_record('tool_epman_group_student', array('groupid' => $student['groupid'], 'userid' => $student['userid']));
+      if ($student0) {
+        $student0 = (array) $student0;
+      }
+
+      if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {
+        if (!group_responsible($groupid, $USER->id)) {
+          if (!group_assistant($groupid, $USER->id)) {
+            throw new moodle_exception("You don't have right to modify the student user set of this academic group");
+          }
+        }
+      }
+
+      $DB->update_record('tool_epman_group_student', $student);
+
+      return $student;
+    }
+
+    /**
+     * Returns the description of the `update_group_student` method's
+     * return value.
+     *
+     * @return external_description
+     */
+    public static function update_group_student_returns() {
+      return new external_single_structure(array(
+        'period' => new external_value(
+          PARAM_INT,
+          'Education period number',
+          VALUE_OPTIONAL),
+      ));
     }
 
     

@@ -66,7 +66,7 @@ $services = array(
             'tool_epman_get_group_students',
             'tool_epman_add_group_student',
             'tool_epman_get_group_student',
-            /* no update */
+            'tool_epman_update_group_student',
             'tool_epman_delete_group_student',
         ),
         'requiredcapability' => 'tool/epman:view',
@@ -283,6 +283,13 @@ $functions = array(
         'classpath'   => 'admin/tool/epman/crud/group-students.php',
         'description' => 'Returns the full definition of the specified academic group student user',
         'type'        => 'read',
+    ),
+    'tool_epman_update_group_student' => array(
+        'classname'   => 'epman_group_student_external',
+        'methodname'  => 'update_group_student',
+        'classpath'   => 'admin/tool/epman/crud/group-students.php',
+        'description' => 'Updates group membership data for the given student',
+        'type'        => 'write',
     ),
     'tool_epman_delete_group_student' => array(
         'classname'   => 'epman_group_student_external',

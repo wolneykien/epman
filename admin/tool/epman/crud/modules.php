@@ -65,13 +65,7 @@ class epman_module_external extends crud_external_api {
 
       return array_map(
         function($module) {
-          $module = (array) $module;
-          if ($module['period']) {
-            $module['period'] = true;
-          } else {
-            $module['period'] = false;
-          }
-          return $module;
+          return (array) $module;
         },
         $modules
       );
@@ -102,8 +96,8 @@ class epman_module_external extends crud_external_api {
             PARAM_INT,
             'Module length'),
           'period' => new external_value(
-            PARAM_BOOL,
-            'Period start flag'),
+            PARAM_INT,
+            'Education period number'),
         )));
     }
 
@@ -161,7 +155,7 @@ class epman_module_external extends crud_external_api {
             'position' => $rec->position,
             'startdate' = $rec->startdate,
             'length' => $rec->length,
-            'period' => (bool) $rec->period,
+            'period' => $rec->period,
             'courses' => array());
         }
         $module['courses'][] = array(
@@ -196,8 +190,8 @@ class epman_module_external extends crud_external_api {
             PARAM_INT,
             'Module length'),
           'period' => new external_value(
-            PARAM_BOOL,
-            'Period start flag'),
+            PARAM_INT,
+            'Education period number'),
           'courses' => new external_multiple_structure(
             new external_single_structure(array(
               'id' => new external_value(
@@ -241,10 +235,10 @@ class epman_module_external extends crud_external_api {
             VALUE_DEFAULT,
             30),
           'period' => new external_value(
-            PARAM_BOOL,
-            'Period start flag',
+            PARAM_INT,
+            'Education period number',
             VALUE_DEFAULT,
-            $programid ? (get_next_module_position($programid) == 0) : false),
+            0),
         )),
       ));
     }
@@ -252,7 +246,7 @@ class epman_module_external extends crud_external_api {
     /**
      * Creates a new module within the given education program (ID).
      *
-     * @return int new module ID
+     * @return array new module
      */
     public static function create_module($programid, array $model) {
       global $DB, $USER;
@@ -275,7 +269,6 @@ class epman_module_external extends crud_external_api {
       }
 
       $module['programid'] = $programid;
-      $module['period'] = (int) $module['period'];
       $module['id'] = $DB->insert_record('tool_epman_module', $module);
 
       return $module;
@@ -305,8 +298,8 @@ class epman_module_external extends crud_external_api {
           PARAM_INT,
           'Module length'),
         'period' => new external_value(
-          PARAM_BOOL,
-          'Period start flag'),
+          PARAM_INT,
+          'Education period number'),
       ));
     }
 
@@ -341,8 +334,8 @@ class epman_module_external extends crud_external_api {
             'Module length, days',
             VALUE_OPTIONAL),
           'period' => new external_value(
-            PARAM_BOOL,
-            'Period start flag',
+            PARAM_INT,
+            'Education period number',
             VALUE_OPTIONAL),
         )),
       ));
@@ -376,9 +369,6 @@ class epman_module_external extends crud_external_api {
         }
       }
 
-      if (isset($module['period'])) {
-        $module['period'] = (int) $module['period'];
-      }
       $DB->update_record('tool_epman_module', $module);
 
       return $module;
@@ -405,8 +395,8 @@ class epman_module_external extends crud_external_api {
             'Module length, days',
             VALUE_OPTIONAL),
           'period' => new external_value(
-            PARAM_BOOL,
-            'Period start flag',
+            PARAM_INT,
+            'Education period number',
             VALUE_OPTIONAL),
       ));
     }

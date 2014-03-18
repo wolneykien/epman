@@ -25,6 +25,7 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->libdir/enrollib.php");
 
 
 /* Define the helper functions. */
@@ -294,8 +295,95 @@ public function value_unchanged($currentmodel, $newmodel, $key, $title = $key) {
   }
 }
 
+/**
+ * Returns the epman enrol plugin or raises the error.
+ */
+public function get_enrol() {
+  $enrol = enrol_get_plugin('epman');
+  if (!$enrol) {
+    throw new moodle_exception("Enrol plugin is disabled, can manage student enrolments");
+  }
+  return $enrol;
+}
 
-/*
+/**
+ * Synchronize the enrolment data for all of the users who are
+ * enroled in accordance with the group membership data but not with
+ * the former.
+ */
+function sync_new_enrolments() {
+  global $DB;
+
+  $enrol = get_enrol();
+
+  $newenrols = $DB->get_recordset_sql(
+    'select e.*, mc.courseid as newcourseid, gs.userid from '.
+    '{tool_epman_group_student} gs '.
+    'left join {tool_epman_group} g on g.id = gs.groupid '.
+    'left join {tool_epman_module} m on m.programid = g.programid '.
+    'and m.period = gs.period '.
+    'left join {tool_epman_module_course} mc on mc.moduleid = m.id '.
+    'left join {enrol} e on e.courseid = mc.courseid '.
+    'left join {user_enrolments} ue on ue.enrolid = e.id '.
+    'and ue.userid = gs.userid '.
+    'where e.enrol = :name and gs.userid is not null '.
+    'and ue.userid is null',
+    array('name' => $enrol->get_name()));
+
+  foreach ($newenrols as $newenrol) {
+    $userid = $newenrol->userid;
+    $courseid = $newenrol->newcourseid;
+    if (!isset($newenrol->id)) {
+      $course = new stdObject(array('id' => $courseid));
+      $enrolid = $enrol->add_instance($course);
+      $newenrol = $DB->get_record('enrol', array('id' => $enrolid));
+      $newenrol->newcourseid = $courseid;
+      $newenrol->userid = $userid;
+    }
+    $enrol->enrol_user($newenrol, $userid);
+  }
+  $newenrols->close();
+}
+
+/**
+ * Synchronize the enrolment data for all of the users who are
+ * not enroled in accordance with the group membership data but
+ * still are enroled with the former.
+ */
+function sync_old_enrolments() {
+  global $DB;
+
+  $enrol = get_enrol();
+
+  $oldenrols = $DB->get_recordset_sql(
+    'select e.*, gs.userid from '.
+    '{enrol} e '.
+    'left join {user_enrolments} ue on ue.enrolid = e.id '.
+    'left join {tool_epman_module_course} mc on mc.courseid = e.courseid '.
+    'left join {tool_epman_module} m on m.id = mc.moduleid '.
+    'left join {tool_epman_group} g on g.programid = m.programid '.
+    'left join {tool_epman_group_student} gs on gs.groupid = g.groupid '.
+    'and gs.period = m.period '.
+    'where e.enrol = :name and ue.userid is not null '.
+    'and gs.userid is null',
+    array('name' => $enrol->get_name()));
+
+  foreach ($oldenrols as $oldenrol) {
+    $enrol->enrol_user($oldenrol, $oldenrol->userid);
+  }
+  $oldenrols->close();
+}
+
+/**
+ * Synchronize the enrolment data in accordance with the group
+ * membership data.
+ */
+function sync_enrolments() {
+  sync_old_enrolments();
+  sync_new_enrolments();
+}
+
+/**
  * Simple stdClass creation.
  *
  */
