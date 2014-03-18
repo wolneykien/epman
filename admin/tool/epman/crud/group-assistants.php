@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Functions implementing the core web services of the education
+ * Functions implementing the core web services of the academic
  * process management module. This module defines CRUD functions
- * for the education program assistant users.
+ * for the academic group assistant users.
  *
  * @package    tool
  * @subpackage epman
@@ -28,49 +28,49 @@
 require_once("base.php");
 require_once("helpers.php");
 
-class epman_program_assistant_external extends crud_external_api {
+class epman_group_assistant_external extends crud_external_api {
 
   /* Define the `list_assistants` implementation functions. */
   
   /**
-   * Returns the description of the `list_program_assistants` method's
+   * Returns the description of the `list_group_assistants` method's
    * parameters.
    *
    * @return external_function_parameters
    */
-  public static function list_program_assistants_parameters() {
+  public static function list_group_assistants_parameters() {
     return new external_function_parameters(array(
-      'programid' => new external_value(
+      'groupid' => new external_value(
         PARAM_INT,
-        'Education program ID'),
+        'Academic group ID'),
     ));
   }
 
   /**
-   * Returns the list of education program assistant users.
+   * Returns the list of academic group assistant users.
    *
-   * @return array of education program modules
+   * @return array of academic group modules
    */
-    public static function list_program_assistants($programid) {
+    public static function list_group_assistants($groupid) {
       global $DB;
 
       $params = self::validate_parameters(
-        self::list_program_assistants_parameters(),
-        array('programid' => $programid)
+        self::list_group_assistants_parameters(),
+        array('groupid' => $groupid)
       );
-      $programid = $params['programid'];
+      $groupid = $params['groupid'];
 
-      program_exists($programid);
+      group_exists($groupid);
 
       $assistants = $DB->get_records_sql(
         'select u.id, u.username, '.
         'u.firstname, u.lastname, u.email, '.
-        'pa.programid, pa.userid '.
-        'from {tool_epman_program_assistant} pa '.
-        'left join {user} u on u.id = pa.userid '
-        'where programid = ? '.
+        'ga.groupid, ga.userid '.
+        'from {tool_epman_group_assistant} ga '.
+        'left join {user} u on u.id = ga.userid '
+        'where groupid = ? '.
         'order by lastname, firstname, username',
-        array('programid' => $programid)
+        array('groupid' => $groupid)
       );
 
       return array_map(
@@ -82,20 +82,20 @@ class epman_program_assistant_external extends crud_external_api {
     }
 
     /**
-     * Returns the description of the `list_program_assistants` method's
+     * Returns the description of the `list_group_assistants` method's
      * return value.
      *
      * @return external_description
      */
-    public static function list_program_assistants_returns() {
+    public static function list_group_assistants_returns() {
       return new external_multiple_structure(
         new external_single_structure(array(
           'id' => new external_value(
             PARAM_INT,
             'ID of the assistant user'),
-          'programid' => new external_value(
+          'groupid' => new external_value(
             PARAM_INT,
-            'Education program ID'),
+            'Academic group ID'),
           'userid' => new external_value(
             PARAM_INT,
             'User ID'),
@@ -120,45 +120,45 @@ class epman_program_assistant_external extends crud_external_api {
 
 
     /**
-     * Returns the description of the `get_program_assistant` method's
+     * Returns the description of the `get_group_assistant` method's
      * parameters.
      *
      * @return external_function_parameters
      */
-    public static function get_program_assistant_parameters() {
+    public static function get_group_assistant_parameters() {
       return new external_function_parameters(array(
-        'programid' => new external_value(
+        'groupid' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
         'id' => new external_value(
           PARAM_INT,
-          'The ID of the education program assistant user to get'),
+          'The ID of the academic group assistant user to get'),
     ));
   }
 
   /**
-   * Returns the complete education program program_assistant's data.
+   * Returns the complete academic group group_assistant's data.
    *
-   * @return array (education program assistant user)
+   * @return array (academic group assistant user)
    */
-    public static function get_program_assistant($programid, $id) {
+    public static function get_group_assistant($groupid, $id) {
       global $DB;
 
       $params = self::validate_parameters(
-        self::get_program_assistant_parameters(),
-        array('programid' => $programid, 'id' => $id)
+        self::get_group_assistant_parameters(),
+        array('groupid' => $groupid, 'id' => $id)
       );
-      $programid = $params['programid'];
+      $groupid = $params['groupid'];
       $id = $params['id'];
 
-      program_exists($programid);
+      group_exists($groupid);
 
-      if (program_assistant($programid, $id)) {
+      if (group_assistant($groupid, $id)) {
         $assistant = $DB->get_record('user', array('id' => $id));
         if ($assistant) {
           return array(
             'id' => $assistant->id,
-            'programid' = $programid,
+            'groupid' = $groupid,
             'username' => $assistant->username,
             'firstname' => $assistant->firstname,
             'lastname' => $assistant->lastname,
@@ -167,26 +167,26 @@ class epman_program_assistant_external extends crud_external_api {
         } else {
           return array(
             'id' => $id,
-            'programid' = $programid,
+            'groupid' = $groupid,
           );
         }
       }
     }
 
     /**
-     * Returns the description of the `get_program_assistant` method's
+     * Returns the description of the `get_group_assistant` method's
      * return value.
      *
      * @return external_description
      */
-    public static function get_program_assistant_returns() {
+    public static function get_group_assistant_returns() {
       return new external_single_structure(array(
         'id' => new external_value(
           PARAM_INT,
            'ID of the assistant user'),
-        'programid' => new external_value(
+        'groupid' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
         'userid' => new external_value(
           PARAM_INT,
           'User ID'),
@@ -210,19 +210,19 @@ class epman_program_assistant_external extends crud_external_api {
     }
 
 
-    /* Define the `add_program_assistant` implementation functions. */
+    /* Define the `add_group_assistant` implementation functions. */
 
     /**
-     * Returns the description of the `add_program_assistant` method's
+     * Returns the description of the `add_group_assistant` method's
      * parameters.
      *
      * @return external_function_parameters
      */
-    public static function add_program_assistant_parameters() {
+    public static function add_group_assistant_parameters() {
       return new external_function_parameters(array(
-        'programid' => new external_value(
+        'groupid' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
         'model' => new external_single_structure(array(
           'userid' => new external_value(
             PARAM_INT,
@@ -232,91 +232,91 @@ class epman_program_assistant_external extends crud_external_api {
     }
 
     /**
-     * Adds the given user to the given education program
+     * Adds the given user to the given academic group
      * as an assistant.
      *
      * @return int new record ID
      */
-    public static function add_program_assistant($programid, array $model) {
+    public static function add_group_assistant($groupid, array $model) {
       global $DB, $USER;
 
       $params = self::validate_parameters(
-        self::add_program_assistant_parameters(),
-        array('programid' => $programid, 'model' => $model)
+        self::add_group_assistant_parameters(),
+        array('groupid' => $groupid, 'model' => $model)
       );
-      $programid = $params['programid'];
+      $groupid = $params['groupid'];
       $assistant = $params['model'];
 
-      program_exists($programid);
+      group_exists($groupid);
       user_exists($assistant['userid']);
 
-      if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        if (!program_responsible($programid, $USER->id)) {
-          throw new moodle_exception("You don't have right to modify the asistant user set of this education program");
+      if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {
+        if (!group_responsible($groupid, $USER->id)) {
+          throw new moodle_exception("You don't have right to modify the assistant user set of this academic group");
         }
       }
 
-      $assistant['programid'] = $programid;
-      $DB->insert_record('tool_epman_program_assistant', $assistant);
+      $assistant['groupid'] = $groupid;
+      $DB->insert_record('tool_epman_group_assistant', $assistant);
 
-      return self::get_program_assistant($programid, $assistant['userid']);
+      return self::get_group_assistant($groupid, $assistant['userid']);
     }
 
     /**
-     * Returns the description of the `add_program_assistant` method's
+     * Returns the description of the `add_group_assistant` method's
      * return value.
      *
      * @return external_description
      */
-    public static function add_program_assistant_returns() {
-      return self::get_program_assistant_returns();
+    public static function add_group_assistant_returns() {
+      return self::get_group_assistant_returns();
     }
 
     
-    /* Define the `delete_program_assistant` implementation functions. */
+    /* Define the `delete_group_assistant` implementation functions. */
 
     /**
-     * Returns the description of the `delete_program_assistant` method's
+     * Returns the description of the `delete_group_assistant` method's
      * parameters.
      *
      * @return external_function_parameters
      */
-    public static function delete_program_assistant_parameters() {
+    public static function delete_group_assistant_parameters() {
       return new external_function_parameters(array(
-        'programid' => new external_value(
+        'groupid' => new external_value(
           PARAM_INT,
-          'Education program ID'),
+          'Academic group ID'),
         'id' => new external_value(
           PARAM_INT,
-          'Education program assistant user ID'),
+          'Academic group assistant user ID'),
       ));
     }
 
     /**
      * Removes the given user from the set of assistants of
-     * the given education program.
+     * the given academic group.
      *
      * @return bool success flag
      */
-    public static function delete_program_assistant($programid, $id) {
+    public static function delete_group_assistant($groupid, $id) {
       global $USER, $DB;
 
       $params = self::validate_parameters(
-        self::delete_program_assistant_parameters(),
-        array('programid' => $programid, 'id' => $id)
+        self::delete_group_assistant_parameters(),
+        array('groupid' => $groupid, 'id' => $id)
       );
-      $programid = $params['programid'];
+      $groupid = $params['groupid'];
       $id = $params['id'];
 
-      program_exists($programid);
+      group_exists($groupid);
 
-      if (program_assistant($programid, $id)) {
-        if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-          if (!program_responsible($programid, $USER->id)) {
-            throw new moodle_exception("You don't have right to modify the assistant user set of this education program");
+      if (group_assistant($groupid, $id)) {
+        if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {
+          if (!group_responsible($groupid, $USER->id)) {
+            throw new moodle_exception("You don't have right to modify the asistant user set of this academic group");
           }
         }
-        $DB->delete_record('tool_epman_program_assistant', array('programid' => $programid, 'userid' => $id));
+        $DB->delete_record('tool_epman_group_assistant', array('groupid' => $groupid, 'userid' => $id));
         return true;
       } else {
         return false;
@@ -324,12 +324,12 @@ class epman_program_assistant_external extends crud_external_api {
     }
 
     /**
-     * Returns the description of the `delete_program_assistant` method's
+     * Returns the description of the `delete_group_assistant` method's
      * return value.
      *
      * @return external_description
      */
-    public static function delete_program_assistant_returns() {
+    public static function delete_group_assistant_returns() {
       return new external_value(
         PARAM_BOOL,
         'Successfull return flag'

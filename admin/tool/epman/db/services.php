@@ -54,6 +54,20 @@ $services = array(
             'tool_epman_get_group',
             'tool_epman_update_group',
             'tool_epman_delete_group',
+
+            /* Group assistants */
+            'tool_epman_get_group_assistants',
+            'tool_epman_add_group_assistant',
+            'tool_epman_get_group_assistant',
+            /* no update */
+            'tool_epman_delete_group_assistant',
+
+            /* Group students */
+            'tool_epman_get_group_students',
+            'tool_epman_add_group_student',
+            'tool_epman_get_group_student',
+            /* no update */
+            'tool_epman_delete_group_student',
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
@@ -211,6 +225,70 @@ $functions = array(
         'methodname'  => 'delete_group',
         'classpath'   => 'admin/tool/epman/crud/groups.php',
         'description' => 'Deletes the definition of the specified academic group',
+        'type'        => 'write',
+    ),
+
+
+    /* Academic group assistant users */
+    
+    'tool_epman_get_group_assistants' => array(
+        'classname'   => 'epman_group_assistant_external',
+        'methodname'  => 'list_group_assistants',
+        'classpath'   => 'admin/tool/epman/crud/group-assistants.php',
+        'description' => 'Returns the list of academic group assistant users defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_add_group_assistant' => array(
+        'classname'   => 'epman_group_assistant_external',
+        'methodname'  => 'add_group_assistant',
+        'classpath'   => 'admin/tool/epman/crud/group-assistants.php',
+        'description' => 'Add to the system a new academic group assistant user with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_group_assistant' => array(
+        'classname'   => 'epman_group_assistant_external',
+        'methodname'  => 'get_group_assistant',
+        'classpath'   => 'admin/tool/epman/crud/group-assistants.php',
+        'description' => 'Returns the full definition of the specified academic group assistant user',
+        'type'        => 'read',
+    ),
+    'tool_epman_delete_group_assistant' => array(
+        'classname'   => 'epman_group_assistant_external',
+        'methodname'  => 'delete_group_assistant',
+        'classpath'   => 'admin/tool/epman/crud/group-assistants.php',
+        'description' => 'Deletes the definition of the specified academic group assistant user',
+        'type'        => 'write',
+    ),
+
+
+    /* Academic group student users */
+    
+    'tool_epman_get_group_students' => array(
+        'classname'   => 'epman_group_student_external',
+        'methodname'  => 'list_group_students',
+        'classpath'   => 'admin/tool/epman/crud/group-students.php',
+        'description' => 'Returns the list of academic group student users defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_add_group_student' => array(
+        'classname'   => 'epman_group_student_external',
+        'methodname'  => 'add_group_student',
+        'classpath'   => 'admin/tool/epman/crud/group-students.php',
+        'description' => 'Add to the system a new academic group student user with the specified parameters',
+        'type'        => 'write',
+    ),
+    'tool_epman_get_group_student' => array(
+        'classname'   => 'epman_group_student_external',
+        'methodname'  => 'get_group_student',
+        'classpath'   => 'admin/tool/epman/crud/group-students.php',
+        'description' => 'Returns the full definition of the specified academic group student user',
+        'type'        => 'read',
+    ),
+    'tool_epman_delete_group_student' => array(
+        'classname'   => 'epman_group_student_external',
+        'methodname'  => 'delete_group_student',
+        'classpath'   => 'admin/tool/epman/crud/group-students.php',
+        'description' => 'Deletes the definition of the specified academic group student user',
         'type'        => 'write',
     ),
 );
