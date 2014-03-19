@@ -226,7 +226,28 @@ class epman_group_student_external extends crud_external_api {
         'model' => new external_single_structure(array(
           'userid' => new external_value(
             PARAM_INT,
-            'User ID'),
+            'User ID',
+            VALUE_OPTIONAL),
+          'username' => new external_value(
+            PARAM_TEXT,
+            'System name of the student user',
+            VALUE_OPTIONAL),
+          'password' => new external_value(
+            PARAM_TEXT,
+            'User account password (for a new account only)',
+            VALUE_OPTIONAL),
+          'firstname' => new external_value(
+            PARAM_TEXT,
+            'First name of the student user',
+            VALUE_OPTIONAL),
+          'lastname' => new external_value(
+            PARAM_TEXT,
+            'Last name of the student user',
+            VALUE_OPTIONAL),
+          'email' => new external_value(
+            PARAM_TEXT,
+            'E-mail of the student user',
+            VALUE_OPTIONAL),
           'period' => new external_value(
             PARAM_INT,
             'Education period number',
@@ -237,7 +258,7 @@ class epman_group_student_external extends crud_external_api {
 
     /**
      * Adds the given user to the given academic group
-     * as an student.
+     * as an student. Optionally creates a Moodle user account.
      *
      * @return array student
      */
@@ -252,6 +273,16 @@ class epman_group_student_external extends crud_external_api {
       $student = $params['model'];
 
       group_exists($groupid);
+
+      if (!isset($student['userid'])) {
+        if (isset($student['username']) &&
+            isset($student['password'])) {
+          $student['userid'] = create_moodle_user($student);
+        } else {
+          throw new invalid_parameter_exception("In order to register a new user account you need to specify its username and password values");
+        }
+      }
+
       user_exists($student['userid']);
 
       if (!has_sys_capability('tool/epman:editgroup', $USER->id)) {

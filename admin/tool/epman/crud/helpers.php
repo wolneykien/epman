@@ -24,6 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once("$CFG->libdir/moodlelib.php");
 require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/enrollib.php");
 
@@ -394,6 +395,51 @@ function sync_old_enrolments() {
 function sync_enrolments() {
   sync_old_enrolments();
   sync_new_enrolments();
+}
+
+/**
+ * Creates a new user account with the specified params.
+ */
+function create_moodle_user(array $params) {
+  $user = create_user_record($params['username'], $params['password']);
+  if ($user && $user->id) {
+    $params['id'] = $user->id;
+    update_user($params);
+    return $user->id;
+  } else {
+    throw new moodle_exception("Unable to register the new user account");
+  }
+}
+
+/**
+ * Updates the user account data with the specified params.
+ */
+function update_moodle_user(array $params) {
+  global $DB;
+
+  $user = $DB->get_record('user', array('id' => $params['id']));
+  if ($user && $user->id) {
+    $user->firstname = $params['firstname'];
+    $user->lastname = $params['lastname'];
+    $user->email = $params['email'];
+    $DB->update_record('user', $user);
+  } else {
+    throw new moodle_exception("User account not found: ".$params['id']);
+  }
+}
+
+/**
+ * Deletes the user account with the given ID.
+ */
+function delete_moodle_user($userid) {
+  global $DB;
+
+  $user = $DB->get_record('user', array('id' => $userid));
+  if ($user && $user->id) {
+    delete_user($user);
+  } else {
+    throw new moodle_exception("User account not found: $userid");
+  }
 }
 
 /**
