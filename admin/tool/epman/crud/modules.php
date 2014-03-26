@@ -153,7 +153,7 @@ class epman_module_external extends crud_external_api {
             'id' => $rec->id,
             'programid' => $rec->programid,
             'position' => $rec->position,
-            'startdate' = $rec->startdate,
+            'startdate' => $rec->startdate,
             'length' => $rec->length,
             'period' => $rec->period,
             'courses' => array());
