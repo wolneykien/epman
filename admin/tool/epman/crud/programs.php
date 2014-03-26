@@ -185,8 +185,8 @@ class epman_program_external extends crud_external_api {
 
       program_exists($id);
 
-      $courses = $DB->get_records_sql(
-        'select p.*, m.position, m.id as moduleid, '.
+      $courses = $DB->get_recordset_sql(
+        'select p.*, m.id as moduleid, m.startdate, m.period, '.
         'm.length, mc.courseid, c.fullname '.
         'from {tool_epman_program} p '.
         'left join {tool_epman_module} m '.
@@ -194,8 +194,8 @@ class epman_program_external extends crud_external_api {
         'left join {tool_epman_module_course} mc '.
         'on mc.moduleid = m.id '.
         'left join {course} c on c.id = mc.courseid '.
-        'where p.id = ? '.
-        'order by m.position, c.fullname',
+        'where p.id = :id '.
+        'order by m.startdate, c.fullname',
         array('id' => $id));
 
       foreach ($courses as $rec) {
@@ -208,23 +208,26 @@ class epman_program_external extends crud_external_api {
             'responsible' => array('id' => $rec->responsibleid),
             'modules' => array());
         }
-        if (!empty($program['modules'])) {
-          $module = $program['modules'][count($program['modules']) - 1];
-        }
-        if ($rec->moduleid && (!isset($module) || !$module || $module['id'] != $rec->moduleid)) {
-          $module = array(
+        $lastmodule = count($program['modules']) - 1;
+        if ($rec->moduleid &&
+            ($lastmodule < 0 ||
+             $program['modules'][$lastmodule]['id'] != $rec->moduleid))
+        {
+          $program['modules'][] = array(
             'id' => $rec->moduleid,
+            'startdate' => $rec->startdate,
+            'period' => $rec->period,
             'length' => $rec->length,
             'courses' => array());
-          $program['modules'][] = $module;
+          $lastmodule = $lastmodule + 1;
         }
-        if (isset($module) && $module) {
-          $module['courses'][] = array(
+        if ($rec->courseid && $lastmodule >= 0) {
+          $program['modules'][$lastmodule]['courses'][] = array(
             'id' => $rec->courseid,
             'name' => $rec->fullname);
-          $program['modules'][count($program['modules']) - 1] = $module;
         }
       }
+      $courses->close();
 
       $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
       if ($responsible) {
@@ -307,9 +310,15 @@ class epman_program_external extends crud_external_api {
               'id' => new external_value(
                 PARAM_INT,
                 'ID of the module'),
+              'startdate' => new external_value(
+                PARAM_INT,
+                'Module start date'),
               'length' => new external_value(
                 PARAM_INT,
                 'Length of the module (days)'),
+              'period' => new external_value(
+                PARAM_INT,
+                'Education period number'),
               'courses' => new external_multiple_structure(
                 new external_single_structure(array(
                   'id' => new external_value(

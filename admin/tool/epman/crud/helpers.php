@@ -220,20 +220,20 @@ function program_assistant($programid, $userid) {
 }
 
 /**
- * Returns the position for the next module within the given
- * education program.
+ * Returns the last module period within the given
+ * education program or 0.
  */
-function get_next_module_position($programid) {
+function get_last_module_period($programid) {
   global $DB;
 
-  $position = $DB->get_field_sql(
-    'select max(position) from {tool_epman_module} '.
-    'where programid = ?',
+  $period = $DB->get_field_sql(
+    'select period from {tool_epman_module} '.
+    'where id = (select max(id) from {tool_epman_module} where programid = :programid)',
     array('programid' => $programid)
   );
 
-  if ($position >= 0) {
-    return $position + 1;
+  if ($period) {
+    return $period;
   } else {
     return 0;
   }

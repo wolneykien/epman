@@ -61,7 +61,7 @@ class epman_module_external extends crud_external_api {
       $programid = $params['programid'];
 
       program_exists($programid);
-      $modules = $DB->get_records('tool_epman_module', array('programid' => $programid), 'position');
+      $modules = $DB->get_records('tool_epman_module', array('programid' => $programid), 'startdate');
 
       return array_map(
         function($module) {
@@ -86,9 +86,6 @@ class epman_module_external extends crud_external_api {
           'programid' => new external_value(
             PARAM_INT,
             'Education program ID'),
-          'position' => new external_value(
-            PARAM_INT,
-            'Module position'),
           'startdate' => new external_value(
             PARAM_INT,
             'Module start date'),
@@ -143,8 +140,8 @@ class epman_module_external extends crud_external_api {
         'left join {tool_epman_module_course} mc '.
         'on mc.moduleid = m.id '.
         'left join {course} c on c.id = mc.courseid '.
-        'where m.id = ? '.
-        'order by m.position, c.fullname',
+        'where m.id = :id '.
+        'order by m.startdate, c.fullname',
         array('id' => $id));
 
       foreach ($courses as $rec) {
@@ -152,7 +149,6 @@ class epman_module_external extends crud_external_api {
           $module = array(
             'id' => $rec->id,
             'programid' => $rec->programid,
-            'position' => $rec->position,
             'startdate' => $rec->startdate,
             'length' => $rec->length,
             'period' => $rec->period,
@@ -180,9 +176,6 @@ class epman_module_external extends crud_external_api {
           'programid' => new external_value(
             PARAM_INT,
             'Education program ID'),
-          'position' => new external_value(
-            PARAM_INT,
-            'Module position'),
           'startdate' => new external_value(
             PARAM_INT,
             'Module start date'),
@@ -215,17 +208,12 @@ class epman_module_external extends crud_external_api {
      *
      * @return external_function_parameters
      */
-    public static function create_module_parameters($programid = null) {
+    public static function create_module_parameters() {
       return new external_function_parameters(array(
         'programid' => new external_value(
           PARAM_INT,
           'Education program ID'),
         'model' => new external_single_structure(array(
-          'position' => new external_value(
-            PARAM_INT,
-            'Module position',
-            VALUE_DEFAULT,
-            $programid ? get_next_module_position($programid) : 0),
           'startdate' => new external_value(
             PARAM_INT,
             'Module start date'),
@@ -238,7 +226,7 @@ class epman_module_external extends crud_external_api {
             PARAM_INT,
             'Education period number',
             VALUE_DEFAULT,
-            0),
+            -1),
         )),
       ));
     }
@@ -252,7 +240,7 @@ class epman_module_external extends crud_external_api {
       global $DB, $USER;
 
       $params = self::validate_parameters(
-        self::create_module_parameters($programid),
+        self::create_module_parameters(),
         array('programid' => $programid, 'model' => $model)
       );
       $programid = $params['programid'];
@@ -269,6 +257,9 @@ class epman_module_external extends crud_external_api {
       }
 
       $module['programid'] = $programid;
+      if ($module['period'] < 0) {
+        $module['period'] = get_last_module_period($programid);
+      }
       $module['id'] = $DB->insert_record('tool_epman_module', $module);
 
       return $module;
@@ -288,9 +279,6 @@ class epman_module_external extends crud_external_api {
         'programid' => new external_value(
           PARAM_INT,
           'Education program name ID'),
-        'position' => new external_value(
-          PARAM_INT,
-          'Module position'),
         'startdate' => new external_value(
           PARAM_INT,
           'Module start date'),
@@ -321,10 +309,6 @@ class epman_module_external extends crud_external_api {
           PARAM_INT,
           'Education program module ID'),
         'model' => new external_single_structure(array(
-          'position' => new external_value(
-            PARAM_INT,
-            'Module position',
-            VALUE_OPTIONAL),
           'startdate' => new external_value(
             PARAM_INT,
             'Module start date',
@@ -382,10 +366,6 @@ class epman_module_external extends crud_external_api {
      */
     public static function update_module_returns() {
       return new external_single_structure(array(
-          'position' => new external_value(
-            PARAM_INT,
-            'Module position',
-            VALUE_OPTIONAL),
           'startdate' => new external_value(
             PARAM_INT,
             'Module start date',

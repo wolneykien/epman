@@ -30,16 +30,15 @@
         <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="period"/>
         <FIELD NAME="period" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Period number" PREVIOUS="programid" NEXT="startdate"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module start date" PREVIOUS="period" NEXT="length"/>
-        <FIELD NAME="length" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="startdate" NEXT="position" />
-        <FIELD NAME="position" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Module position" PREVIOUS="length"/>
+        <FIELD NAME="length" TYPE="int" LENGTH="5" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="The length of the module, days" PREVIOUS="startdate" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_program" />
         <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" />
       </KEYS>
       <INDEXES>
-        <INDEX NAME="uq_position" UNIQUE="true" FIELDS="programid, position"
-               COMMENT="Position of a module within the education program must be unique"/>
+        <INDEX NAME="uq_position" UNIQUE="true" FIELDS="programid, startdate"
+               COMMENT="Position (startdate) of a module within the education program must be unique"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_module" NEXT="tool_epman_module_course">
