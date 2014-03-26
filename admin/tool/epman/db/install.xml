@@ -24,7 +24,7 @@
         <INDEX NAME="uq_name" UNIQUE="true" FIELDS="name" COMMENT="Name of an education program must be unique"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="tool_epman_module" COMMENT="Education program modules" PREVIOUS="tool_epman_program" NEXT="tool_epman_program_module">
+    <TABLE NAME="tool_epman_module" COMMENT="Education program modules" PREVIOUS="tool_epman_program" NEXT="tool_epman_program_assistant">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="programid"/>
         <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="period"/>
@@ -42,7 +42,7 @@
                COMMENT="Position of a module within the education program must be unique"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_program_module" NEXT="tool_epman_module_course">
+    <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_module" NEXT="tool_epman_module_course">
       <FIELDS>
         <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="programid"/>
@@ -53,7 +53,7 @@
         <KEY NAME="fk_assistant" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_program"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant">
+    <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant" NEXT="tool_epman_group">
       <FIELDS>
         <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid" NEXT="coursetype" />
@@ -67,14 +67,14 @@
     </TABLE>
 
     <!-- Groups -->
-    <TABLE NAME="tool_epman_group" COMMENT="Academic groups" NEXT="tool_epman_group_student">
+    <TABLE NAME="tool_epman_group" COMMENT="Academic groups" PREVIOUS="tool_epman_module_course" NEXT="tool_epman_group_student">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true"
                SEQUENCE="false" COMMENT="Name of the academic group" PREVIOUS="id" NEXT="programid"/>
         <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="name" NEXT="year"/>
         <FIELD NAME="year" TYPE="int" LENGTH="2" NOTNULL="true"
-               UNSIGNED="true" SEQUENCE="false" COMMENT="Actual learning year" PREVIOUS="description" NEXT="responsibleid" />
+               UNSIGNED="true" SEQUENCE="false" COMMENT="Actual learning year" PREVIOUS="programid" NEXT="responsibleid" />
         <FIELD NAME="responsibleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of the responsible user" PREVIOUS="year" />
       </FIELDS>
       <KEYS>
@@ -86,7 +86,7 @@
         <INDEX NAME="uq_name" UNIQUE="true" FIELDS="name" COMMENT="Name of an education program must be unique"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="tool_epman_group_student" COMMENT="Connects academic groups with the students" PREVIOUS="tool_epman_group" NEXT="tool_epman_group_assistants">
+    <TABLE NAME="tool_epman_group_student" COMMENT="Connects academic groups with the students" PREVIOUS="tool_epman_group" NEXT="tool_epman_group_assistant">
       <FIELDS>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid" NEXT="period" />
@@ -98,7 +98,7 @@
         <KEY NAME="fk_student" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_group"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="tool_epman_group_assistant" COMMENT="Connects academic groups with assistant users" PREVIOUS="tool_epman_group_students">
+    <TABLE NAME="tool_epman_group_assistant" COMMENT="Connects academic groups with assistant users" PREVIOUS="tool_epman_group_student">
       <FIELDS>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid"/>
