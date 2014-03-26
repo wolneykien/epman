@@ -208,8 +208,10 @@ class epman_program_external extends crud_external_api {
             'responsible' => array('id' => $rec->responsibleid),
             'modules' => array());
         }
-        $module = end($program['modules']);
-        if ($rec->moduleid && (!$module || $module['id'] != $rec->moduleid)) {
+        if (!empty($program['modules'])) {
+          $module = $program['modules'][count($program['modules']) - 1];
+        }
+        if ($rec->moduleid && (!isset($module) || !$module || $module['id'] != $rec->moduleid)) {
           $module = array(
             'id' => $rec->moduleid,
             'length' => $rec->length,
@@ -219,6 +221,7 @@ class epman_program_external extends crud_external_api {
         $module['courses'][] = array(
           'id' => $rec->courseid,
           'name' => $rec->fullname);
+        $program['modules'][count($program['modules']) - 1] = $module;
       }
 
       $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
