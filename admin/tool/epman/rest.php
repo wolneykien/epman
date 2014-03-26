@@ -139,10 +139,14 @@ class epman_rest_server extends webservice_rest_server {
 
       $wsfunctionsuf = '';
       $wsargs = array();
-      foreach ($wsobjs as $wsobj) {
+      foreach ($wsobjs as $i => $wsobj) {
         $wsfunctionsuf = $wsfunctionsuf."_".$wsobj['name'];
         if ($wsobj['id'] != '*') {
-          $wsargs[$wsobj['name']."id"] = $wsobj['id'];
+          if ($i < (count($wsobjs) - 1)) {
+            $wsargs[$wsobj['name']."id"] = $wsobj['id'];
+          } else {
+            $wsargs['id'] = $wsobj['id'];
+          }
         }
       }
 
