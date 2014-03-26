@@ -105,7 +105,7 @@ function program_exists($programid) {
 function module_exists($moduleid) {
   global $DB;
   
-  if (!$DB->record_exists('tool_epman_modules', array('id' => $moduleid))) {
+  if (!$DB->record_exists('tool_epman_module', array('id' => $moduleid))) {
     throw new object_not_found_exception("Module doesn't exist: $moduleid");
   }
 }
