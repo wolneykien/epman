@@ -35,7 +35,7 @@ require_once("$CFG->libdir/enrollib.php");
  * Clears the assistant user set for the given education
  * program.
  */
-public function clear_program_assistants($programid) {
+function clear_program_assistants($programid) {
   global $DB;
   
   program_exists($programid);
@@ -45,7 +45,7 @@ public function clear_program_assistants($programid) {
 /**
  * Clears the module set for the given education program.
  */
-public function clear_program_modules($programid) {
+function clear_program_modules($programid) {
   global $DB;
   
   program_exists($programid);
@@ -57,7 +57,7 @@ public function clear_program_modules($programid) {
  *
  * @throw invalid_parameter_exception
  */
-public function course_exists($courseid) {
+function course_exists($courseid) {
   global $DB;
   
   if (!$DB->record_exists('course', array('id' => $courseid))) {
@@ -68,7 +68,7 @@ public function course_exists($courseid) {
 /**
  * Clears the course set for the given education program module.
  */
-public function clear_module_courses($moduleid) {
+function clear_module_courses($moduleid) {
   global $DB;
   
   module_exists($moduleid);
@@ -80,7 +80,7 @@ public function clear_module_courses($moduleid) {
  *
  * @throw invalid_parameter_exception
  */
-public function program_exists($programid) {
+function program_exists($programid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_program', array('id' => $programid))) {
@@ -93,7 +93,7 @@ public function program_exists($programid) {
  *
  * @throw invalid_parameter_exception
  */
-public function module_exists($moduleid) {
+function module_exists($moduleid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_modules', array('id' => $moduleid))) {
@@ -106,7 +106,7 @@ public function module_exists($moduleid) {
  *
  * @throw invalid_parameter_exception
  */
-public function user_exists($userid) {
+function user_exists($userid) {
   global $DB;
   
   if (!$DB->record_exists('user', array('id' => $userid))) {
@@ -119,7 +119,7 @@ public function user_exists($userid) {
  *
  * @throw invalid_parameter_exception
  */
-public function group_exists($groupid) {
+function group_exists($groupid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_group', array('id' => $groupid))) {
@@ -131,7 +131,7 @@ public function group_exists($groupid) {
  * Clears the assistant user set for the given academic
  * group.
  */
-public function clear_group_assistants($groupid) {
+function clear_group_assistants($groupid) {
   global $DB;
   
   group_exists($groupid);
@@ -142,7 +142,7 @@ public function clear_group_assistants($groupid) {
  * Clears the assistant user set for the given academic
  * group.
  */
-public function clear_group_students($groupid) {
+function clear_group_students($groupid) {
   global $DB;
   
   group_exists($groupid);
@@ -152,7 +152,7 @@ public function clear_group_students($groupid) {
 /**
  * Checks if the given user (id) has the given system capability.
  */
-public function has_sys_capability($capability, $userid) {
+function has_sys_capability($capability, $userid) {
   global $USER;
   
   if (!isset($userid)) {
@@ -168,7 +168,7 @@ public function has_sys_capability($capability, $userid) {
  * Checks if the given user (id) is responsible for the
  * given education program (id).
  */
-public function program_responsible($programid, $userid) {
+function program_responsible($programid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -191,7 +191,7 @@ public function program_responsible($programid, $userid) {
  * Checks if the given user (id) is responsible for the
  * given education program (id).
  */
-public function program_assistant($programid, $userid) {
+function program_assistant($programid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -214,7 +214,7 @@ public function program_assistant($programid, $userid) {
  * Returns the position for the next module within the given
  * education program.
  */
-public function get_next_module_position($programid) {
+function get_next_module_position($programid) {
   global $DB;
 
   $position = $DB->get_record_sql(
@@ -234,7 +234,7 @@ public function get_next_module_position($programid) {
  * Checks if the given user (id) is responsible for the
  * given academic group (id).
  */
-public function group_responsible($groupid, $userid) {
+function group_responsible($groupid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -257,7 +257,7 @@ public function group_responsible($groupid, $userid) {
  * Checks if the given user (id) is an assistant of the
  * given academic group (id).
  */
-public function group_assistant($groupid, $userid) {
+function group_assistant($groupid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -280,7 +280,7 @@ public function group_assistant($groupid, $userid) {
  * Checks if the given user (id) is a student of the
  * given academic group (id).
  */
-public function group_student($groupid, $userid) {
+function group_student($groupid, $userid) {
   global $DB, $USER;
   
   if (!isset($userid)) {
@@ -302,17 +302,17 @@ public function group_student($groupid, $userid) {
 /**
  * Checks that the given field is not being modified.
  */
-public function value_unchanged($currentmodel, $newmodel, $key, $title = $key) {
+function value_unchanged($currentmodel, $newmodel, $key, $title) {
   if (isset($newmodel[$key]) &&
       $currentmodel[$key] != $newmodel[$key]) {
-    throw new moodle_exception("You don't have the right to change the $title");
+    throw new moodle_exception("You don't have the right to change the ".($title ? $title : $key));
   }
 }
 
 /**
  * Returns the epman enrol plugin or raises the error.
  */
-public function get_enrol() {
+function get_enrol() {
   $enrol = enrol_get_plugin('epman');
   if (!$enrol) {
     throw new moodle_exception("Enrol plugin is disabled, can manage student enrolments");
