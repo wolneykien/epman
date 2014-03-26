@@ -188,7 +188,7 @@ class epman_program_external extends crud_external_api {
       $courses = $DB->get_records_sql(
         'select p.*, m.position, m.id as moduleid, '.
         'm.length, mc.courseid, c.fullname '.
-        'from {tool_epman_program} p left join '.
+        'from {tool_epman_program} p '.
         'left join {tool_epman_module} m '.
         'on m.programid = p.id '.
         'left join {tool_epman_module_course} mc '.
@@ -218,10 +218,12 @@ class epman_program_external extends crud_external_api {
             'courses' => array());
           $program['modules'][] = $module;
         }
-        $module['courses'][] = array(
-          'id' => $rec->courseid,
-          'name' => $rec->fullname);
-        $program['modules'][count($program['modules']) - 1] = $module;
+        if (isset($module) && $module) {
+          $module['courses'][] = array(
+            'id' => $rec->courseid,
+            'name' => $rec->fullname);
+          $program['modules'][count($program['modules']) - 1] = $module;
+        }
       }
 
       $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
