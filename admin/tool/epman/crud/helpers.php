@@ -52,16 +52,25 @@ function clear_program_modules($programid) {
   $DB->delete_records('tool_epman_module', array('programid' => $programid));
 }
 
+class object_not_found_exception extends invalid_parameter_exception {
+
+  public function __construct($msg) {
+    parent::__construct($msg);
+    $this->http_response_code = 404;
+  }
+
+}
+
 /**
  * Checks if the course with the given ID exists.
  *
- * @throw invalid_parameter_exception
+ * @throw object_not_found_exception
  */
 function course_exists($courseid) {
   global $DB;
   
   if (!$DB->record_exists('course', array('id' => $courseid))) {
-    throw new invalid_parameter_exception("Course doesn't exist: $courseid");
+    throw new object_not_found_exception("Course doesn't exist: $courseid");
   }
 }
 
@@ -78,52 +87,52 @@ function clear_module_courses($moduleid) {
 /**
  * Checks if the education program with the given ID exists.
  *
- * @throw invalid_parameter_exception
+ * @throw object_not_found_exception
  */
 function program_exists($programid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_program', array('id' => $programid))) {
-    throw new invalid_parameter_exception("Program doesn't exist: $programid");
+    throw new object_not_found_exception("Program doesn't exist: $programid");
   }
 }
 
 /**
  * Checks if the education program module with the given ID exists.
  *
- * @throw invalid_parameter_exception
+ * @throw object_not_found_exception
  */
 function module_exists($moduleid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_modules', array('id' => $moduleid))) {
-    throw new invalid_parameter_exception("Module doesn't exist: $moduleid");
+    throw new object_not_found_exception("Module doesn't exist: $moduleid");
   }
 }
 
 /**
  * Checks if the user with the given ID exists.
  *
- * @throw invalid_parameter_exception
+ * @throw object_not_found_exception
  */
 function user_exists($userid) {
   global $DB;
   
   if (!$DB->record_exists('user', array('id' => $userid))) {
-    throw new invalid_parameter_exception("Responsible user doesn't exist: $userid");
+    throw new object_not_found_exception("Responsible user doesn't exist: $userid");
   }
 }
 
 /**
  * Checks if the academic group with the given ID exists.
  *
- * @throw invalid_parameter_exception
+ * @throw object_not_found_exception
  */
 function group_exists($groupid) {
   global $DB;
   
   if (!$DB->record_exists('tool_epman_group', array('id' => $groupid))) {
-    throw new invalid_parameter_exception("Group doesn't exist: $groupid");
+    throw new object_not_found_exception("Group doesn't exist: $groupid");
   }
 }
 
@@ -217,7 +226,7 @@ function program_assistant($programid, $userid) {
 function get_next_module_position($programid) {
   global $DB;
 
-  $position = $DB->get_record_sql(
+  $position = $DB->get_field_sql(
     'select max(position) from {tool_epman_module} '.
     'where programid = ?',
     array('programid' => $programid)
@@ -299,13 +308,22 @@ function group_student($groupid, $userid) {
   );
 }
 
+class permission_exception extends moodle_exception {
+
+  public function __construct($msg) {
+    parent::__construct('permission', 'debug', '', null, $msg);
+    $this->http_response_code = 403;
+  }
+
+}
+
 /**
  * Checks that the given field is not being modified.
  */
 function value_unchanged($currentmodel, $newmodel, $key, $title) {
   if (isset($newmodel[$key]) &&
       $currentmodel[$key] != $newmodel[$key]) {
-    throw new moodle_exception("You don't have the right to change the ".($title ? $title : $key));
+    throw new permission_exception("You don't have the right to change the ".($title ? $title : $key));
   }
 }
 
@@ -315,7 +333,7 @@ function value_unchanged($currentmodel, $newmodel, $key, $title) {
 function get_enrol() {
   $enrol = enrol_get_plugin('epman');
   if (!$enrol) {
-    throw new moodle_exception("Enrol plugin is disabled, can manage student enrolments");
+    throw new moodle_exception("Enrol plugin is disabled, can't manage student enrolments");
   }
   return $enrol;
 }
@@ -424,7 +442,7 @@ function update_moodle_user(array $params) {
     $user->email = $params['email'];
     $DB->update_record('user', $user);
   } else {
-    throw new moodle_exception("User account not found: ".$params['id']);
+    throw new object_not_found_exception("User account not found: ".$params['id']);
   }
 }
 
@@ -438,7 +456,7 @@ function delete_moodle_user($userid) {
   if ($user && $user->id) {
     delete_user($user);
   } else {
-    throw new moodle_exception("User account not found: $userid");
+    throw new object_not_found_exception("User account not found: $userid");
   }
 }
 

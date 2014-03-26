@@ -89,6 +89,15 @@ class epman_rest_server extends webservice_rest_server {
   }
 
   protected function parse_request() {
+    try {
+      return $this->do_parse_request();
+    } catch (Exception $ex) {
+      $this->set_response_code($ex);
+      throw $ex;
+    }
+  }
+
+  protected function do_parse_request() {
     $params = array_merge($_GET,$_POST);
 
     if (substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['SCRIPT_NAME'])) == $_SERVER['SCRIPT_NAME']) {
@@ -207,7 +216,74 @@ class epman_rest_server extends webservice_rest_server {
       unset($_GET['id']);
       unset($_POST['id']);
     }
+
     return parent::parse_request();
+  }
+
+  protected function execute() {
+    try {
+      parent::execute();
+    } catch (Exception $ex) {
+      $this->set_response_code($ex);
+      throw $ex;
+    }
+  }
+
+  protected function send_response() {
+    try {
+      if ($this->function->returns_desc != null) {
+        $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+      } else {
+        $validatedvalues = null;
+      }
+    } catch (Exception $ex) {
+      $exception = $ex;
+    }
+
+    if (!empty($exception)) {
+      $response =  $this->generate_error($exception);
+      $this->set_response_code($exception);
+    } else {
+      $response = json_encode($validatedvalues);
+    }
+
+    $this->send_headers();
+    echo $response;
+  }
+
+  protected function set_response_code($exception = null) {
+    if (isset($exception->http_response_code)) {
+      $this->response_code = $exception->http_response_code;
+    }
+    if ($exception && (!isset($this->response_code) || $this->response_code == 200)) {
+      if ($exception instanceof invalid_parameter_exception) {
+        $this->response_code = 400;
+      } elseif ($exception instanceof webservice_access_exception) {
+        $this->response_code = 403;
+      } else {
+        $this->response_code = 500;
+      }
+    }
+  }
+
+  protected function send_headers() {
+    if (isset($this->response_code)) {
+      switch ($this->response_code) {
+      case 400:
+        header($_SERVER['SERVER_PROTOCOL']." 400 Bad Request", true, 400);
+        break;
+      case 403:
+        header($_SERVER['SERVER_PROTOCOL']." 403 Forbidden", true, 403);
+        break;
+      case 404:
+        header($_SERVER['SERVER_PROTOCOL']." 404 Not Found", true, 404);
+        break;
+      case 500:
+        header($_SERVER['SERVER_PROTOCOL']." 500 Internal Server Error", true, 500);
+        break;
+      }
+    }
+    parent::send_headers();
   }
 
 }
