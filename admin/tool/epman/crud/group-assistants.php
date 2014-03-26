@@ -308,7 +308,7 @@ class epman_group_assistant_external extends crud_external_api {
             throw new moodle_exception("You don't have right to modify the asistant user set of this academic group");
           }
         }
-        $DB->delete_record('tool_epman_group_assistant', array('groupid' => $groupid, 'userid' => $id));
+        $DB->delete_records('tool_epman_group_assistant', array('groupid' => $groupid, 'userid' => $id));
         return true;
       } else {
         return false;

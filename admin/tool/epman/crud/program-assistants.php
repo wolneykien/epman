@@ -309,7 +309,7 @@ class epman_program_assistant_external extends crud_external_api {
             throw new moodle_exception("You don't have right to modify the assistant user set of this education program");
           }
         }
-        $DB->delete_record('tool_epman_program_assistant', array('programid' => $programid, 'userid' => $id));
+        $DB->delete_records('tool_epman_program_assistant', array('programid' => $programid, 'userid' => $id));
         return true;
       } else {
         return false;

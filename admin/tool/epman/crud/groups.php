@@ -594,7 +594,7 @@ class epman_group_external extends crud_external_api {
       group_exists($id);
       clear_group_students($id);
       clear_group_assistants($id);
-      $DB->delete_record('tool_epman_group', array('id' => $id));
+      $DB->delete_records('tool_epman_group', array('id' => $id));
       
       return true;
     }

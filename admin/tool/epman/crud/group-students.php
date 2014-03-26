@@ -430,7 +430,7 @@ class epman_group_student_external extends crud_external_api {
             }
           }
         }
-        $DB->delete_record('tool_epman_group_student', array('groupid' => $groupid, 'userid' => $id));
+        $DB->delete_records('tool_epman_group_student', array('groupid' => $groupid, 'userid' => $id));
         return true;
       } else {
         return false;

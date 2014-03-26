@@ -586,7 +586,7 @@ class epman_program_external extends crud_external_api {
       program_exists($id);
       clear_program_modules($id);
       clear_program_assistants($id);
-      $DB->delete_record('tool_epman_program', array('id' => $id));
+      $DB->delete_records('tool_epman_program', array('id' => $id));
       
       return true;
     }

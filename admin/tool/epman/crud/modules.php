@@ -428,7 +428,7 @@ class epman_module_external extends crud_external_api {
       }
 
       clear_module_courses($id);
-      $DB->delete_record('tool_epman_module', array('id' => $id));
+      $DB->delete_records('tool_epman_module', array('id' => $id));
       
       return true;
     }
