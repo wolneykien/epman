@@ -72,7 +72,7 @@ class epman_program_external extends crud_external_api {
             'max(u.username) as username, '.
             'max(u.firstname) as firstname, '.
             'max(u.lastname) as lastname, '.
-            'max(u.email) as email, '.
+            'max(u.email) as email '.
             'from {tool_epman_program} p '.
             'left join {tool_epman_program_assistant} pa '.
             'on pa.programid = p.id '.
@@ -85,7 +85,7 @@ class epman_program_external extends crud_external_api {
       } else {
         $programs = $DB->get_records_sql(
             'select p.*, u.username, '.
-            'u.firstname, u.lastname, u.email, '.
+            'u.firstname, u.lastname, u.email '.
             'from {tool_epman_program} p '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.

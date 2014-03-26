@@ -78,7 +78,7 @@ class epman_group_external extends crud_external_api {
             'max(u.username) as username, '.
             'max(u.firstname) as firstname, '.
             'max(u.lastname) as lastname, '.
-            'max(u.email) as email, '.
+            'max(u.email) as email '.
             'from {tool_epman_group} g '.
             'left join {tool_epman_group_assistant} ga '.
             'on ga.programid = g.id '.
@@ -94,7 +94,7 @@ class epman_group_external extends crud_external_api {
       } else {
         $groups = $DB->get_records(
             'select p.*, u.username, '.
-            'u.firstname, u.lastname, u.email, '.
+            'u.firstname, u.lastname, u.email '.
             'from {tool_epman_group} g '.
             'left join {tool_epman_program} p '.
             'on p.id = g.programid '.
