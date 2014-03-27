@@ -27,15 +27,24 @@ require('../../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once('../locallib.php');
 
-$PAGE->requires->css('/admin/tool/epman/styles/redmond/jquery-ui-1.10.3.custom.css', true);
+$PAGE->requires->css('/admin/tool/epman/styles/redmond/jquery-ui-1.10.3.custom.css');
 
-$PAGE->requires->js('/admin/tool/epman/js/lib/jquery.js', true);
-$PAGE->requires->js('/admin/tool/epman/js/lib/jquery-ui-1.10.3.custom.js', true);
-$PAGE->requires->js('/admin/tool/epman/js/lib/underscore.js', true);
-$PAGE->requires->js('/admin/tool/epman/js/lib/backbone.js', true);
-$PAGE->requires->js('/admin/tool/epman/js/lib/local-config.js', true);
+$PAGE->requires->js('/admin/tool/epman/js/lib/jquery.js');
+$PAGE->requires->js('/admin/tool/epman/js/lib/jquery-ui-1.10.3.custom.js');
+$PAGE->requires->js('/admin/tool/epman/js/lib/underscore.js');
+$PAGE->requires->js('/admin/tool/epman/js/lib/backbone.js');
+$PAGE->requires->js('/admin/tool/epman/js/lib/local-config.js');
 
-$PAGE->requires->js('/admin/tool/epman/js/programs.js', true);
+$PAGE->requires->data_for_js('toolEpmanPageOptions', array(
+    'restRoot' => "../rest.php",
+    'restParams' => array(
+        'wstoken' => get_token(),
+    ),
+    'emulateHTTP' => true,
+    'emulateJSON' => true,
+), true);
+
+$PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/admin/tool/epman/js/programs.js'));
 
 admin_externalpage_setup('toolepman');
 $PAGE->set_pagelayout('maintenance');
@@ -44,6 +53,11 @@ $PAGE->set_pagelayout('maintenance');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 ?>
+<div id="program-list" style="display: none;">
+  <div id="program-<@= p.get('id') @>" class="tool-epman-program">
+    <h3><@= p.get('name') @></h3>
+  </div>
+</div>
 <?php
 echo $OUTPUT->footer();
 ?>

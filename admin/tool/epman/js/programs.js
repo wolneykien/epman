@@ -18,6 +18,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
     },
 
     start : function () {
+        console.log("Default route");
         this.programs.fetch({ reset:true });
     },
         
@@ -47,9 +48,13 @@ var EducationPrograms = Backbone.Collection.extend({
     url: "/programs",
 
     initialize : function (models, options) {
-        if (typeof options.restRoot !== 'undefined') {
+        if (options.restRoot) {
             this.url = options.restRoot + this.url;
         }
+        if (options.restParams && !_.isEmpty(options.restParams)) {
+            this.url = this.url + '?' + $.param(options.restParams);
+        }
+        console.log("Education program URL: " + this.url);
     },
 
 });
@@ -70,13 +75,41 @@ var EducationProgramList = Backbone.View.extend({
     },
 
     render : function () {
+        console.log("Render out the eduction program list");
         this.$el.empty ();
         if (!this.collection.isEmpty()) {
             this.collection.forEach(function (program) {
-                this.$el.append(this.template({ program : program }));
+                this.$el.append(this.template({ p : program }));
             }, this);
+        } else {
+            console.log("Empty");
         }
+        this.$el.show();
         return this;
     },
 
 });
+
+
+/* Init */
+
+var initPage = function () {
+    console.log("Init page");
+    var options = toolEpmanPageOptions || {};
+    Backbone.emulateHTTP = options.emulateHTTP || false;
+    Backbone.emulateJSON = options.emulateJSON || false;
+
+    var programs = new EducationPrograms([], options);
+    var programList = new EducationProgramList({
+        el : "#program-list",
+        collection : programs,
+    });
+    
+    var router = new EducationProgramsRouter({
+        programs : programs,
+    });
+    
+    Backbone.history.start ({ pushState: false });
+};
+
+$(initPage);
