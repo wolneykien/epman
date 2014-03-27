@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The front page of the education process management module.
+ * The education program list page of the education process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -23,16 +23,27 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../../config.php');
+require('../../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once('../locallib.php');
+
+$PAGE->requires->css('/admin/tool/epman/styles/redmond/jquery-ui-1.10.3.custom.css', true);
+
+$PAGE->requires->js('/admin/tool/epman/js/lib/jquery.js', true);
+$PAGE->requires->js('/admin/tool/epman/js/lib/jquery-ui-1.10.3.custom.js', true);
+$PAGE->requires->js('/admin/tool/epman/js/lib/underscore.js', true);
+$PAGE->requires->js('/admin/tool/epman/js/lib/backbone.js', true);
+$PAGE->requires->js('/admin/tool/epman/js/lib/local-config.js', true);
+
+$PAGE->requires->js('/admin/tool/epman/js/programs.js', true);
 
 admin_externalpage_setup('toolepman');
 $PAGE->set_pagelayout('maintenance');
-
-echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
 ?>
-<a href="programs/index.php">List programs</a>
+<?php
+echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
+?>
 <?php
 echo $OUTPUT->footer();
 ?>

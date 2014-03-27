@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_eproc', language 'en'.
+ * Defines various functions for pages of the education process management module.
  *
  * @package    tool
  * @subpackage epman
@@ -23,6 +23,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Education process management module';
-$string['programlistheading'] = 'Education programs';
+require_once($CFG->libdir.'/externallib.php');
+
+function get_token() {
+  global $DB, $USER;
+
+  $service = $DB->get_record('external_services', array('shortname' => 'epman'));
+  if (empty($service)) {
+    throw new webservice_access_exception(get_string('servicenotavailable', 'webservice'));
+  }
+
+  $token = $DB->get_record(
+      'external_tokens',
+      array(
+          'userid' => $USER->id,
+          'creatorid' => $USER->id,
+          'sid' => session_id(),
+          'externalserviceid' => $service->id,
+      )
+  );
+
+  if (empty($token)) {
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $tokenhash = external_create_service_token('epman', $sitecontext);
+    return $tokenhash;
+  } else {
+    return $token->token;
+  }
+}
 ?>
