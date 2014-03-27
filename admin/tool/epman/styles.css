@@ -1,0 +1,59 @@
+
+.tool-epman .record-list {
+  margin-top: 2.0em;
+  margin-bottom: 1.0em;
+}
+
+.tool-epman .record {
+  margin-top: 0.25em;
+}
+
+.tool-epman .record-header {
+  padding: 0.25em;
+  background-color: #e8e8e8;
+  color: #098aba;
+  font-size: medium;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tool-epman .show-more {
+  background-image: url([[pix:moodle|t/collapsed]]);
+  background-repeat: no-repeat;
+  background-position: 0.25em center;
+  padding-left: 2.0em;
+}
+
+.tool-epman .show-more.expanded {
+  background-image: url([[pix:moodle|t/expanded]]);
+}
+
+.tool-epman .link-button {
+  padding-left: 2.0em;
+  background-repeat: no-repeat;
+  background-position: 0.25em center;
+  font-size: small;
+  font-weight: normal;
+}
+
+.tool-epman .link-button > a {
+  color: black;
+}
+
+.tool-epman .link-button.right {
+  margin-left: 0.5em;
+  float: right;
+}
+
+.tool-epman .link-button.left {
+  margin-right: 0.5em;
+  float: left;
+}
+
+.tool-epman .link-button.responsible {
+  background-image: url([[pix:moodle|i/user]]);
+}
+
+.tool-epman .link-button.groups {
+  background-image: url([[pix:moodle|i/group]]);
+}

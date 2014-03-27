@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once('../locallib.php');
 
 $PAGE->requires->css('/admin/tool/epman/styles/redmond/jquery-ui-1.10.3.custom.css');
+//$PAGE->requires->css('/admin/tool/epman/styles/epman.css');
 
 $PAGE->requires->js('/admin/tool/epman/js/lib/jquery.js');
 $PAGE->requires->js('/admin/tool/epman/js/lib/jquery-ui-1.10.3.custom.js');
@@ -44,7 +45,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
     'emulateJSON' => true,
 ), true);
 
-$PAGE->requires->js(new moodle_url($CFG->httpswwwroot.'/admin/tool/epman/js/programs.js'));
+$PAGE->requires->js('/admin/tool/epman/js/programs.js');
 
 admin_externalpage_setup('toolepman');
 $PAGE->set_pagelayout('maintenance');
@@ -53,9 +54,23 @@ $PAGE->set_pagelayout('maintenance');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 ?>
-<div id="program-list" style="display: none;">
-  <div id="program-<@= p.get('id') @>" class="tool-epman-program">
-    <h3><@= p.get('name') @></h3>
+<div class="tool-epman">
+  <div id="program-list" class="record-list" style="display: none;">
+    <div id="program-<@= p.get('id') @>" class="record">
+      <div class="record-header show-more">
+        <@= p.get('name') @>
+        <div class="link-button right responsible">
+          <a href="javascript:void()">
+            <?php echo get_string('responsible', 'tool_epman'); ?>
+          </a>
+        </div>
+        <div class="link-button right groups">
+          <a href="javascript:void()">
+            <?php echo get_string('groups', 'tool_epman'); ?>
+          </a>
+        </div>
+     </div>
+    </div>
   </div>
 </div>
 <?php
