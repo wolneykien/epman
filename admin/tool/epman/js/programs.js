@@ -72,6 +72,16 @@ var EducationProgramList = Backbone.View.extend({
     initialize : function (options) {
         this.template = _.template(this.$el.html ());
         this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'request', function() {
+            console.log("Loading the education programs");
+            this.$el.empty ();
+            this.$el.toggleClass("loading", true);
+            this.$el.show();
+        });
+        this.listenTo(this.collection, 'sync', function() {
+            console.log("Done loading the education programs");
+            this.$el.toggleClass("loading", false);
+        });
     },
 
     render : function () {
