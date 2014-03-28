@@ -55,6 +55,11 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 ?>
 <div class="tool-epman">
+  <div class="panel right vspace">
+    <span class="link-button switch right responsible">
+      <?php echo get_string('myprograms', 'tool_epman'); ?>
+    </span>
+  </div>
   <div id="program-list" class="record-list" style="display: none;">
     <div id="program-<@= p.get('id') @>" class="record">
       <div class="record-header show-more">

@@ -1,6 +1,10 @@
 
-.tool-epman .record-list {
+.tool-epman .vspace {
   margin-top: 2.0em;
+}
+
+.tool-epman .record-list {
+  margin-top: 1.5em;
   margin-bottom: 1.0em;
 }
 
@@ -10,11 +14,14 @@
 
 .tool-epman .record-header {
   padding: 0.25em;
+  padding-right: 0.5em;
   background-color: #e8e8e8;
   color: #098aba;
   font-size: medium;
   font-weight: bold;
   cursor: pointer;
+  line-height: 1.4em;
+  vertical-align: middle;
 }
 
 .tool-epman .show-more {
@@ -29,11 +36,13 @@
 }
 
 .tool-epman .link-button {
+  display: inline-block;
   padding-left: 2.0em;
   background-repeat: no-repeat;
   background-position: 0.25em center;
   font-size: small;
   font-weight: normal;
+  cursor: pointer;
 }
 
 .tool-epman .link-button.nolink > a {
@@ -64,4 +73,73 @@
   background-position: center center;
   width: 100%;
   height: 100px;
+}
+
+.tool-epman .switch, .tool-epman .switch.off {
+  padding-top: 0.15em;
+  padding-left: 1.4em;
+  padding-right: 4.0em;
+  background-image: url([[pix:tool_epman|switch_off]]);
+  background-position: right 0.25em center;
+  background-repeat: no-repeat;
+  line-height: 1.5em;
+}
+
+.tool-epman .switch.on {
+  background: url([[pix:tool_epman|switch_on]]) right no-repeat;
+}
+
+.tool-epman .panel {
+  width: 100%;
+  padding-top: 0.25em;
+  padding: 0.25em;
+  font-size: normal;
+}
+
+.tool-epman .panel.right {
+  text-align: right;
+}
+
+.tool-epman .panel.left {
+  text-align: left;
+}
+
+.tool-epman .panel > .link-button {
+  font-size: medium;
+  padding-left: 1.65em;
+  background-color: #eee8a0;
+  border-radius: 0.8em;
+}
+
+.tool-epman .panel > .link-button:hover {
+  background-color: #f5f0cc;
+}
+
+.tool-epman .panel > .link-button:hover:active, .tool-epman .panel > .link-button:active {
+  background-color: #eee8a0;
+}
+
+.tool-epman .panel > .link-button.right {
+  float: none;
+}
+
+.tool-epman .panel > .link-button.left {
+  float: none;
+}
+
+.tool-epman .link-button.switch {
+  background-position: left 0.25em center,right 0.25em center;
+}
+
+.tool-epman .panel > .link-button.switch {
+  background-position: left 0.75em center,right 0.25em center;
+  padding-left: 1.9em;
+}
+
+.tool-epman .link-button.switch.responsible, .tool-epman .link-button.switch.responsible.off {
+  background-image: url([[pix:tool_epman|user]]), url([[pix:tool_epman|switch_off]]);
+}
+
+.tool-epman .tool-epman .link-button.switch.responsible.on {
+  background-image: url([[pix:tool_epman|user]]), url([[pix:tool_epman|switch_on]]);
 }
