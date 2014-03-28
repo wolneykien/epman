@@ -36,7 +36,7 @@
   font-weight: normal;
 }
 
-.tool-epman .link-button > a {
+.tool-epman .link-button.nolink > a {
   color: black;
 }
 

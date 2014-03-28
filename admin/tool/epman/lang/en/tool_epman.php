@@ -27,4 +27,5 @@ $string['pluginname'] = 'Education process management module';
 $string['programlistheading'] = 'Education programs';
 $string['responsible'] = 'Responsible';
 $string['groups'] = 'Groups';
+$string['notspecified'] = '(not specified)';
 ?>

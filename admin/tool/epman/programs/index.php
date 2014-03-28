@@ -60,12 +60,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <div class="record-header show-more">
         <@= p.get('name') @>
         <div class="link-button right responsible">
-          <a href="javascript:void()">
-            <?php echo get_string('responsible', 'tool_epman'); ?>
+          <a href="<@= p.get('responsible') && p.get('responsible').id ? '/user/profile.php?id=' + p.get('responsible').id : '' @>">
+            <@= p.get('responsible') && p.get('responsible').id ? p.get('responsible').firstname + " " + p.get('responsible').lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
           </a>
         </div>
         <div class="link-button right groups">
-          <a href="javascript:void()">
+          <a href="../groups/index.php?programid=<@= p.get('id') @>">
             <?php echo get_string('groups', 'tool_epman'); ?>
           </a>
         </div>
