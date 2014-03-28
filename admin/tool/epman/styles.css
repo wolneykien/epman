@@ -83,7 +83,7 @@
   background-image: url([[pix:tool_epman|switch_off]]);
   background-position: right 0.25em center;
   background-repeat: no-repeat;
-  line-height: 1.5em;
+  line-height: 26px; /* switch_on/off.png */
 }
 
 .tool-epman .switch.on {
@@ -109,7 +109,7 @@
   font-size: medium;
   padding-left: 1.65em;
   background-color: #eee8a0;
-  border-radius: 0.8em;
+  border-radius: 16px; /* switch_on/off.png */
 }
 
 .tool-epman .panel > .link-button:hover {
@@ -129,11 +129,11 @@
 }
 
 .tool-epman .link-button.switch {
-  background-position: left 0.25em center,right 0.25em center;
+  background-position: left 0.25em center,right 2px center;  /* 2px: switch_on/off.png */
 }
 
 .tool-epman .panel > .link-button.switch {
-  background-position: left 0.75em center,right 0.25em center;
+  background-position: left 0.75em center,right 2px center;  /* 2px: switch_on/off.png */
   padding-left: 1.9em;
 }
 
@@ -141,6 +141,6 @@
   background-image: url([[pix:tool_epman|user]]), url([[pix:tool_epman|switch_off]]);
 }
 
-.tool-epman .tool-epman .link-button.switch.responsible.on {
+.tool-epman .link-button.switch.responsible.on {
   background-image: url([[pix:tool_epman|user]]), url([[pix:tool_epman|switch_on]]);
 }
