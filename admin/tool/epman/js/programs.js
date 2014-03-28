@@ -1,5 +1,10 @@
 
 /**
+ * User account description.
+ */
+var user = {};
+
+/**
  * Education program list router.
  *
  * @param options {
@@ -10,16 +15,16 @@
 var EducationProgramsRouter = Backbone.Router.extend({
 
     routes : {
-        "" : "start",
+        "(years/:year)" : function (year) {
+            this.filter.apply({ my : false });
+        },
+        "my(years/:year)" : function (year) {
+            this.filter.apply({ my : true });
+        },
     },
 
     initialize : function (options) {
-        this.programs = options.programs;
-    },
-
-    start : function () {
-        console.log("Default route");
-        this.programs.fetch({ reset:true });
+        this.filter = options.filter;
     },
         
 });
@@ -45,16 +50,32 @@ var EducationProgram = Backbone.Model.extend({
 var EducationPrograms = Backbone.Collection.extend({
 
     model: EducationProgram,
-    url: "/programs",
+    urlBase : "/programs",
+    urlParams : {},
+    url: function () {
+        if (_.isEmpty(this.urlParams)) {
+            return this.urlBase;
+        } else {
+            return this.urlBase + '?' + $.param(this.urlParams);
+        }
+    },
 
     initialize : function (models, options) {
         if (options.restRoot) {
-            this.url = options.restRoot + this.url;
+            this.urlBase = options.restRoot + this.urlBase;
         }
-        if (options.restParams && !_.isEmpty(options.restParams)) {
-            this.url = this.url + '?' + $.param(options.restParams);
+        _.extend(this.urlParams, options.restParams);
+        console.log("Education program URL: " + this.url());
+    },
+
+    load : function (filter) {
+        if (filter.my) {
+            _.extend(this.urlParams, { userid : user.id });
+        } else {
+            this.urlParams = _.omit(this.urlParams, "userid");
         }
-        console.log("Education program URL: " + this.url);
+        console.log("Fetching programs from " + this.url());
+        this.fetch({ reset : true });
     },
 
 });
@@ -67,7 +88,7 @@ var EducationPrograms = Backbone.Collection.extend({
  * }
  *
  */
-var EducationProgramList = Backbone.View.extend({
+var EducationProgramsList = Backbone.View.extend({
 
     initialize : function (options) {
         this.template = _.template(this.$el.html ());
@@ -100,6 +121,58 @@ var EducationProgramList = Backbone.View.extend({
 
 });
 
+/**
+ * The page's filter view.
+ */
+var EducationProgramsFilter = Backbone.View.extend({
+
+    filter : {
+    },
+
+    events : {
+        "click #my" : function (e) {
+            this.apply({ my : !this.filter.my });
+        },
+    },
+
+    initialize : function (options) {
+        this.programs = options.programs;
+        if (_.isUndefined(user.id) || _.isNull(user.id)) {
+            this.$el.find('#my').hide();
+            console.warn("No current user Id specified. Hide the 'My' filter");
+        }
+    },
+
+    render : function () {
+        this.$el.find('#my').toggleClass("on", this.filter.my);
+        return this;
+    },
+
+    apply : function (filter) {
+        if (!_.isEqual(this.filter, filter)) {
+            console.log("Filter: " + JSON.stringify(filter));
+            if (_.isUndefined(user.id) || _.isNull(user.id)) {
+                _.extend(filter, { my : false });
+            }
+            this.filter = filter;
+            this.render();
+            this.navigate();
+            this.programs.load(this.filter);
+        }
+    },
+
+    navigate : function () {
+        var route = _.filter(
+            [ "my" ],
+            function (opt) {
+                return this.filter[opt];
+            },
+            this
+        ).join("/");
+        Backbone.history.navigate(route);
+    },
+
+});
 
 /* Init */
 
@@ -109,14 +182,24 @@ var initPage = function () {
     Backbone.emulateHTTP = options.emulateHTTP || false;
     Backbone.emulateJSON = options.emulateJSON || false;
 
-    var programs = new EducationPrograms([], options);
-    var programList = new EducationProgramList({
+    _.extend(user, options.user);
+
+    var programs = new EducationPrograms([], {
+        restRoot : options.restRoot,
+        restParams : options.restParams,
+    });
+    var programList = new EducationProgramsList({
         el : "#program-list",
         collection : programs,
     });
     
-    var router = new EducationProgramsRouter({
+    var filter = new EducationProgramsFilter({
+        el : "#filter",
         programs : programs,
+    });
+
+    var router = new EducationProgramsRouter({
+        filter : filter,
     });
     
     Backbone.history.start ({ pushState: false });

@@ -43,6 +43,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
     ),
     'emulateHTTP' => true,
     'emulateJSON' => true,
+    'user' => $USER,
 ), true);
 
 $PAGE->requires->js('/admin/tool/epman/js/programs.js');
@@ -55,8 +56,8 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 ?>
 <div class="tool-epman">
-  <div class="panel right vspace">
-    <span class="link-button switch right responsible">
+  <div id="filter" class="panel right vspace">
+    <span id="my" class="link-button switch right responsible">
       <?php echo get_string('myprograms', 'tool_epman'); ?>
     </span>
   </div>
