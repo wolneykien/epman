@@ -37,7 +37,7 @@
 
 .tool-epman .link-button {
   display: inline-block;
-  padding-left: 2.0em;
+  padding-left: 1.8em;
   background-repeat: no-repeat;
   background-position: 0.25em center;
   font-size: small;
@@ -61,6 +61,7 @@
 
 .tool-epman .link-button.responsible {
   background-image: url([[pix:tool_epman|user]]);
+  padding-left: 1.6em;
 }
 
 .tool-epman .link-button.groups {
