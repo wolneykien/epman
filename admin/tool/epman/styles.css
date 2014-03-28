@@ -18,14 +18,14 @@
 }
 
 .tool-epman .show-more {
-  background-image: url([[pix:moodle|t/collapsed]]);
+  background-image: url([[pix:tool_epman|collapsed]]);
   background-repeat: no-repeat;
   background-position: 0.25em center;
   padding-left: 2.0em;
 }
 
 .tool-epman .show-more.expanded {
-  background-image: url([[pix:moodle|t/expanded]]);
+  background-image: url([[pix:tool_epman|expanded]]);
 }
 
 .tool-epman .link-button {
@@ -51,15 +51,15 @@
 }
 
 .tool-epman .link-button.responsible {
-  background-image: url([[pix:moodle|i/user]]);
+  background-image: url([[pix:tool_epman|user]]);
 }
 
 .tool-epman .link-button.groups {
-  background-image: url([[pix:moodle|i/group]]);
+  background-image: url([[pix:tool_epman|group]]);
 }
 
 .tool-epman .loading {
-  background-image: url([[pix:moodle|i/loading]]);
+  background-image: url([[pix:tool_epman|loading]]);
   background-repeat: no-repeat;
   background-position: center center;
   width: 100%;
