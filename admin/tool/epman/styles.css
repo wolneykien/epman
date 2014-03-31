@@ -15,7 +15,6 @@
 .tool-epman .record-header {
   padding: 0.25em;
   padding-right: 0.5em;
-  background-color: #e8e8e8;
   color: #098aba;
   font-size: medium;
   font-weight: bold;
@@ -24,11 +23,23 @@
   vertical-align: middle;
 }
 
+.tool-epman .record-header:hover, .tool-epman .record:hover > .record-header {
+  background-color: #e8e8e8;
+}
+
 .tool-epman .show-more {
   background-image: url([[pix:tool_epman|collapsed]]);
   background-repeat: no-repeat;
   background-position: 0.25em center;
   padding-left: 2.0em;
+}
+
+.tool-epman .record-header.show-more {
+  background-image: url([[pix:tool_epman|collapsed_light]]);
+}
+
+.tool-epman .show-more:hover, .tool-epman .record:hover .show-more, .tool-epman .record-header:hover.show-more {
+  background-image: url([[pix:tool_epman|collapsed]]);
 }
 
 .tool-epman .show-more.expanded {
@@ -45,7 +56,31 @@
   cursor: pointer;
 }
 
+.tool-epman .link-button > a {
+  color: #098aba;
+}
+
+.tool-epman .record-header .link-button > a {
+  color: #d0d0d0;
+}
+
+.tool-epman .record-header:hover .link-button > a,
+.tool-epman .record-header.expanded .link-button > a,
+.tool-epman .record:hover .link-button > a {
+  color: #098aba;
+}
+
 .tool-epman .link-button.nolink > a {
+  color: black;
+}
+
+.tool-epman .record-header .link-button.nolink > a {
+  color: #d0d0d0;
+}
+
+.tool-epman .record-header:hover .link-button.nolink > a,
+.tool-epman .record-header.expanded .link-button.nolink > a,
+.tool-epman .record:hover .link-button.nolink > a {
   color: black;
 }
 
@@ -60,11 +95,31 @@
 }
 
 .tool-epman .link-button.responsible {
-  background-image: url([[pix:tool_epman|user]]);
-  padding-left: 1.6em;
-}
+   background-image: url([[pix:tool_epman|user]]);
+   padding-left: 1.6em;
+ }
+
+.tool-epman .record-header .link-button.responsible {
+   background-image: url([[pix:tool_epman|user_light]]);
+ }
+
+.tool-epman .record-header:hover .link-button.responsible,
+.tool-epman .record-header.expanded .link-button.responsible,
+.tool-epman .record:hover > .record-header .link-button.responsible {
+   background-image: url([[pix:tool_epman|user]]);
+ }
 
 .tool-epman .link-button.groups {
+   background-image: url([[pix:tool_epman|group]]);
+ }
+
+.tool-epman .record-header .link-button.groups {
+   background-image: url([[pix:tool_epman|group_light]]);
+ }
+
+.tool-epman .record-header:hover .link-button.groups,
+.tool-epman .record-header.expanded .link-button.groups,
+.tool-epman .record:hover > .record-header .link-button.groups {
   background-image: url([[pix:tool_epman|group]]);
 }
 
