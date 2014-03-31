@@ -62,16 +62,18 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </span>
   </div>
   <div id="program-list" class="record-list" style="display: none;">
-    <div id="program-<@= p.get('id') @>" class="record">
+    <div id="program-<@= p.id @>" class="record">
       <div class="record-header show-more">
-        <@= p.get('name') @>
+        <@= p.name @>
+        <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
         <div class="link-button right responsible">
-          <a href="<@= p.get('responsible') && p.get('responsible').id ? '/user/profile.php?id=' + p.get('responsible').id : '' @>">
-            <@= p.get('responsible') && p.get('responsible').id ? p.get('responsible').firstname + " " + p.get('responsible').lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
+          <a href="<@= p.responsible && p.responsible.id ? '/user/profile.php?id=' + p.responsible.id : '' @>">
+            <@= p.responsible && p.responsible.id ? p.responsible.firstname + " " + p.responsible.lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
           </a>
         </div>
+        <@ } @>
         <div class="link-button right groups">
-          <a href="../groups/index.php?programid=<@= p.get('id') @>">
+          <a href="../groups/index.php?programid=<@= p.id @>">
             <?php echo get_string('groups', 'tool_epman'); ?>
           </a>
         </div>

@@ -15,10 +15,13 @@ var user = {};
 var EducationProgramsRouter = Backbone.Router.extend({
 
     routes : {
-        "(years/:year)" : function (year) {
+        "" : function () {
+            this.navigate("#!", {trigger : true});
+        },
+        "!(years/:year)" : function (year) {
             this.filter.apply({ my : false });
         },
-        "my(years/:year)" : function (year) {
+        "!my(years/:year)" : function (year) {
             this.filter.apply({ my : true });
         },
     },
@@ -52,6 +55,7 @@ var EducationPrograms = Backbone.Collection.extend({
     model: EducationProgram,
     urlBase : "/programs",
     urlParams : {},
+    filter : {},
     url: function () {
         if (_.isEmpty(this.urlParams)) {
             return this.urlBase;
@@ -69,6 +73,7 @@ var EducationPrograms = Backbone.Collection.extend({
     },
 
     load : function (filter) {
+        this.filter = filter;
         if (filter.my) {
             _.extend(this.urlParams, { userid : user.id });
         } else {
@@ -110,7 +115,11 @@ var EducationProgramsList = Backbone.View.extend({
         this.$el.empty ();
         if (!this.collection.isEmpty()) {
             this.collection.forEach(function (program) {
-                this.$el.append(this.template({ p : program }));
+                this.$el.append(this.template(
+                    { f: this.collection.filter,
+                      p : program.toJSON(),
+                    }
+                ));
             }, this);
         } else {
             console.log("Empty");
@@ -169,7 +178,7 @@ var EducationProgramsFilter = Backbone.View.extend({
             },
             this
         ).join("/");
-        Backbone.history.navigate(route);
+        Backbone.history.navigate("#!" + route);
     },
 
 });
