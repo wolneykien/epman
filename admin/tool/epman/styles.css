@@ -8,9 +8,9 @@
   margin-bottom: 1.0em;
 }
 
-.tool-epman .record {
+/*.tool-epman .record {
   margin-top: 0.25em;
-}
+}*/
 
 .tool-epman .record-header {
   padding: 0.25em;
@@ -19,7 +19,7 @@
   font-size: medium;
   font-weight: bold;
   cursor: pointer;
-  line-height: 1.4em;
+  line-height: 1.2em;
   vertical-align: middle;
 }
 
@@ -198,4 +198,19 @@
 
 .tool-epman .link-button.switch.responsible.on {
   background-image: url([[pix:tool_epman|user]]), url([[pix:tool_epman|switch_on]]);
+}
+
+.tool-epman .list-section {
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+  font-size: large;
+  font-weight: bold;
+  color: black;
+}
+
+.tool-epman .list-section-header > hr {
+  border-style: none;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #e0e0e0;
 }

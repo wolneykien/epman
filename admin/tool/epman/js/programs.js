@@ -96,7 +96,12 @@ var EducationPrograms = Backbone.Collection.extend({
 var EducationProgramsList = Backbone.View.extend({
 
     initialize : function (options) {
-        this.template = _.template(this.$el.html ());
+        var section = $("#list-section-template");
+        this.sectionTemplate = _.template(section.html());
+        section.remove;
+        var record = $("#record-template");
+        this.recordTemplate = _.template(record.html());
+        record.remove();
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(this.collection, 'request', function() {
             console.log("Loading the education programs");
@@ -113,46 +118,35 @@ var EducationProgramsList = Backbone.View.extend({
     render : function () {
         console.log("Render out the eduction program list");
         this.$el.empty ();
-        var year = null;
+        this.$el.show();
         if (!this.collection.isEmpty()) {
+            var section = null;
             this.collection.forEach(function (program) {
-                var newyear = (program.get('year') != year);
-                year = program.get('year');
-                this.$el.append(this.template(
-                    { f: this.collection.filter,
-                      p : program.toJSON(),
-                      openyear : newyear,
-                      year : year,
-                      closeyear : newyear,
+                var data = {
+                    f : this.collection.filter,
+                    p : program.toJSON(),
+                    year : program.get('year'),
+                };
+                if (section == null || section.year != data.year) {
+                    this.$el.append(this.sectionTemplate(data));
+                    section = {
+                        $el : this.$("#year-" + data.year),
+                        year : data.year,
                     }
-                ));
+                }
+                section.$el.append(this.recordTemplate(data));
             }, this);
+
+            for (y = section.year + 1; y < 7; y++) {
+                this.$el.append(this.sectionTemplate({
+                    f : this.collection.filter,
+                    p : null,
+                    year : y,
+                }));
+            }
         } else {
             console.log("Empty");
         }
-        if (year != null) {
-            this.$el.append(this.template(
-                { f: this.collection.filter,
-                  p : null,
-                  openyear : false,
-                  year : year,
-                  closeyear : true,
-                }
-            ));
-            year++;
-            while (year < 7) {
-                this.$el.append(this.template(
-                    { f: this.collection.filter,
-                      p : null,
-                      openyear : true,
-                      year : year,
-                      closeyear : true,
-                    }
-                ));
-                year++;
-            }
-        }
-        this.$el.show();
         return this;
     },
 

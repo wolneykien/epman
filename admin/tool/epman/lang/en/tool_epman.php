@@ -29,5 +29,11 @@ $string['responsible'] = 'Responsible';
 $string['groups'] = 'Groups';
 $string['notspecified'] = '(not specified)';
 $string['myprograms'] = 'My programs';
-$string['courseyear'] = 'Year:';
+$string['courseyear'] = 'Year %i';
+$string['courseyear1'] = 'Year I';
+$string['courseyear2'] = 'Year II';
+$string['courseyear3'] = 'Year III';
+$string['courseyear4'] = 'Year IV';
+$string['courseyear5'] = 'Year V';
+$string['courseyear6'] = 'Year VI';
 ?>

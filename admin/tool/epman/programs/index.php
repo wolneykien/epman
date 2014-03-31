@@ -55,42 +55,57 @@ $PAGE->set_pagelayout('maintenance');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 ?>
+
+<!-- Templates -->
+<div id="list-section-template" style="display: none;">
+  <div id="year-<@= year @>" class="list-section">
+    <div class="list-section-header">
+      <span>
+        <@= (function (year) {
+          switch (year) {
+            case 1: return "<?php echo get_string('courseyear1', 'tool_epman'); ?>";
+            case 2: return "<?php echo get_string('courseyear2', 'tool_epman'); ?>";
+            case 3: return "<?php echo get_string('courseyear3', 'tool_epman'); ?>";
+            case 4: return "<?php echo get_string('courseyear4', 'tool_epman'); ?>";
+            case 5: return "<?php echo get_string('courseyear5', 'tool_epman'); ?>";
+            case 6: return "<?php echo get_string('courseyear6', 'tool_epman'); ?>";
+            default:
+              return "<?php echo get_string('courseyear', 'tool_epman'); ?>".replace(/%i/, year);
+          }
+        })(year) @>
+      </span>
+      <hr />
+    </div>
+  </div>
+</div>
+<div id="record-template" style="display: none;">
+  <div id="program-<@= p.id @>" class="record">
+    <div class="record-header show-more">
+      <@= p.name @>
+      <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
+        <div class="link-button right responsible">
+          <a href="<@= p.responsible && p.responsible.id ? '/user/profile.php?id=' + p.responsible.id : '' @>">
+            <@= p.responsible && p.responsible.id ? p.responsible.firstname + " " + p.responsible.lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
+          </a>
+        </div>
+      <@ } @>
+      <div class="link-button right groups">
+        <a href="../groups/index.php?programid=<@= p.id @>">
+          <?php echo get_string('groups', 'tool_epman'); ?>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Page -->
 <div class="tool-epman">
   <div id="filter" class="panel right vspace">
     <span id="my" class="link-button switch right responsible">
       <?php echo get_string('myprograms', 'tool_epman'); ?>
     </span>
   </div>
-  <div id="program-list" class="record-list" style="display: none;">
-    <@ if (openyear) { @>
-    <div id="year-<@= year @>" class="list-section">
-      <span class="list-section-header">
-        <?php echo get_string('courseyear', 'tool_epman'); ?> <@= year @>
-      </span>
-    <@ } @>
-    <@ if (p) { @>
-    <div id="program-<@= p.id @>" class="record">
-      <div class="record-header show-more">
-        <@= p.name @>
-        <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
-        <div class="link-button right responsible">
-          <a href="<@= p.responsible && p.responsible.id ? '/user/profile.php?id=' + p.responsible.id : '' @>">
-            <@= p.responsible && p.responsible.id ? p.responsible.firstname + " " + p.responsible.lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
-          </a>
-        </div>
-        <@ } @>
-        <div class="link-button right groups">
-          <a href="../groups/index.php?programid=<@= p.id @>">
-            <?php echo get_string('groups', 'tool_epman'); ?>
-          </a>
-        </div>
-      </div>
-    </div>
-    <@ } @>
-    <@ if (closeyear) { @>
-    </div>
-    <@ } @>
-  </div>
+  <div id="program-list" class="record-list" />
 </div>
 <?php
 echo $OUTPUT->footer();
