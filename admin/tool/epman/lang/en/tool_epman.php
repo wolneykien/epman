@@ -29,4 +29,5 @@ $string['responsible'] = 'Responsible';
 $string['groups'] = 'Groups';
 $string['notspecified'] = '(not specified)';
 $string['myprograms'] = 'My programs';
+$string['courseyear'] = 'Year:';
 ?>

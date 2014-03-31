@@ -62,6 +62,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </span>
   </div>
   <div id="program-list" class="record-list" style="display: none;">
+    <@ if (openyear) { @>
+    <div id="year-<@= year @>" class="list-section">
+      <span class="list-section-header">
+        <?php echo get_string('courseyear', 'tool_epman'); ?> <@= year @>
+      </span>
+    <@ } @>
+    <@ if (p) { @>
     <div id="program-<@= p.id @>" class="record">
       <div class="record-header show-more">
         <@= p.name @>
@@ -77,8 +84,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
             <?php echo get_string('groups', 'tool_epman'); ?>
           </a>
         </div>
-     </div>
+      </div>
     </div>
+    <@ } @>
+    <@ if (closeyear) { @>
+    </div>
+    <@ } @>
   </div>
 </div>
 <?php

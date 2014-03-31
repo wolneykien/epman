@@ -113,16 +113,44 @@ var EducationProgramsList = Backbone.View.extend({
     render : function () {
         console.log("Render out the eduction program list");
         this.$el.empty ();
+        var year = null;
         if (!this.collection.isEmpty()) {
             this.collection.forEach(function (program) {
+                var newyear = (program.get('year') != year);
+                year = program.get('year');
                 this.$el.append(this.template(
                     { f: this.collection.filter,
                       p : program.toJSON(),
+                      openyear : newyear,
+                      year : year,
+                      closeyear : newyear,
                     }
                 ));
             }, this);
         } else {
             console.log("Empty");
+        }
+        if (year != null) {
+            this.$el.append(this.template(
+                { f: this.collection.filter,
+                  p : null,
+                  openyear : false,
+                  year : year,
+                  closeyear : true,
+                }
+            ));
+            year++;
+            while (year < 7) {
+                this.$el.append(this.template(
+                    { f: this.collection.filter,
+                      p : null,
+                      openyear : true,
+                      year : year,
+                      closeyear : true,
+                    }
+                ));
+                year++;
+            }
         }
         this.$el.show();
         return this;
