@@ -37,4 +37,12 @@ $string['courseyear4'] = 'Year IV';
 $string['courseyear5'] = 'Year V';
 $string['courseyear6'] = 'Year VI';
 $string['Description'] = 'Description';
+$string['moduleStart'] = 'Start';
+$string['moduleEnd'] = 'End';
+$string['N1day'] = '%i day';
+$string['N2days'] = '%i days';
+$string['N3days'] = '%i days';
+$string['N4days'] = '%i days';
+$string['N5days'] = '%i days';
+$string['Ndays'] = '%i days';
 ?>

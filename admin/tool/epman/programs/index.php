@@ -63,14 +63,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <span>
         <@= (function (year) {
           switch (year) {
-            case 1: return "<?php echo get_string('courseyear1', 'tool_epman'); ?>";
-            case 2: return "<?php echo get_string('courseyear2', 'tool_epman'); ?>";
-            case 3: return "<?php echo get_string('courseyear3', 'tool_epman'); ?>";
-            case 4: return "<?php echo get_string('courseyear4', 'tool_epman'); ?>";
-            case 5: return "<?php echo get_string('courseyear5', 'tool_epman'); ?>";
-            case 6: return "<?php echo get_string('courseyear6', 'tool_epman'); ?>";
-            default:
-              return "<?php echo get_string('courseyear', 'tool_epman'); ?>".replace(/%i/, year);
+              case 1: return "<?php echo get_string('courseyear1', 'tool_epman'); ?>";
+              case 2: return "<?php echo get_string('courseyear2', 'tool_epman'); ?>";
+              case 3: return "<?php echo get_string('courseyear3', 'tool_epman'); ?>";
+              case 4: return "<?php echo get_string('courseyear4', 'tool_epman'); ?>";
+              case 5: return "<?php echo get_string('courseyear5', 'tool_epman'); ?>";
+              case 6: return "<?php echo get_string('courseyear6', 'tool_epman'); ?>";
+             default: return "<?php echo get_string('courseyear', 'tool_epman'); ?>".replace(/%i/, year);
           }
         })(year) @>
       </span>
@@ -110,11 +109,38 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="module-template" style="display: none;">
-  <div id="module-<@= m.id @>" class="program-module" style="background-color: <@= moduleColor(m) @>">
-  <@ _.forEach(m.courses, function (c, i) {
-    if (i > 0) { @><span class="module-course-delimiter"></span><@ } @>
-    <span class="module-course"><@= c.name @></span>
-  <@ }); @>
+  <div id="module-<@= m.id @>" class="program-module">
+    <div class="module-header">
+      <div class="name-value">
+        <span><?php echo get_string('moduleStart', 'tool_epman'); ?></span>
+        <span><@= (new Date(m.startdate * 1000)).toLocaleDateString() @></span>
+      </div>
+      <div class="name-value">
+        <span><?php echo get_string('moduleEnd', 'tool_epman'); ?></span>
+        <span>
+          <@= (new Date((m.startdate + m.length * 24 * 3600) * 1000)).toLocaleDateString() @>
+          <span class="comment">
+            <@= (function (len) {
+              switch (("" + len).substr(-1)) {
+                  case "1": return "<?php echo get_string('N1day', 'tool_epman'); ?>".replace(/%i/, len);
+                  case "2": return "<?php echo get_string('N2days', 'tool_epman'); ?>".replace(/%i/, len);
+                  case "3": return "<?php echo get_string('N3days', 'tool_epman'); ?>".replace(/%i/, len);
+                  case "4": return "<?php echo get_string('N4days', 'tool_epman'); ?>".replace(/%i/, len);
+                  case "5": return "<?php echo get_string('N5days', 'tool_epman'); ?>".replace(/%i/, len);
+                   default: return "<?php echo get_string('Ndays', 'tool_epman'); ?>".replace(/%i/, len);
+              }
+            })(m.length) @>
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="module-course-list">
+      <ul>
+      <@ _.forEach(m.courses, function (c) { @>
+        <li><@= c.name @></li>
+      <@ }); @>
+      </ul>
+    </div>
   </div>
 </div>
 
