@@ -8,10 +8,6 @@
   margin-bottom: 1.0em;
 }
 
-/*.tool-epman .record.collapsed > .record-body {
-  display: none;
-}*/
-
 .tool-epman .record-header {
   padding: 0.25em;
   padding-right: 0.5em;
@@ -21,6 +17,10 @@
   cursor: pointer;
   line-height: 1.2em;
   vertical-align: middle;
+}
+
+.tool-epman .record-header.expanded {
+  background-color: #f0f0f0;
 }
 
 .tool-epman .record-header:hover, .tool-epman .record:hover > .record-header {
@@ -221,4 +221,37 @@
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: #e0e0e0;
+}
+
+.tool-epman .record.expanded {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 0.25em;
+}
+
+.tool-epman .record-body {
+  padding: 0.25em;
+}
+
+.tool-epman .record .record-description {
+  font-size: small;
+  font-style: italic;
+  font-weight: normal;
+  color: black;
+}
+
+.tool-epman .name-value {
+  text-align: left;
+  font-size: small;
+  color: black;
+}
+
+.tool-epman .name-value span:first-child {
+  font-weight: bold;
+}
+
+.tool-epman .name-value span:first-child:after {
+  content: ":";
 }

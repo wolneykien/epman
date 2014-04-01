@@ -100,8 +100,9 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="record-body-template" style="display: none;">
-  <div class="record-description">
-    <span>
+  <div class="name-value">
+    <span><?php echo get_string('Description', 'tool_epman'); ?></span>
+    <span class="record-description">
       <@= (p.description && p.description.length > 0) ? p.description : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
     </span>
   </div>
