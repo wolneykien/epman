@@ -37,6 +37,14 @@ var EducationProgramsRouter = Backbone.Router.extend({
  */
 var EducationProgram = Backbone.Model.extend({
 
+    url : function () {
+        if (this.collection) {
+            return this.collection.url(this.id);
+        } else {
+            return null;
+        }
+    },
+
     initialize : function (attrs, options) {
     },
 
@@ -56,11 +64,15 @@ var EducationPrograms = Backbone.Collection.extend({
     urlBase : "/programs",
     urlParams : {},
     filter : {},
-    url: function () {
+    url: function (id) {
+        var url = this.urlBase;
+        if (id) {
+            url = url + "/" + id;
+        }
         if (_.isEmpty(this.urlParams)) {
-            return this.urlBase;
+            return url;
         } else {
-            return this.urlBase + '?' + $.param(this.urlParams);
+            return url + '?' + $.param(this.urlParams);
         }
     },
 
@@ -86,6 +98,46 @@ var EducationPrograms = Backbone.Collection.extend({
 });
 
 /**
+ * Renders the complete education program.
+ */
+var EducationProgramView = Backbone.View.extend({
+
+    initialize : function (options) {
+        this.template = options.template;
+        this.$header = options.$header;
+        this.headerTemplate = options.headerTemplate;
+        this.$body = options.$body;
+        this.bodyTemplate = options.bodyTemplate;
+        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'request', function(model) {
+            console.log("Loading the education program #" + this.model.id);
+            this.$body.empty();
+            this.$body.toggleClass("loading", true);
+            this.$body.show();
+        });
+        this.listenTo(this.model, 'sync', function() {
+            console.log("Done loading the education program #" + this.model.id);
+            this.$body.toggleClass("loading", false);
+            if (_.isEmpty(this.model.changed)) {
+                this.render();
+            }
+        });
+    },
+
+    render : function () {
+        console.log("Render out the eduction program #" + this.model.id);
+        var data = {
+            f : this.model.collection.filter,
+            p : this.model.toJSON(),
+            year : this.model.get('year'),
+        };
+        this.$header.html(this.headerTemplate(data));
+        this.$body.html(this.bodyTemplate(data));
+        return this;
+    },
+});
+
+/**
  * Renders the list of the education programs.
  *
  * @param options {
@@ -95,21 +147,64 @@ var EducationPrograms = Backbone.Collection.extend({
  */
 var EducationProgramsList = Backbone.View.extend({
 
+    expandedPrograms : {},
+
+    events : {
+        "click .record-header.show-more" : function (e) {
+            var rh = $(e.currentTarget);
+            var r = rh.parent();
+            var rb = r.find(".record-body");
+            var rid = r.attr("id").replace(/^program-/, "");
+            if (!rh.hasClass("expanded")) {
+                rh.toggleClass("collapsed", false);
+                rh.toggleClass("expanded", true);
+                r.toggleClass("collapsed", false);
+                r.toggleClass("expanded", true);
+                var program = this.collection.get(rid);
+                var programView = new EducationProgramView({
+                    el : ("#" + rid),
+                    $el : r,                    
+                    template : this.recordTemplate,
+                    $header : rh,
+                    headerTemplate : this.recordHeaderTemplate,
+                    $body : rb,
+                    bodyTemplate : this.recordBodyTemplate,
+                    model : program,
+                });
+                this.expandedPrograms[rid] = programView;
+                program.fetch();
+            } else {
+                rb.hide();
+                rh.toggleClass("collapsed", true);
+                rh.toggleClass("expanded", false);
+                r.toggleClass("collapsed", true);
+                r.toggleClass("expanded", false);
+            }
+        },
+    },
+
     initialize : function (options) {
         var section = $("#list-section-template");
         this.sectionTemplate = _.template(section.html());
-        section.remove;
+        section.remove();
         var record = $("#record-template");
         this.recordTemplate = _.template(record.html());
+        var recordHeader = record.find(".record-header");
+        this.recordHeaderTemplate = _.template(recordHeader.html());
         record.remove();
+        var recordBody = $("#record-body-template");
+        this.recordBodyTemplate = _.template(recordBody.html());
+        recordBody.remove();
         this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(this.collection, 'request', function() {
+        this.listenTo(this.collection, 'request', function(collection) {
+            if (collection != this.collection) return;
             console.log("Loading the education programs");
-            this.$el.empty ();
+            this.$el.empty();
             this.$el.toggleClass("loading", true);
             this.$el.show();
         });
-        this.listenTo(this.collection, 'sync', function() {
+        this.listenTo(this.collection, 'sync', function(collection) {
+            if (collection != this.collection) return;
             console.log("Done loading the education programs");
             this.$el.toggleClass("loading", false);
         });
@@ -117,7 +212,7 @@ var EducationProgramsList = Backbone.View.extend({
 
     render : function () {
         console.log("Render out the eduction program list");
-        this.$el.empty ();
+        this.$el.empty();
         this.$el.show();
         if (!this.collection.isEmpty()) {
             var section = null;

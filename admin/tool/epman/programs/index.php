@@ -79,7 +79,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="record-template" style="display: none;">
-  <div id="program-<@= p.id @>" class="record">
+  <div id="program-<@= p.id @>" class="record collapsed">
     <div class="record-header show-more">
       <@= p.name @>
       <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
@@ -95,6 +95,25 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </a>
       </div>
     </div>
+    <div class="record-body" style="display: none;">
+    </div>
+  </div>
+</div>
+<div id="record-body-template" style="display: none;">
+  <div class="record-description">
+    <span>
+      <@= (p.description && p.description.length > 0) ? p.description : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
+    </span>
+  </div>
+  <div id="program-<@= p.id @>-modules" class="program-module-list">
+  </div>
+</div>
+<div id="module-template" style="display: none;">
+  <div id="module-<@= m.id @>" class="program-module" style="background-color: <@= moduleColor(m) @>">
+  <@ _.forEach(m.courses, function (c, i) {
+    if (i > 0) { @><span class="module-course-delimiter"></span><@ } @>
+    <span class="module-course"><@= c.name @></span>
+  <@ }); @>
   </div>
 </div>
 
@@ -105,7 +124,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <?php echo get_string('myprograms', 'tool_epman'); ?>
     </span>
   </div>
-  <div id="program-list" class="record-list" />
+  <div id="program-list" class="record-list">
+  </div>
 </div>
 <?php
 echo $OUTPUT->footer();

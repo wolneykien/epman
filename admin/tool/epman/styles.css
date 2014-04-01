@@ -8,8 +8,8 @@
   margin-bottom: 1.0em;
 }
 
-/*.tool-epman .record {
-  margin-top: 0.25em;
+/*.tool-epman .record.collapsed > .record-body {
+  display: none;
 }*/
 
 .tool-epman .record-header {
@@ -38,11 +38,19 @@
   background-image: url([[pix:tool_epman|collapsed_light]]);
 }
 
-.tool-epman .show-more:hover, .tool-epman .record:hover .show-more, .tool-epman .record-header:hover.show-more {
+.tool-epman .show-more:hover,
+.tool-epman .record:hover .show-more,
+.tool-epman .record-header:hover.show-more {
   background-image: url([[pix:tool_epman|collapsed]]);
 }
 
 .tool-epman .show-more.expanded {
+  background-image: url([[pix:tool_epman|expanded]]);
+}
+
+.tool-epman .show-more.expanded:hover,
+.tool-epman .record:hover .show-more.expanded,
+.tool-epman .record-header:hover.show-more.expanded {
   background-image: url([[pix:tool_epman|expanded]]);
 }
 
