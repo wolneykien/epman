@@ -83,9 +83,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <@= p.name @>
       <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
         <div class="link-button right responsible">
+          <@ if (p.responsible && p.responsible.id) { @>
           <a href="<@= p.responsible && p.responsible.id ? '/user/profile.php?id=' + p.responsible.id : '' @>">
-            <@= p.responsible && p.responsible.id ? p.responsible.firstname + " " + p.responsible.lastname : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
+            <@= p.responsible.firstname + " " + p.responsible.lastname @>
           </a>
+          <@ } else { @>
+          <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+          <@ } @>
         </div>
       <@ } @>
       <div class="link-button right groups">
@@ -101,11 +105,35 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 <div id="record-body-template" style="display: none;">
   <div class="name-value">
     <span><?php echo get_string('Description', 'tool_epman'); ?></span>
-    <span class="record-description">
-      <@= (p.description && p.description.length > 0) ? p.description : "<?php echo get_string('notspecified', 'tool_epman'); ?>" @>
-    </span>
+    <@ if (p.description && p.description.length > 0) { @>
+    <span class="description"><@= p.description @></span>
+    <@ } else { @>
+    <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+    <@ } @>
   </div>
-  <div id="program-<@= p.id @>-modules" class="program-module-list">
+  <div id="program-<@= p.id @>-modules" class="program-modules">
+    <@ if (!p.modules || _.isEmpty(p.modules)) { @>
+    <span class="comment"><?php echo get_string('nomodules', 'tool_epman'); ?></span>
+    <@ } else { @>
+    <div class="program-module-list">
+    </div>
+    <@ } @>
+  </div>
+</div>
+<div id="modules-period-template" style="display: none;">
+  <div id="module-<@= m.id @>-period-<@= m.period + 1 @>" class="modules-period">
+    <div class="modules-period-header">
+      <@= (function (period) {
+        switch (("" + period).substr(-1)) {
+          case "1": return "<?php echo get_string('N1st_period', 'tool_epman'); ?>".replace(/%i/, period);
+          case "2": return "<?php echo get_string('N2nd_period', 'tool_epman'); ?>".replace(/%i/, period);
+          case "3": return "<?php echo get_string('N3rd_period', 'tool_epman'); ?>".replace(/%i/, period);
+          case "4": return "<?php echo get_string('N4th_period', 'tool_epman'); ?>".replace(/%i/, period);
+          case "5": return "<?php echo get_string('N5th_period', 'tool_epman'); ?>".replace(/%i/, period);
+           default: return "<?php echo get_string('Nth_period', 'tool_epman'); ?>".replace(/%i/, period);
+        }
+      })(m.period + 1) @>
+    </div>
   </div>
 </div>
 <div id="module-template" style="display: none;">
@@ -134,10 +162,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </span>
       </div>
     </div>
-    <div class="module-course-list">
-      <ul>
-      <@ _.forEach(m.courses, function (c) { @>
-        <li><@= c.name @></li>
+    <div class="module-courses">
+      <ul class="module-course-list">
+      <@ _.each(m.courses, function (c) { @>
+        <li>
+          <a href="/course/view.php?id=<@= c.id @>"><@= c.name @></a>
+        </li>
       <@ }); @>
       </ul>
     </div>

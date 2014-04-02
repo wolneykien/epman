@@ -235,11 +235,26 @@
   padding: 0.25em;
 }
 
-.tool-epman .record .record-description {
+.tool-epman .record .description {
   font-size: small;
   font-style: italic;
   font-weight: normal;
   color: black;
+}
+
+.tool-epman .comment {
+  font-size: small;
+  font-style: italic;
+  font-weight: normal;
+  color: #a0a0a0;
+}
+
+.tool-epman .comment:before {
+  content: "(";
+}
+
+.tool-epman .comment:after {
+  content: ")";
 }
 
 .tool-epman .name-value {
@@ -248,10 +263,90 @@
   color: black;
 }
 
-.tool-epman .name-value span:first-child {
+.tool-epman .name-value > span:first-child {
   font-weight: bold;
 }
 
-.tool-epman .name-value span:first-child:after {
+.tool-epman .name-value > span:first-child:after {
   content: ":";
+}
+
+.tool-epman .program-modules {
+  margin-top: 0.25em;
+}
+
+.tool-epman .program-module-list {
+}
+
+.tool-epman .program-module {
+  font-size: small;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  font-weight: normal;
+  margin-top: 0.5em;
+  border-left: 3px solid #098aba;
+}
+
+/*.tool-epman .modules-period > .program-module:nth-child(2) {
+  margin-top: 0.25em;
+}*/
+
+.tool-epman .program-module .module-header {
+  background-color: #f8f8f8;
+}
+
+.tool-epman .program-module .module-header .name-value {
+  display: inline-block;
+  padding-left: 1.0em;
+/*  font-size: medium; */
+}
+
+.tool-epman .program-module .module-header .name-value:first-child {
+  padding-left: 0px;
+}
+
+.tool-epman .program-module .module-courses {
+  display: block;
+  text-align: left;
+  margin-top: 0.25em;
+}
+
+.tool-epman ul {
+  margin: 0px;
+}
+
+.tool-epman .program-module .module-course-list {
+  display: inline-block;
+  font-size: small;
+}
+
+.tool-epman .program-module .module-course-list > li {
+  list-style-type: disc;
+  margin-left: 1.25em;
+  margin-right: 0.5em;
+  float: left;
+}
+
+.tool-epman .program-module .module-course-list > li:last-child {
+  margin-right: 0px;
+}
+
+.tool-epman .program-module-list .modules-period {
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+  border-left: 3px solid #2bacdc;
+  padding-left: 0.25em;
+}
+
+.tool-epman .program-module-list .modules-period:first-child {
+  margin-top: 0.5em;
+}
+
+.tool-epman .program-module-list .modules-period > .modules-period-header {
+  font-size: small;
+  text-align: left;
+  color: black;
+  font-style: italic;
+  font-weight: normal;
+  padding: 0px;
 }

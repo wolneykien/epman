@@ -108,6 +108,8 @@ var EducationProgramView = Backbone.View.extend({
         this.headerTemplate = options.headerTemplate;
         this.$body = options.$body;
         this.bodyTemplate = options.bodyTemplate;
+        this.moduleTemplate = options.moduleTemplate;
+        this.periodTemplate = options.periodTemplate;
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'request', function(model) {
             console.log("Loading the education program #" + this.model.id);
@@ -133,6 +135,18 @@ var EducationProgramView = Backbone.View.extend({
         };
         this.$header.html(this.headerTemplate(data));
         this.$body.html(this.bodyTemplate(data));
+        var $modules = this.$body.find(".program-module-list");
+        var period = null;
+        _.each(data.p.modules, function (m) {
+            if (period == null || period.num != m.period) {
+                $modules.append(this.periodTemplate({ m : m }));
+                period = {
+                    $el : $modules.find("#module-" + m.id + "-period-" + (m.period + 1)),
+                    num : m.period,
+                };
+            }
+            period.$el.append(this.moduleTemplate({ m : m }));
+        }, this);
         return this;
     },
 });
@@ -169,6 +183,8 @@ var EducationProgramsList = Backbone.View.extend({
                     headerTemplate : this.recordHeaderTemplate,
                     $body : rb,
                     bodyTemplate : this.recordBodyTemplate,
+                    moduleTemplate : this.moduleTemplate,
+                    periodTemplate : this.periodTemplate,
                     model : program,
                 });
                 this.expandedPrograms[rid] = programView;
@@ -186,15 +202,16 @@ var EducationProgramsList = Backbone.View.extend({
     initialize : function (options) {
         var section = $("#list-section-template");
         this.sectionTemplate = _.template(section.html());
-        section.remove();
         var record = $("#record-template");
         this.recordTemplate = _.template(record.html());
         var recordHeader = record.find(".record-header");
         this.recordHeaderTemplate = _.template(recordHeader.html());
-        record.remove();
         var recordBody = $("#record-body-template");
         this.recordBodyTemplate = _.template(recordBody.html());
-        recordBody.remove();
+        var module = $("#module-template");
+        this.moduleTemplate = _.template(module.html());
+        var period = $("#modules-period-template");
+        this.periodTemplate = _.template(period.html());
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(this.collection, 'request', function(collection) {
             if (collection != this.collection) return;
@@ -227,7 +244,7 @@ var EducationProgramsList = Backbone.View.extend({
                     section = {
                         $el : this.$("#year-" + data.year),
                         year : data.year,
-                    }
+                    };
                 }
                 section.$el.append(this.recordTemplate(data));
             }, this);
