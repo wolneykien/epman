@@ -173,6 +173,22 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </div>
   </div>
 </div>
+<div id="vacation-template" style="display: none;">
+  <div class="program-vacation">
+    <span>
+      <@= (function (len) {
+        switch (("" + len).substr(-1)) {
+          case "1": return "<?php echo get_string('vacation_N1day', 'tool_epman'); ?>".replace(/%i/, len);
+          case "2": return "<?php echo get_string('vacation_N2days', 'tool_epman'); ?>".replace(/%i/, len);
+          case "3": return "<?php echo get_string('vacation_N3days', 'tool_epman'); ?>".replace(/%i/, len);
+          case "4": return "<?php echo get_string('vacation_N4days', 'tool_epman'); ?>".replace(/%i/, len);
+          case "5": return "<?php echo get_string('vacation_N5days', 'tool_epman'); ?>".replace(/%i/, len);
+           default: return "<?php echo get_string('vacation_Ndays', 'tool_epman'); ?>".replace(/%i/, len);
+        }
+      })(length) @>
+    </span>
+  </div>
+</div>
 
 <!-- Page -->
 <div class="tool-epman">

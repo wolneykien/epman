@@ -110,6 +110,7 @@ var EducationProgramView = Backbone.View.extend({
         this.bodyTemplate = options.bodyTemplate;
         this.moduleTemplate = options.moduleTemplate;
         this.periodTemplate = options.periodTemplate;
+        this.vacationTemplate = options.vacationTemplate;
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'request', function(model) {
             console.log("Loading the education program #" + this.model.id);
@@ -137,15 +138,25 @@ var EducationProgramView = Backbone.View.extend({
         this.$body.html(this.bodyTemplate(data));
         var $modules = this.$body.find(".program-module-list");
         var period = null;
+        var endDays = null;
         _.each(data.p.modules, function (m) {
+            var startDays = Math.ceil(m.startdate / (24 * 3600));
             if (period == null || period.num != m.period) {
+                if (endDays != null && startDays != (endDays + 1)) {
+                    $modules.append(this.vacationTemplate({ length : (startDays - endDays - 1) }));
+                    endDays = startDays - 1;
+                }
                 $modules.append(this.periodTemplate({ m : m }));
                 period = {
                     $el : $modules.find("#module-" + m.id + "-period-" + (m.period + 1)),
                     num : m.period,
                 };
             }
+            if (endDays != null && startDays != (endDays + 1)) {
+                period.$el.append(this.vacationTemplate({ length : (startDays - endDays - 1) }));
+            }
             period.$el.append(this.moduleTemplate({ m : m }));
+            endDays = startDays + m.length;
         }, this);
         return this;
     },
@@ -185,6 +196,7 @@ var EducationProgramsList = Backbone.View.extend({
                     bodyTemplate : this.recordBodyTemplate,
                     moduleTemplate : this.moduleTemplate,
                     periodTemplate : this.periodTemplate,
+                    vacationTemplate : this.vacationTemplate,
                     model : program,
                 });
                 this.expandedPrograms[rid] = programView;
@@ -212,6 +224,8 @@ var EducationProgramsList = Backbone.View.extend({
         this.moduleTemplate = _.template(module.html());
         var period = $("#modules-period-template");
         this.periodTemplate = _.template(period.html());
+        var vacation = $("#vacation-template");
+        this.vacationTemplate = _.template(vacation.html());
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(this.collection, 'request', function(collection) {
             if (collection != this.collection) return;

@@ -350,3 +350,16 @@
   font-weight: normal;
   padding: 0px;
 }
+
+.tool-epman .program-vacation {
+  font-size: small;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  font-weight: normal;
+  margin-top: 0.5em;
+  border-left: 3px solid #ba8a09;
+}
+
+.tool-epman .program-module-list > .program-vacation {
+  margin-top: 1.0em;
+}

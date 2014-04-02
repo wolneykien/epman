@@ -52,4 +52,10 @@ $string['N3rd_period'] = '%i-rd period';
 $string['N4th_period'] = '%i-th period';
 $string['N5th_period'] = '%i-th period';
 $string['Nth_period'] = '%i-th period';
+$string['vacation_N1day'] = 'Vacation %i day';
+$string['vacation_N2days'] = 'Vacation %i days';
+$string['vacation_N3days'] = 'Vacation %i days';
+$string['vacation_N4days'] = 'Vacation %i days';
+$string['vacation_N5days'] = 'Vacation %i days';
+$string['vacation_Ndays'] = 'Vacation %i days';
 ?>
