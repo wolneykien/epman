@@ -1,4 +1,8 @@
 
+.tool-epman {
+  margin-right: 0.25em;
+}
+
 .tool-epman .vspace {
   margin-top: 2.0em;
 }
@@ -154,7 +158,6 @@
 }
 
 .tool-epman .panel {
-  width: 100%;
   padding-top: 0.25em;
   padding: 0.25em;
   font-size: normal;
