@@ -360,6 +360,24 @@ var initPage = function () {
     });
     
     Backbone.history.start ({ pushState: false });
+
+    
+    var filterPanel = $('#filter');
+    var footerPanel = $('#footer');
+    var checkFooter = function () {
+        if ($(window).scrollTop () > (filterPanel.offset().top + filterPanel.height())) {
+            footerPanel.css(
+                { left : filterPanel.offset().left,
+                  width : filterPanel.width(),
+                });
+            footerPanel.show();
+        } else {
+            footerPanel.hide();
+        }
+    }
+
+    $(window).scroll (checkFooter);
+    checkFooter();
 };
 
 $(initPage);

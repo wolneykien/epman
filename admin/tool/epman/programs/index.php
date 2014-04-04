@@ -199,6 +199,11 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div id="program-list" class="record-list">
   </div>
+  <div id="footer" class="page-footer" style="display: none;">
+    <a class="link-button right gotop" onclick="document.getElementById('filter').scrollIntoView();">
+      <?php echo get_string('gotop', 'tool_epman'); ?>
+    </a>
+  </div>
 </div>
 <?php
 echo $OUTPUT->footer();

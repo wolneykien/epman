@@ -58,4 +58,5 @@ $string['vacation_N3days'] = 'Vacation %i days';
 $string['vacation_N4days'] = 'Vacation %i days';
 $string['vacation_N5days'] = 'Vacation %i days';
 $string['vacation_Ndays'] = 'Vacation %i days';
+$string['gotop'] = 'Up';
 ?>

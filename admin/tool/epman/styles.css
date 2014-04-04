@@ -58,7 +58,8 @@
   background-image: url([[pix:tool_epman|expanded]]);
 }
 
-.tool-epman .link-button {
+.tool-epman .link-button,
+.tool-epman .link-button > a {
   display: inline-block;
   padding-left: 1.8em;
   background-repeat: no-repeat;
@@ -68,10 +69,12 @@
   cursor: pointer;
 }
 
+.tool-epman .link-button,
 .tool-epman .link-button > a {
   color: #098aba;
 }
 
+.tool-epman .record-header .link-button,
 .tool-epman .record-header .link-button > a {
   color: #d0d0d0;
 }
@@ -82,6 +85,7 @@
   color: #098aba;
 }
 
+.tool-epman .link-button.nolink,
 .tool-epman .link-button.nolink > a {
   color: black;
 }
@@ -365,4 +369,29 @@
 
 .tool-epman .program-module-list > .program-vacation {
   margin-top: 1.0em;
+}
+
+.tool-epman .page-footer {
+  position: fixed;
+  bottom: 0px;
+  height: 4.0em;
+  line-height: 4.0em;
+  padding: 0px;
+  margin-top: 0.25em;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #d6e0ff;
+  border-top: 2px solid white;
+}
+
+.tool-epman .link-button.gotop {
+  background-image: url([[pix:tool_epman|up]]);
+  background-color: #e8e8ff;
+  background-position: 1.0em center;
+  padding-left: 2.25em;
+  padding-right: 1.25em;
+}
+
+.tool-epman .link-button.gotop:hover {
+  background-color: #efefff;
 }
