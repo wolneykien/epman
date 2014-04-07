@@ -84,7 +84,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
         <div class="link-button right responsible">
           <@ if (p.responsible && p.responsible.id) { @>
-          <a href="<@= p.responsible && p.responsible.id ? '/user/profile.php?id=' + p.responsible.id : '' @>">
+          <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
             <@= p.responsible.firstname + " " + p.responsible.lastname @>
           </a>
           <@ } else { @>
@@ -94,7 +94,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <@ } @>
       <div class="link-button right groups">
         <a href="../groups/index.php?programid=<@= p.id @>">
-          <?php echo get_string('groups', 'tool_epman'); ?>
+          <?php echo get_string('Groups', 'tool_epman'); ?>
         </a>
       </div>
     </div>
@@ -110,6 +110,33 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <@ } else { @>
     <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
     <@ } @>
+  </div>
+  <div class="name-value">
+    <span><?php echo get_string('Responsible', 'tool_epman'); ?></span>
+    <@ if (p.responsible && p.responsible.id) { @>
+    <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
+      <@= p.responsible.firstname + " " + p.responsible.lastname @>
+    </a>
+    <@ } else { @>
+    <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+    <@ } @>
+  </div>
+  <div class="name-value">
+    <span><?php echo get_string('Assistants', 'tool_epman'); ?></span>
+    <@ if (p.assistants && p.assistants.length > 0) {
+      _.each(p.assistants, function (a) {
+        if (a.id) { @>
+        <a href="<@= '/user/profile.php?id=' + a.id @>">
+          <@= a.firstname + " " + a.lastname @>
+        </a>
+        <@ }
+      });
+    } else { @>
+    <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+    <@ } @>
+  </div>
+  <div class="section-header">
+    <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
   </div>
   <div id="program-<@= p.id @>-modules" class="program-modules">
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>

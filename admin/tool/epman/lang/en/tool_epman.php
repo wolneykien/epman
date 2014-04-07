@@ -25,8 +25,8 @@
 
 $string['pluginname'] = 'Education process management module';
 $string['programlistheading'] = 'Education programs';
-$string['responsible'] = 'Responsible';
-$string['groups'] = 'Groups';
+$string['Responsible'] = 'Responsible';
+$string['Groups'] = 'Groups';
 $string['notspecified'] = 'not specified';
 $string['myprograms'] = 'My programs';
 $string['courseyear'] = 'Year %i';
@@ -59,4 +59,6 @@ $string['vacation_N4days'] = 'Vacation %i days';
 $string['vacation_N5days'] = 'Vacation %i days';
 $string['vacation_Ndays'] = 'Vacation %i days';
 $string['gotop'] = 'Up';
+$string['Modules'] = 'Modules';
+$string['Assistants'] = 'Assistants';
 ?>
