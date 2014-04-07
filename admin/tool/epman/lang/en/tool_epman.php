@@ -61,4 +61,8 @@ $string['vacation_Ndays'] = 'Vacation %i days';
 $string['gotop'] = 'Up';
 $string['Modules'] = 'Modules';
 $string['Assistants'] = 'Assistants';
+$string['Edit'] = 'Edit';
+$string['Delete'] = 'Delete';
+$string['Edit_program'] = 'Edit program';
+$string['Delete_program'] = 'Delete program';
 ?>

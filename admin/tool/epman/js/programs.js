@@ -176,6 +176,9 @@ var EducationProgramsList = Backbone.View.extend({
 
     events : {
         "click .record-header.show-more" : function (e) {
+            if (!$(e.target).hasClass("record-header")) {
+                return true;
+            }
             var rh = $(e.currentTarget);
             var r = rh.parent();
             var rb = r.find(".record-body");

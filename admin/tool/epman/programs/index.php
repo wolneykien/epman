@@ -92,6 +92,16 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <@ } @>
         </div>
       <@ } @>
+      <div class="link-button hidden nolink edit">
+        <a href="javascript:void()">
+          <?php echo get_string('Edit_program', 'tool_epman'); ?>
+        </a>
+      </div>
+      <div class="link-button hidden nolink delete">
+        <a href="javascript:void()">
+          <?php echo get_string('Delete_program', 'tool_epman'); ?>
+        </a>
+      </div>
       <div class="link-button right groups">
         <a href="../groups/index.php?programid=<@= p.id @>">
           <?php echo get_string('Groups', 'tool_epman'); ?>

@@ -69,6 +69,10 @@
   cursor: pointer;
 }
 
+.tool-epman .link-button {
+  margin-left: 0.5em;
+}
+
 .tool-epman .link-button,
 .tool-epman .link-button > a {
   color: #098aba;
@@ -90,23 +94,42 @@
   color: black;
 }
 
+.tool-epman .record-header .link-button.nolink,
 .tool-epman .record-header .link-button.nolink > a {
   color: #d0d0d0;
 }
 
 .tool-epman .record-header:hover .link-button.nolink > a,
-.tool-epman .record-header.expanded .link-button.nolink > a,
+.tool-epman .record-header.expanded:hover .link-button.nolink > a,
 .tool-epman .record:hover .link-button.nolink > a {
   color: black;
 }
 
+.tool-epman .record-header .link-button.hidden {
+  display: none;
+ }
+
+.tool-epman .record-header.expanded .link-button.hidden {
+  display: inline-block;
+}
+
+.tool-epman .record-header.expanded .link-button.hidden,
+.tool-epman .record-header.expanded .link-button.hidden > a {
+  color: #a0a0a0;
+}
+
+.tool-epman .record-header.expanded:hover .link-button.hidden.nolink,
+.tool-epman .record-header.expanded:hover .link-button.hidden.nolink > a {
+  color: black;
+}
+
 .tool-epman .link-button.right {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
   float: right;
 }
 
 .tool-epman .link-button.left {
-  margin-right: 0.5em;
+  margin-left: 0.5em;
   float: left;
 }
 
@@ -407,4 +430,29 @@
   padding: 0.25em;
   margin-top: 0.50em;
   background-color: #f5f0cc;
+}
+
+.tool-epman .link-button.edit {
+   background-image: url([[pix:tool_epman|edit]]);
+ }
+
+.tool-epman .record-header.expanded .link-button.edit {
+  background-image: url([[pix:tool_epman|edit_light]]);
+}
+
+.tool-epman .record-header.expanded:hover .link-button.edit {
+  background-image: url([[pix:tool_epman|edit]]);
+}
+
+.tool-epman .link-button.delete {
+  background-image: url([[pix:tool_epman|delete]]);
+  padding-left: 0.5em;
+ }
+
+.tool-epman .record-header.expanded .link-button.delete {
+  background-image: url([[pix:tool_epman|delete_light]]);
+}
+
+.tool-epman .record-header.expanded:hover .link-button.delete {
+  background-image: url([[pix:tool_epman|delete]]);
 }
