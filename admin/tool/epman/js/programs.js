@@ -183,9 +183,7 @@ var EducationProgramsList = Backbone.View.extend({
             var r = rh.parent();
             var rb = r.find(".record-body");
             var rid = r.attr("id").replace(/^program-/, "");
-            if (!rh.hasClass("expanded")) {
-                rh.toggleClass("collapsed", false);
-                rh.toggleClass("expanded", true);
+            if (!r.hasClass("expanded")) {
                 r.toggleClass("collapsed", false);
                 r.toggleClass("expanded", true);
                 var program = this.collection.get(rid);
@@ -206,8 +204,6 @@ var EducationProgramsList = Backbone.View.extend({
                 program.fetch();
             } else {
                 rb.hide();
-                rh.toggleClass("collapsed", true);
-                rh.toggleClass("expanded", false);
                 r.toggleClass("collapsed", true);
                 r.toggleClass("expanded", false);
             }

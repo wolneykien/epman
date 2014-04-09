@@ -147,6 +147,16 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div class="section-header">
     <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
+    <div class="link-button hidden nolink edit">
+      <a href="javascript:void()">
+        <?php echo get_string('Add_module', 'tool_epman'); ?>
+      </a>
+    </div>
+    <div class="link-button hidden nolink delete">
+      <a href="javascript:void()">
+        <?php echo get_string('Delete_modules', 'tool_epman'); ?>
+      </a>
+    </div>
   </div>
   <div id="program-<@= p.id @>-modules" class="program-modules">
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>
