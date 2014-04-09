@@ -147,7 +147,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div class="section-header">
     <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
-    <div class="link-button light nolink edit">
+    <div class="link-button light nolink add">
       <a href="javascript:void()">
         <?php echo get_string('Add_module', 'tool_epman'); ?>
       </a>

@@ -497,3 +497,21 @@
 {
   background-image: url([[pix:tool_epman|delete]]);
 }
+
+.tool-epman .link-button.add {
+   background-image: url([[pix:tool_epman|add_color]]);
+ }
+
+.tool-epman .record.expanded > .record-header .link-button.light.add,
+.tool-epman .record .section-header .link-button.light.add,
+.tool-epman .program-module > .module-header .link-button.light.add
+{
+  background-image: url([[pix:tool_epman|add_light]]);
+}
+
+.tool-epman .record.expanded > .record-header:hover .link-button.light.add,
+.tool-epman .record .section-header:hover .link-button.light.add,
+.tool-epman .program-module > .module-header:hover .link-button.light.add
+{
+  background-image: url([[pix:tool_epman|add_color]]);
+}
