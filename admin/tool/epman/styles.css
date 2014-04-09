@@ -125,7 +125,9 @@
 .tool-epman .record > .record-header:hover .link-button.light.nolink,
 .tool-epman .record > .record-header:hover .link-button.light.nolink > a,
 .tool-epman .record .section-header:hover .link-button.light.nolink,
-.tool-epman .record .section-header:hover .link-button.light.nolink > a
+.tool-epman .program-module > .module-header:hover .link-button.light.nolink,
+.tool-epman .record .section-header:hover .link-button.light.nolink > a,
+.tool-epman .program-module > .module-header:hover .link-button.light.nolink > a
 {
   color: black;
 }
@@ -133,7 +135,9 @@
 .tool-epman .record > .record-header:hover .link-button.light,
 .tool-epman .record > .record-header:hover .link-button.light > a,
 .tool-epman .record .section-header:hover .link-button.light,
-.tool-epman .record .section-header:hover .link-button.light > a
+.tool-epman .program-module > .module-header:hover .link-button.light,
+.tool-epman .record .section-header:hover .link-button.light > a,
+.tool-epman .program-module > .module-header:hover .link-button.light > a
 {
   color: #098aba;
 }
@@ -153,14 +157,16 @@
 }
 
 .tool-epman .record > .record-header .link-button.responsible,
-.tool-epman .record .section-header .link-button.responsible
+.tool-epman .record .section-header .link-button.responsible,
+.tool-epman .program-module > .module-header .link-button.responsible
 {
   background-image: url([[pix:tool_epman|user_light]]);
 }
 
 .tool-epman .record > .record-header:hover .link-button.responsible,
 .tool-epman .record.expanded > .record-header .link-button.responsible,
-.tool-epman .record .section-header:hover .link-button.responsible
+.tool-epman .record .section-header:hover .link-button.responsible,
+.tool-epman .program-module > .module-header:hover .link-button.responsible
 {
   background-image: url([[pix:tool_epman|user]]);
 }
@@ -170,14 +176,16 @@
  }
 
 .tool-epman .record > .record-header .link-button.groups,
-.tool-epman .record .section-header .link-button.groups
+.tool-epman .record .section-header .link-button.groups,
+.tool-epman .program-module > .module-header .link-button.groups
 {
   background-image: url([[pix:tool_epman|group_light]]);
 }
 
 .tool-epman .record > .record-header:hover .link-button.groups,
 .tool-epman .record.expanded > .record-header .link-button.groups,
-.tool-epman .record .section-header:hover .link-button.groups
+.tool-epman .record .section-header:hover .link-button.groups,
+.tool-epman .program-module > .module-header:hover .link-button.groups
 {
   background-image: url([[pix:tool_epman|group]]);
 }
@@ -458,13 +466,15 @@
  }
 
 .tool-epman .record.expanded > .record-header .link-button.light.edit,
-.tool-epman .record .section-header .link-button.light.edit
+.tool-epman .record .section-header .link-button.light.edit,
+.tool-epman .program-module > .module-header .link-button.light.edit
 {
   background-image: url([[pix:tool_epman|edit_light]]);
 }
 
 .tool-epman .record.expanded > .record-header:hover .link-button.light.edit,
-.tool-epman .record .section-header:hover .link-button.light.edit
+.tool-epman .record .section-header:hover .link-button.light.edit,
+.tool-epman .program-module > .module-header:hover .link-button.light.edit
 {
   background-image: url([[pix:tool_epman|edit]]);
 }
@@ -475,13 +485,15 @@
  }
 
 .tool-epman .record.expanded > .record-header .link-button.light.delete,
-.tool-epman .record .section-header .link-button.light.delete
+.tool-epman .record .section-header .link-button.light.delete,
+.tool-epman .program-module > .module-header .link-button.light.delete
 {
   background-image: url([[pix:tool_epman|delete_light]]);
 }
 
 .tool-epman .record.expanded > .record-header:hover .link-button.light.delete,
-.tool-epman .record .section-header:hover .link-button.light.delete
+.tool-epman .record .section-header:hover .link-button.light.delete,
+.tool-epman .program-module > .module-header:hover .link-button.light.delete
 {
   background-image: url([[pix:tool_epman|delete]]);
 }

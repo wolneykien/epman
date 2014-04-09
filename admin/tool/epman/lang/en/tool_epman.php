@@ -67,4 +67,5 @@ $string['Edit_program'] = 'Edit program';
 $string['Delete_program'] = 'Delete program';
 $string['Add_module'] = 'Add module';
 $string['Delete_modules'] = 'Delete modules';
+$string['Edit_module'] = 'Edit module';
 ?>

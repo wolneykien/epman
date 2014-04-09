@@ -208,6 +208,11 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           </span>
         </span>
       </div>
+      <div class="link-button light nolink edit">
+        <a href="javascript:void()">
+          <?php echo get_string('Edit_module', 'tool_epman'); ?>
+        </a>
+      </div>
     </div>
     <div class="module-courses">
       <ul class="module-course-list">
