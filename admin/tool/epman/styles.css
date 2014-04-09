@@ -69,8 +69,17 @@
 }
 
 .tool-epman .link-button,
-.tool-epman .link-button > a {
+.tool-epman .link-button > a,
+.tool-epman .link-button > a:visited,
+.tool-epman .link-button:active,
+.tool-epman .link-button:active > a,
+.tool-epman .link-button > a:active,
+.tool-epman .link-button:focus,
+.tool-epman .link-button:focus > a,
+.tool-epman .link-button > a:focus
+{
   color: #098aba;
+  outline: none;
 }
 
 .tool-epman .record > .record-header .link-button,
