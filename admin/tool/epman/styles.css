@@ -39,24 +39,17 @@
   padding-left: 2.0em;
 }
 
-.tool-epman .record-header.show-more {
+.tool-epman .record > .record-header.show-more {
   background-image: url([[pix:tool_epman|collapsed_light]]);
 }
 
 .tool-epman .show-more:hover,
-.tool-epman .record:hover .show-more,
-.tool-epman .record-header:hover.show-more {
+.tool-epman .record:hover > .record-header.show-more
+{
   background-image: url([[pix:tool_epman|collapsed]]);
 }
 
-.tool-epman .expanded > .show-more {
-  background-image: url([[pix:tool_epman|expanded]]);
-}
-
-.tool-epman .expanded > .show-more:hover,
-.tool-epman .expanded:hover > .show-more,
-.tool-epman .expanded > .record-header:hover.show-more
-{
+.tool-epman .record.expanded > .record-header.show-more {
   background-image: url([[pix:tool_epman|expanded]]);
 }
 
@@ -80,18 +73,16 @@
   color: #098aba;
 }
 
-.tool-epman .record-header .link-button,
-.tool-epman .record-header .link-button > a,
-.tool-epman .record .section-header .link-button,
-.tool-epman .record .section-header .link-button > a
+.tool-epman .record > .record-header .link-button,
+.tool-epman .record > .record-header .link-button > a
 {
   color: #d0d0d0;
 }
 
+.tool-epman .record-header:hover .link-button,
+.tool-epman .record.expanded > .record-header .link-button,
 .tool-epman .record-header:hover .link-button > a,
-.tool-epman .expanded > .record-header .link-button > a,
-.tool-epman .record:hover .link-button > a,
-.tool-epman .record .section-header:hover .link-button > a
+.tool-epman .record.expanded > .record-header .link-button > a
 {
   color: #098aba;
 }
@@ -101,48 +92,50 @@
   color: black;
 }
 
-.tool-epman .record-header .link-button.nolink,
-.tool-epman .record-header .link-button.nolink > a,
-.tool-epman .record .section-header .link-button.nolink,
-.tool-epman .record .section-header .link-button.nolink > a
+.tool-epman .record > .record-header .link-button.nolink,
+.tool-epman .record > .record-header .link-button.nolink > a,
 {
   color: #d0d0d0;
 }
 
-.tool-epman .record-header:hover .link-button.nolink > a,
-.tool-epman .record.expanded > .record-header:hover .link-button.nolink > a,
-.tool-epman .record:hover .link-button.nolink > a,
-.tool-epman .record .section-header:hover .link-button.nolink > a
+.tool-epman .record > .record-header:hover .link-button.nolink,
+.tool-epman .record > .record-header:hover .link-button.nolink > a,
+.tool-epman .record.expanded > .record-header .link-button.nolink,
+.tool-epman .record.expanded > .record-header .link-button.nolink > a
 {
   color: black;
 }
 
-.tool-epman .record-header .link-button.hidden,
-.tool-epman .record .section-header .link-button.hidden
-{
+.tool-epman .record > .record-header .link-button.light {
   display: none;
 }
 
-.tool-epman .record.expanded > .record-header .link-button.hidden,
-.tool-epman .record.expanded .section-header .link-button.hidden
-{
+.tool-epman .record.expanded > .record-header .link-button.light {
   display: inline-block;
 }
 
-.tool-epman .record.expanded > .record-header .link-button.hidden,
-.tool-epman .record.expanded > .record-header .link-button.hidden > a,
-.tool-epman .record.expanded .section-header .link-button.hidden,
-.tool-epman .record.expanded .section-header .link-button.hidden > a
+.tool-epman .link-button.light,
+.tool-epman .link-button.light > a,
+.tool-epman .record.expanded > .record-header .link-button.light,
+.tool-epman .record.expanded > .record-header .link-button.light > a
 {
   color: #a0a0a0;
 }
 
-.tool-epman .record.expanded > .record-header:hover .link-button.hidden.nolink,
-.tool-epman .record.expanded > .record-header:hover .link-button.hidden.nolink > a,
-.tool-epman .record.expanded .section-header:hover .link-button.hidden.nolink,
-.tool-epman .record.expanded .section-header:hover .link-button.hidden.nolink > a
+.tool-epman .record > .record-header:hover .link-button.light.nolink,
+.tool-epman .record > .record-header:hover .link-button.light.nolink > a,
+.tool-epman .record .section-header:hover .link-button.light.nolink,
+.tool-epman .record .section-header:hover .link-button.light.nolink > a
 {
   color: black;
+}
+
+.tool-epman .record > .record-header:hover .link-button.light,
+.tool-epman .record > .record-header:hover .link-button.light > a,
+.tool-epman .record .section-header:hover .link-button.light,
+.tool-epman .record .section-header:hover .link-button.light > a
+{
+  color: #098aba;
 }
 
 .tool-epman .link-button.right {
@@ -166,6 +159,7 @@
 }
 
 .tool-epman .record > .record-header:hover .link-button.responsible,
+.tool-epman .record.expanded > .record-header .link-button.responsible,
 .tool-epman .record .section-header:hover .link-button.responsible
 {
   background-image: url([[pix:tool_epman|user]]);
@@ -182,6 +176,7 @@
 }
 
 .tool-epman .record > .record-header:hover .link-button.groups,
+.tool-epman .record.expanded > .record-header .link-button.groups,
 .tool-epman .record .section-header:hover .link-button.groups
 {
   background-image: url([[pix:tool_epman|group]]);
@@ -462,14 +457,14 @@
    background-image: url([[pix:tool_epman|edit]]);
  }
 
-.tool-epman .record.expanded > .record-header .link-button.edit,
-.tool-epman .record.expanded .section-header .link-button.edit
+.tool-epman .record.expanded > .record-header .link-button.light.edit,
+.tool-epman .record .section-header .link-button.light.edit
 {
   background-image: url([[pix:tool_epman|edit_light]]);
 }
 
-.tool-epman .record.expanded > .record-header:hover .link-button.edit,
-.tool-epman .record.expanded .section-header:hover .link-button.edit
+.tool-epman .record.expanded > .record-header:hover .link-button.light.edit,
+.tool-epman .record .section-header:hover .link-button.light.edit
 {
   background-image: url([[pix:tool_epman|edit]]);
 }
@@ -479,14 +474,14 @@
   padding-left: 0.5em;
  }
 
-.tool-epman .record.expanded > .record-header .link-button.delete,
-.tool-epman .record.expanded .section-header .link-button.delete
+.tool-epman .record.expanded > .record-header .link-button.light.delete,
+.tool-epman .record .section-header .link-button.light.delete
 {
   background-image: url([[pix:tool_epman|delete_light]]);
 }
 
-.tool-epman .record.expanded > .record-header:hover .link-button.delete,
-.tool-epman .record.expanded .section-header:hover .link-button.delete
+.tool-epman .record.expanded > .record-header:hover .link-button.light.delete,
+.tool-epman .record .section-header:hover .link-button.light.delete
 {
   background-image: url([[pix:tool_epman|delete]]);
 }

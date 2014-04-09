@@ -92,12 +92,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <@ } @>
         </div>
       <@ } @>
-      <div class="link-button hidden nolink edit">
+      <div class="link-button light nolink edit">
         <a href="javascript:void()">
           <?php echo get_string('Edit_program', 'tool_epman'); ?>
         </a>
       </div>
-      <div class="link-button hidden nolink delete">
+      <div class="link-button light nolink delete">
         <a href="javascript:void()">
           <?php echo get_string('Delete_program', 'tool_epman'); ?>
         </a>
@@ -147,12 +147,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div class="section-header">
     <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
-    <div class="link-button hidden nolink edit">
+    <div class="link-button light nolink edit">
       <a href="javascript:void()">
         <?php echo get_string('Add_module', 'tool_epman'); ?>
       </a>
     </div>
-    <div class="link-button hidden nolink delete">
+    <div class="link-button light nolink delete">
       <a href="javascript:void()">
         <?php echo get_string('Delete_modules', 'tool_epman'); ?>
       </a>
