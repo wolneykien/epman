@@ -75,6 +75,11 @@ $services = array(
             'tool_epman_get_group_student',
             'tool_epman_update_group_student',
             'tool_epman_delete_group_student',
+
+            /* Users (read-only) */
+            'tool_epman_get_users',
+            'tool_epman_get_user',
+            
         ),
         'requiredcapability' => 'tool/epman:view',
         'restrictedusers' => 0,
@@ -344,5 +349,24 @@ $functions = array(
         'description' => 'Deletes the definition of the specified academic group student user',
         'type'        => 'write',
     ),
+
+
+    /* Users (read-only) */
+    
+    'tool_epman_get_users' => array(
+        'classname'   => 'epman_user_external',
+        'methodname'  => 'list_users',
+        'classpath'   => 'admin/tool/epman/crud/users.php',
+        'description' => 'Returns the list of users defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_get_user' => array(
+        'classname'   => 'epman_user_external',
+        'methodname'  => 'get_user',
+        'classpath'   => 'admin/tool/epman/crud/users.php',
+        'description' => 'Returns the definition of the specified user (by id)',
+        'type'        => 'read',
+    ),
+
 );
 ?>
