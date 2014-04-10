@@ -3,6 +3,16 @@
   margin-right: 0.25em;
 }
 
+.tool-epman a,
+.tool-epman a:visited,
+.tool-epman a:hover,
+.tool-epman a:active
+{
+  color: #098aba;
+  font-weight: normal;
+  font-style: normal;
+}
+
 .tool-epman .vspace {
   margin-top: 2.0em;
 }
@@ -310,7 +320,7 @@
 }
 
 .tool-epman .comment {
-  font-size: small;
+  font-size: inherit;
   font-style: italic;
   font-weight: normal;
   color: #a0a0a0;

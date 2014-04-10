@@ -1,13 +1,10 @@
 
 /**
- * User account description.
+ * Globals.
  */
 var user = {};
-
-/**
- * Templates.
- */
 var templates = {};
+var i18n = {};
 
 /**
  * Education program list router.
@@ -110,6 +107,7 @@ var EducationProgramView = Backbone.View.extend({
     initialize : function (options) {
         this.$header = options.$header;
         this.$body = options.$body;
+        this.$programDialog = null;
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'request', function(model) {
             console.log("Loading the education program #" + this.model.id);
@@ -157,6 +155,43 @@ var EducationProgramView = Backbone.View.extend({
             period.$el.append(templates.module({ m : m }));
             endDays = startDays + m.length;
         }, this);
+
+        if (this.$programDialog != null) {
+            this.$programDialog.dialog("destroy");
+            this.$programDialog = null;
+        }
+
+        var $programDialog = $("#program-dialog-template");
+        $programDialog.html(templates.programDialog(data));
+
+        var dialogOptions = {
+            autoOpen : false,
+            modal : true,
+            dialogClass : 'no-close',
+            width : '32%',
+            buttons : [
+                {
+                    text : i18n["OK"],
+                    click : function () {
+                        $(this).dialog ("close");
+                    }
+                },
+                {
+                    text : i18n["Cancel"],
+                    click : function () {
+                        $(this).dialog ("close");
+                    }
+                }
+            ],
+        };
+
+        $programDialog = $programDialog.find('.dialog');
+        $programDialog.dialog(dialogOptions);
+        this.$header.find("[role='edit-button']").click(function () {
+            $programDialog.dialog("open");
+        });
+        this.$programDialog = $programDialog;
+
         return this;
     },
 });
@@ -318,6 +353,7 @@ var initPage = function () {
     Backbone.emulateJSON = options.emulateJSON || false;
 
     _.extend(user, options.user);
+    _.defaults(i18n, options.i18n);
 
     templates = {
         listSection : _.template($("#list-section-template").html()),

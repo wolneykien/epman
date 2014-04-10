@@ -68,4 +68,8 @@ $string['Delete_program'] = 'Delete program';
 $string['Add_module'] = 'Add module';
 $string['Delete_modules'] = 'Delete modules';
 $string['Edit_module'] = 'Edit module';
+$string['Education_proram_edit'] = 'Education proram edit';
+$string['OK'] = 'OK';
+$string['Cancel'] = 'Cancel';
+$string['programName'] = 'Name';
 ?>
