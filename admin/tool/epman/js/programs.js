@@ -258,8 +258,8 @@ var EducationProgramsList = Backbone.View.extend({
         console.log("Render out the eduction program list");
         this.$el.empty();
         this.$el.show();
+        var section = null;
         if (!this.collection.isEmpty()) {
-            var section = null;
             this.collection.forEach(function (program) {
                 var data = {
                     f : this.collection.filter,
@@ -275,17 +275,21 @@ var EducationProgramsList = Backbone.View.extend({
                 }
                 section.$el.append(templates.record(data));
             }, this);
-
-            for (y = section.year + 1; y < 7; y++) {
-                this.$el.append(templates.listSection({
-                    f : this.collection.filter,
-                    p : null,
-                    year : y,
-                }));
-            }
         } else {
             console.log("Empty");
         }
+
+        if (!section) {
+            section = { year : 0};
+        }
+        for (y = section.year + 1; y < 7; y++) {
+            this.$el.append(templates.listSection({
+                f : this.collection.filter,
+                p : null,
+                year : y,
+            }));
+        }
+
         return this;
     },
 
