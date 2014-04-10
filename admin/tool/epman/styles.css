@@ -66,9 +66,9 @@
 .tool-epman .link-button,
 .tool-epman .link-button > a {
   display: inline-block;
-  padding-left: 1.0em;
+  padding-left: 0.75em;
   background-repeat: no-repeat;
-  background-position: 0.25em center;
+  background-position: 0px center;
   font-size: small;
   font-weight: normal;
   cursor: pointer;
@@ -76,6 +76,10 @@
 
 .tool-epman .link-button {
   margin-left: 0.5em;
+}
+
+.tool-epman .link-button:first-child {
+  margin-left: 0px;
 }
 
 .tool-epman .link-button,
@@ -233,8 +237,10 @@
 
 .tool-epman .panel {
   padding-top: 0.25em;
-  padding: 0.25em;
+  padding-bottom: 0.25em;
   font-size: normal;
+  line-height: 28px;
+  vertical-align: middle;
 }
 
 .tool-epman .panel.right {
@@ -245,27 +251,28 @@
   text-align: left;
 }
 
-.tool-epman .panel > .link-button {
+.tool-epman .panel > .link-button.switch {
   font-size: medium;
   padding-left: 1.65em;
   background-color: #eee8a0;
   border-radius: 16px; /* switch_on/off.png */
 }
 
-.tool-epman .panel > .link-button:hover {
+.tool-epman .panel > .link-button.switch:hover {
   background-color: #f5f0cc;
 }
 
-.tool-epman .panel > .link-button:hover:active, .tool-epman .panel > .link-button:active {
+.tool-epman .panel > .link-button.switch:hover:active,
+.tool-epman .panel > .link-button.switch:active {
   background-color: #eee8a0;
 }
 
 .tool-epman .panel > .link-button.right {
-  float: none;
+  float: right;
 }
 
 .tool-epman .panel > .link-button.left {
-  float: none;
+  float: left;
 }
 
 .tool-epman .link-button.switch {

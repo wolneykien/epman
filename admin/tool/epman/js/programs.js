@@ -5,6 +5,8 @@
 var user = {};
 var templates = {};
 var i18n = {};
+var dialogs = {};
+var addProgram;
 
 /**
  * Education program list router.
@@ -34,20 +36,45 @@ var EducationProgramsRouter = Backbone.Router.extend({
         
 });
 
+function getUrl(urlBase, urlParams, id) {
+    var url = urlBase;
+    if (id) {
+        url = url + "/" + id;
+    }
+    if (_.isEmpty(urlParams)) {
+        return url;
+    } else {
+        return url + '?' + $.param(urlParams);
+    }
+}
+
 /**
  * Education program model.
  */
 var EducationProgram = Backbone.Model.extend({
 
+    urlBase : "/programs",
+    urlParams : {},
     url : function () {
         if (this.collection) {
             return this.collection.url(this.id);
         } else {
-            return null;
+            if (id) {
+                return getUrl(this.urlBase, this.urlParams, this.id);
+            } else {
+                return null;
+            }
         }
     },
 
     initialize : function (attrs, options) {
+        if (options.restRoot) {
+            this.urlBase = options.restRoot + this.urlBase;
+        }
+        _.extend(this.urlParams, options.restParams);
+        if (this.id) {
+            console.log("Education program URL: " + this.url());
+        }
     },
 
 });
@@ -67,15 +94,7 @@ var EducationPrograms = Backbone.Collection.extend({
     urlParams : {},
     filter : {},
     url: function (id) {
-        var url = this.urlBase;
-        if (id) {
-            url = url + "/" + id;
-        }
-        if (_.isEmpty(this.urlParams)) {
-            return url;
-        } else {
-            return url + '?' + $.param(this.urlParams);
-        }
+        return getUrl(this.urlBase, this.urlParams, id);
     },
 
     initialize : function (models, options) {
@@ -83,7 +102,7 @@ var EducationPrograms = Backbone.Collection.extend({
             this.urlBase = options.restRoot + this.urlBase;
         }
         _.extend(this.urlParams, options.restParams);
-        console.log("Education program URL: " + this.url());
+        console.log("Education program collection URL: " + this.url());
     },
 
     load : function (filter) {
@@ -107,7 +126,6 @@ var EducationProgramView = Backbone.View.extend({
     initialize : function (options) {
         this.$header = options.$header;
         this.$body = options.$body;
-        this.$programDialog = null;
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'request', function(model) {
             console.log("Loading the education program #" + this.model.id);
@@ -155,42 +173,14 @@ var EducationProgramView = Backbone.View.extend({
             period.$el.append(templates.module({ m : m }));
             endDays = startDays + m.length;
         }, this);
-
-        if (this.$programDialog != null) {
-            this.$programDialog.dialog("destroy");
-            this.$programDialog = null;
-        }
-
-        var $programDialog = $("#program-dialog-template");
-        $programDialog.html(templates.programDialog(data));
-
-        var dialogOptions = {
-            autoOpen : false,
-            modal : true,
-            dialogClass : 'no-close',
-            width : '32%',
-            buttons : [
-                {
-                    text : i18n["OK"],
-                    click : function () {
-                        $(this).dialog ("close");
-                    }
-                },
-                {
-                    text : i18n["Cancel"],
-                    click : function () {
-                        $(this).dialog ("close");
-                    }
-                }
-            ],
-        };
-
-        $programDialog = $programDialog.find('.dialog');
-        $programDialog.dialog(dialogOptions);
+        
         this.$header.find("[role='edit-button']").click(function () {
-            $programDialog.dialog("open");
+            openDialog(
+                "#program-dialog-template",
+                templates.programDialog,
+                data,
+                {});
         });
-        this.$programDialog = $programDialog;
 
         return this;
     },
@@ -348,6 +338,40 @@ var EducationProgramsFilter = Backbone.View.extend({
 
 });
 
+var openDialog = function (el, template, data, options) {
+    if (dialogs['el'] != null) {
+        dialogs['el'].dialog("destroy");
+        dialogs['el'] = null;
+    }
+
+    var $el = $(el);
+    $el.html(template(data));
+
+    var options = _.extend({}, options, { autoOpen : true });
+    options = _.defaults({
+        modal : true,
+        dialogClass : 'no-close',
+        width : '48%',
+        buttons : [
+            {
+                text : i18n["OK"],
+                click : function () {
+                    $(this).dialog ("close");
+                }
+            },
+            {
+                text : i18n["Cancel"],
+                click : function () {
+                    $(this).dialog ("close");
+                }
+            }
+        ],
+    });
+
+    dialogs['el'] = $el.find('.dialog').dialog(options);
+}
+
+
 /* Init */
 
 var initPage = function () {
@@ -404,6 +428,19 @@ var initPage = function () {
             footerPanel.hide();
         }
     }
+
+    var addProgram = function () {
+        var program = new EducationProgram({}, {
+            restRoot : options.restRoot,
+            restParams : options.restParams,
+        });
+        openDialog(
+            "#program-dialog-template",
+            templates.programDialog,
+            { p : program.toJSON() },
+            {});
+    };
+    $("#add-program-button").click(addProgram);
 
     $(window).scroll (checkFooter);
     checkFooter();

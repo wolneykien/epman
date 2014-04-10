@@ -248,7 +248,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 
 <!-- Dialog templates -->
 <div id="program-dialog-template" style="display: none;">
-  <div class="tool-epman dialog" title="<?php echo get_string('Education_proram_edit', 'tool_epman'); ?>">
+  <div class="tool-epman dialog" title="<@= p.id ? '<?php echo get_string('Education_program_edit', 'tool_epman'); ?>' : '<?php echo get_string('New_education_program', 'tool_epman'); ?>' @>">
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('programName', 'tool_epman'); ?></td>
@@ -295,7 +295,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 
 <!-- Page -->
 <div class="tool-epman">
-  <div id="filter" class="panel right vspace">
+  <div id="filter" class="panel vspace">
+    <div class="link-button nolink add">
+      <a id="add-program-button" href="javascript:void(0)">
+        <?php echo get_string('Add_program', 'tool_epman'); ?>
+      </a>
+    </div>
     <span id="my" class="link-button switch right responsible">
       <?php echo get_string('myprograms', 'tool_epman'); ?>
     </span>

@@ -68,9 +68,11 @@ $string['Delete_program'] = 'Delete program';
 $string['Add_module'] = 'Add module';
 $string['Delete_modules'] = 'Delete modules';
 $string['Edit_module'] = 'Edit module';
-$string['Education_proram_edit'] = 'Education proram edit';
+$string['Education_program_edit'] = 'Education program edit';
+$string['New_education_program'] = 'New education program';
 $string['OK'] = 'OK';
 $string['Cancel'] = 'Cancel';
 $string['programName'] = 'Name';
 $string['Enter_the_programs_description'] = "Enter the program's description";
+$string['Add_program'] = 'Add program';
 ?>
