@@ -248,43 +248,48 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 
 <!-- Dialog templates -->
 <div id="program-dialog-template" style="display: none;">
-  <div class="dialog tool-epman" title="<?php echo get_string('Education_proram_edit', 'tool_epman'); ?>">
-    <div class="name-value">
-      <span><?php echo get_string('programName', 'tool_epman'); ?></span>
-      <span><@= p.name @></span>
-    </div>
-    <div class="name-value">
-      <span><?php echo get_string('Description', 'tool_epman'); ?></span>
-      <@ if (p.description && p.description.length > 0) { @>
-      <span class="description"><@= p.description @></span>
-      <@ } else { @>
-      <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
-      <@ } @>
-    </div>
-    <div class="name-value">
-      <span><?php echo get_string('Responsible', 'tool_epman'); ?></span>
-      <@ if (p.responsible && p.responsible.id) { @>
-      <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
-        <@= p.responsible.firstname + " " + p.responsible.lastname @>
-      </a>
-      <@ } else { @>
-      <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
-      <@ } @>
-    </div>
-    <div class="name-value">
-      <span><?php echo get_string('Assistants', 'tool_epman'); ?></span>
-      <@ if (p.assistants && p.assistants.length > 0) {
-        _.each(p.assistants, function (a) {
-          if (a.id) { @>
-          <a href="<@= '/user/profile.php?id=' + a.id @>">
-            <@= a.firstname + " " + a.lastname @>
+  <div class="tool-epman dialog" title="<?php echo get_string('Education_proram_edit', 'tool_epman'); ?>">
+    <table class="name-value-table">
+      <tr class="name-value">
+        <td><?php echo get_string('programName', 'tool_epman'); ?></td>
+        <td><input name="name" value="<@= p.name @>"></input></td>
+      </tr>
+      <tr>
+        <td colspan="2" class="fullrow">
+          <textarea name="description" class="description" placeholder="<?php echo get_string('Enter_the_programs_description', 'tool_epman'); ?>"><@= p.description @></textarea>
+        </td>
+      </tr>
+    </table>
+    <table class="name-value-table">
+      <tr class="name-value">
+        <td><?php echo get_string('Responsible', 'tool_epman'); ?></td>
+        <td>
+        <@ if (p.responsible && p.responsible.id) { @>
+          <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
+          <@= p.responsible.firstname + " " + p.responsible.lastname @>
           </a>
-          <@ }
-        });
-      } else { @>
-      <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
-      <@ } @>
-    </div>
+        <@ } else { @>
+          <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+        <@ } @>
+        </td>
+      </tr>
+      <tr class="name-value">
+        <td><?php echo get_string('Assistants', 'tool_epman'); ?></td>
+        <td>
+        <@ if (p.assistants && p.assistants.length > 0) {
+          _.each(p.assistants, function (a) {
+            if (a.id) { @>
+            <a href="<@= '/user/profile.php?id=' + a.id @>">
+              <@= a.firstname + " " + a.lastname @>
+            </a>
+            <@ }
+          });
+        } else { @>
+          <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
+        <@ } @>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 

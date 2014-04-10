@@ -343,12 +343,40 @@
   padding-right: 0.25em;
 }
 
-.tool-epman .name-value > span:first-child {
+.tool-epman .name-value > span:first-child,
+.tool-epman .name-value > td:first-child { 
   font-weight: bold;
 }
 
-.tool-epman .name-value > span:first-child:after {
+.tool-epman .name-value > span:first-child:after,
+.tool-epman .name-value > td:first-child:after {
   content: ":";
+}
+
+.tool-epman .name-value-table {
+  width: 100%;
+  margin: 0px;
+}
+
+.tool-epman .name-value-table .name-value > td:last-child {
+  width: 100%;
+}
+
+.tool-epman .name-value-table .name-value > td.fullrow {
+  width: 100%;
+}
+
+.tool-epman.dialog input,
+.tool-epman.dialog textarea {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d0d0d0;
+  font-size: small;
+  resize: none;
 }
 
 .tool-epman .program-modules {

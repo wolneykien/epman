@@ -72,4 +72,5 @@ $string['Education_proram_edit'] = 'Education proram edit';
 $string['OK'] = 'OK';
 $string['Cancel'] = 'Cancel';
 $string['programName'] = 'Name';
+$string['Enter_the_programs_description'] = "Enter the program's description";
 ?>
