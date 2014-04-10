@@ -5,6 +5,11 @@
 var user = {};
 
 /**
+ * Templates.
+ */
+var templates = {};
+
+/**
  * Education program list router.
  *
  * @param options {
@@ -103,14 +108,8 @@ var EducationPrograms = Backbone.Collection.extend({
 var EducationProgramView = Backbone.View.extend({
 
     initialize : function (options) {
-        this.template = options.template;
         this.$header = options.$header;
-        this.headerTemplate = options.headerTemplate;
         this.$body = options.$body;
-        this.bodyTemplate = options.bodyTemplate;
-        this.moduleTemplate = options.moduleTemplate;
-        this.periodTemplate = options.periodTemplate;
-        this.vacationTemplate = options.vacationTemplate;
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'request', function(model) {
             console.log("Loading the education program #" + this.model.id);
@@ -134,8 +133,8 @@ var EducationProgramView = Backbone.View.extend({
             p : this.model.toJSON(),
             year : this.model.get('year'),
         };
-        this.$header.html(this.headerTemplate(data));
-        this.$body.html(this.bodyTemplate(data));
+        this.$header.html(templates.recordHeader(data));
+        this.$body.html(templates.recordBody(data));
         var $modules = this.$body.find(".program-module-list");
         var period = null;
         var endDays = null;
@@ -143,19 +142,19 @@ var EducationProgramView = Backbone.View.extend({
             var startDays = Math.ceil(m.startdate / (24 * 3600));
             if (period == null || period.num != m.period) {
                 if (endDays != null && startDays != (endDays + 1)) {
-                    $modules.append(this.vacationTemplate({ length : (startDays - endDays - 1) }));
+                    $modules.append(templates.vacation({ length : (startDays - endDays - 1) }));
                     endDays = startDays - 1;
                 }
-                $modules.append(this.periodTemplate({ m : m }));
+                $modules.append(templates.period({ m : m }));
                 period = {
                     $el : $modules.find("#module-" + m.id + "-period-" + (m.period + 1)),
                     num : m.period,
                 };
             }
             if (endDays != null && startDays != (endDays + 1)) {
-                period.$el.append(this.vacationTemplate({ length : (startDays - endDays - 1) }));
+                period.$el.append(templates.vacation({ length : (startDays - endDays - 1) }));
             }
-            period.$el.append(this.moduleTemplate({ m : m }));
+            period.$el.append(templates.module({ m : m }));
             endDays = startDays + m.length;
         }, this);
         return this;
@@ -190,14 +189,8 @@ var EducationProgramsList = Backbone.View.extend({
                 var programView = new EducationProgramView({
                     el : ("#" + rid),
                     $el : r,                    
-                    template : this.recordTemplate,
                     $header : rh,
-                    headerTemplate : this.recordHeaderTemplate,
                     $body : rb,
-                    bodyTemplate : this.recordBodyTemplate,
-                    moduleTemplate : this.moduleTemplate,
-                    periodTemplate : this.periodTemplate,
-                    vacationTemplate : this.vacationTemplate,
                     model : program,
                 });
                 this.expandedPrograms[rid] = programView;
@@ -211,20 +204,6 @@ var EducationProgramsList = Backbone.View.extend({
     },
 
     initialize : function (options) {
-        var section = $("#list-section-template");
-        this.sectionTemplate = _.template(section.html());
-        var record = $("#record-template");
-        this.recordTemplate = _.template(record.html());
-        var recordHeader = record.find(".record-header");
-        this.recordHeaderTemplate = _.template(recordHeader.html());
-        var recordBody = $("#record-body-template");
-        this.recordBodyTemplate = _.template(recordBody.html());
-        var module = $("#module-template");
-        this.moduleTemplate = _.template(module.html());
-        var period = $("#modules-period-template");
-        this.periodTemplate = _.template(period.html());
-        var vacation = $("#vacation-template");
-        this.vacationTemplate = _.template(vacation.html());
         this.listenTo(this.collection, 'reset', this.render);
         this.listenTo(this.collection, 'request', function(collection) {
             if (collection != this.collection) return;
@@ -253,17 +232,17 @@ var EducationProgramsList = Backbone.View.extend({
                     year : program.get('year'),
                 };
                 if (section == null || section.year != data.year) {
-                    this.$el.append(this.sectionTemplate(data));
+                    this.$el.append(templates.listSection(data));
                     section = {
                         $el : this.$("#year-" + data.year),
                         year : data.year,
                     };
                 }
-                section.$el.append(this.recordTemplate(data));
+                section.$el.append(templates.record(data));
             }, this);
 
             for (y = section.year + 1; y < 7; y++) {
-                this.$el.append(this.sectionTemplate({
+                this.$el.append(templates.listSection({
                     f : this.collection.filter,
                     p : null,
                     year : y,
@@ -339,6 +318,17 @@ var initPage = function () {
     Backbone.emulateJSON = options.emulateJSON || false;
 
     _.extend(user, options.user);
+
+    templates = {
+        listSection : _.template($("#list-section-template").html()),
+        record : _.template($("#record-template").html()),
+        recordHeader : _.template($("#record-template").find(".record-header").html()),
+        recordBody : _.template($("#record-body-template").html()),
+        module : _.template($("#module-template").html()),
+        period : _.template($("#modules-period-template").html()),
+        vacation : _.template($("#vacation-template").html()),
+        programDialog : _.template($("#program-dialog-template").html()),
+    };
 
     var programs = new EducationPrograms([], {
         restRoot : options.restRoot,
