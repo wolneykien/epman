@@ -247,7 +247,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="userselect-template" style="display: none;">
-  <div role="selected-list" class="selected-list">
+  <div role="selected-list" class="multiselect-box">
   <@ _.each(collection, function (user) {
         if (user.id) { @>
         <span data-id="<@= user.id @>" class="responsible deletable">
@@ -291,11 +291,11 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('Responsible', 'tool_epman'); ?></td>
-        <td role="userselet"></td>
+        <td role="selet-responsible"></td>
       </tr>
       <tr class="name-value">
         <td><?php echo get_string('Assistants', 'tool_epman'); ?></td>
-        <td role="usermultiselect"></td>
+        <td role="select-assistants"></td>
       </tr>
     </table>
   </div>

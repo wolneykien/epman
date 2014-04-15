@@ -569,3 +569,35 @@
 {
   background-image: url([[pix:tool_epman|add_color]]);
 }
+
+.tool-epman .multiselect-box {
+  text-align: left;
+}
+
+.tool-epman .keyword-input-box {
+  position: relative;
+  margin-left: 0.25em;
+}
+
+.tool-epman .keyword-input {
+  margin: 0px;
+  padding: 0px;
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d0d0d0;
+  font-size: small;
+}
+
+.tool-epman .search-list-overlay {
+  position: absolute;
+  margin: 0px;
+  padding: 0.25em;
+  left : 0px;
+  bottom : 0px;
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d0d0d0;
+  font-size: small;
+}

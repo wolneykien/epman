@@ -4,8 +4,6 @@
  */
 var user = {};
 var templates = {};
-var i18n = {};
-var dialogs = {};
 var addProgram;
 
 /**
@@ -36,45 +34,16 @@ var EducationProgramsRouter = Backbone.Router.extend({
         
 });
 
-function getUrl(urlBase, urlParams, id) {
-    var url = urlBase;
-    if (id) {
-        url = url + "/" + id;
-    }
-    if (_.isEmpty(urlParams)) {
-        return url;
-    } else {
-        return url + '?' + $.param(urlParams);
-    }
-}
-
 /**
  * Education program model.
  */
-var EducationProgram = Backbone.Model.extend({
+var EducationProgram = Model.extend({
 
     urlBase : "/programs",
-    urlParams : {},
-    url : function () {
-        if (this.collection) {
-            return this.collection.url(this.id);
-        } else {
-            if (id) {
-                return getUrl(this.urlBase, this.urlParams, this.id);
-            } else {
-                return null;
-            }
-        }
-    },
 
-    initialize : function (attrs, options) {
-        if (options.restRoot) {
-            this.urlBase = options.restRoot + this.urlBase;
-        }
-        _.extend(this.urlParams, options.restParams);
-        if (this.id) {
-            console.log("Education program URL: " + this.url());
-        }
+    defaults : {
+        responsible : {},
+        assistants : [],
     },
 
 });
@@ -87,23 +56,11 @@ var EducationProgram = Backbone.Model.extend({
  * }
  *
  */
-var EducationPrograms = Backbone.Collection.extend({
+var EducationPrograms = Collection.extend({
 
     model: EducationProgram,
     urlBase : "/programs",
-    urlParams : {},
     filter : {},
-    url: function (id) {
-        return getUrl(this.urlBase, this.urlParams, id);
-    },
-
-    initialize : function (models, options) {
-        if (options.restRoot) {
-            this.urlBase = options.restRoot + this.urlBase;
-        }
-        _.extend(this.urlParams, options.restParams);
-        console.log("Education program collection URL: " + this.url());
-    },
 
     load : function (filter) {
         this.filter = filter;
@@ -124,6 +81,9 @@ var EducationPrograms = Backbone.Collection.extend({
 var EducationProgramView = Backbone.View.extend({
 
     initialize : function (options) {
+        if (options.$el) {
+            this.$el = options.$el;
+        }
         this.$header = options.$header;
         this.$body = options.$body;
         this.listenTo(this.model, 'change', this.render);
@@ -175,15 +135,16 @@ var EducationProgramView = Backbone.View.extend({
         }, this);
         
         this.$header.find("[role='edit-button']").click(function () {
-            openDialog(
-                "#program-dialog-template",
-                templates.programDialog,
-                data,
-                {});
+            var program = new ProgramDialog({
+                model : this.model,
+                el : "#program-dialog-template",
+            });
+            program.open();
         });
 
         return this;
     },
+
 });
 
 /**
@@ -338,6 +299,34 @@ var EducationProgramsFilter = Backbone.View.extend({
 
 });
 
+var ProgramDialog = Dialog.extend({
+
+    responsible : null,
+    assistants : null,
+
+    render : function () {
+        this.$el.html(templates.programDialog({
+            p : this.model.toJSON(),
+        }));
+        this.responsible = new UserSelect({
+            $el : this.$("[role='select-responsible']"),
+            template : templates.userselect,
+            searchlistTemplate : templates.userSearchList,
+            selectedList : new Users([new User(this.model.get('responsible'))]),
+            max : 1,
+        });
+        this.assistants = new UserSelect({
+            $el : this.$("[role='select-assistants']"),
+            template : templates.userselect,
+            searchlistTemplate : templates.userSearchList,
+            selectedList : new Users(_.map(this.model.get('assistants'), function (assistant) {
+                return new User(assistant)
+            })),
+        });   
+    },
+
+});
+
 /* Init */
 
 var initPage = function () {
@@ -362,10 +351,9 @@ var initPage = function () {
         userSearchList : _.template($("#user-search-list-template").html()),
     };
 
-    var programs = new EducationPrograms([], {
-        restRoot : options.restRoot,
-        restParams : options.restParams,
-    });
+    _.extend(restOptions, { options.restRoot, options.restParams });
+
+    var programs = new EducationPrograms([], {});
     var programList = new EducationProgramsList({
         el : "#program-list",
         collection : programs,
@@ -398,15 +386,11 @@ var initPage = function () {
     }
 
     var addProgram = function () {
-        var program = new EducationProgram({}, {
-            restRoot : options.restRoot,
-            restParams : options.restParams,
+        var program = new ProgramDialog({
+            model : new EducationProgram({}, {}),
+            el : "#program-dialog-template",
         });
-        openDialog(
-            "#program-dialog-template",
-            templates.programDialog,
-            { p : program.toJSON() },
-            {});
+        program.open();
     };
     $("#add-program-button").click(addProgram);
 
