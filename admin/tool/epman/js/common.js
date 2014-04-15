@@ -36,7 +36,7 @@ var Model = Backbone.Model.extend({
     },
 
     initialize : function (attrs, options) {
-        options = _.defaults(options, restOptions);
+        options = _.defaults(options || {}, restOptions);
         if (options.restRoot) {
             this.urlBase = options.restRoot.replace(/\/$/, "") + this.urlBase;
         }
@@ -58,7 +58,7 @@ var Collection = Backbone.Collection.extend({
     },
 
     initialize : function (models, options) {
-        options = _.defaults(options, restOptions);
+        options = _.defaults(options || {}, restOptions);
         if (options.restRoot) {
             this.urlBase = options.restRoot.replace(/\/$/, "") + this.urlBase;
         }
@@ -76,7 +76,7 @@ var Dialog = Backbone.View.extend({
     dialog : null,
 
     initialize : function (options) {
-        _.extend(this, options);
+        _.extend(this, options || {});
         if (!this.dialogOptions) {
             this.dialogOptions = {};
         }
@@ -94,8 +94,8 @@ var Dialog = Backbone.View.extend({
 
         this.render();
 
-        var options = _.extend({}, this.dialogOptions, options, { autoOpen : true });
-        options = _.defaults({
+        var options = _.extend({}, this.dialogOptions, options || {}, { autoOpen : true });
+        options = _.defaults(options, {
             modal : true,
             dialogClass : 'no-close',
             width : '48%',
@@ -131,7 +131,7 @@ var MultiSelect = Backbone.View.extend({
     keyword : "",
 
     events : {
-        "change [role='keyword-input']" : function (e) {
+        "input [role='keyword-input']" : function (e) {
             this.search($(e.target).val());
         },
         "keypress [role='keyword-input']" : function (e) {
@@ -145,7 +145,7 @@ var MultiSelect = Backbone.View.extend({
     },
 
     initialize : function (options) {
-        _.extend(this, _.pick(options,
+        _.extend(this, _.pick(options || {},
             'selectedCollection',
             'searchCollection',
             'max',
@@ -153,7 +153,7 @@ var MultiSelect = Backbone.View.extend({
             'template',
             'searchlistTemplate',
             'keyword',
-            '$el',
+            '$el'
         ));
         this.configure(options);
         this.listenTo(this.selectedCollection, "reset", this.render);
@@ -163,7 +163,11 @@ var MultiSelect = Backbone.View.extend({
         this.listenTo(this.searchCollection, "add", this.update);
         this.listenTo(this.searchCollection, "remove", this.update);
         this.render();
-        this.search(this.keyword);
+        if (!this.max || this.selectedCollection.length < this.max) {
+            this.search(this.keyword);
+        } else {
+            this.search("");
+        }
     },
 
     configure : function (options) {
@@ -171,10 +175,10 @@ var MultiSelect = Backbone.View.extend({
 
     render : function () {
         this.undelegateEvents();
-        this.$el.html(template({
+        this.$el.html(this.template({
             collection : this.selectedCollection.toJSON(),
-            more : (!this.max || this.selectedCollection.length < this.max),
         }));
+        this.$("[role='search']").toggle(!this.max || this.selectedCollection.length < this.max);
         this.$searchlist = this.$("[role='search-list']");
         var input = this.$("[role='keyword-input']");
         input.val(this.keyword);
@@ -182,15 +186,15 @@ var MultiSelect = Backbone.View.extend({
     },
 
     update : function () {
-        if (!this.searchCollection.isEmpty()) {
-            this.$searchList.show();
-            this.$searchList.html(this.searchlistTemplate({
+        this.$searchlist.toggleClass("loading", false);
+        if (!this.searchCollection.isEmpty()) {            
+            this.$searchlist.html(this.searchlistTemplate({
                 collection : this.searchCollection.toJSON(),
                 keyword : this.keyword,
             }));
         } else {
-            this.$searchList.hide();
-            this.$searchList.empty();
+            this.$searchlist.hide();
+            this.$searchlist.empty();
         }
     },
 
@@ -202,6 +206,8 @@ var MultiSelect = Backbone.View.extend({
         if (keyword.length > 0) {
             this.searchCollection.urlParams.search = keyword;
             this.searchCollection.urlParams.limit = this.searchLimit;
+            this.$searchlist.toggleClass("loading", true);
+            this.$searchlist.show();
             this.searchCollection.fetch({ reset : true });
         } else {
             this.searchCollection.reset();

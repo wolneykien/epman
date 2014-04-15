@@ -15,10 +15,9 @@ var Users = Collection.extend({
 var UserSelect = MultiSelect.extend({
 
     configure : function (options) {
-        _.extend(this, _.pick(options,
-            'selectedCollection',
-            'searchCollection',
-        ));
+        if (!this.searchCollection) {
+            this.searchCollection = new Users();
+        }
     },
 
 });

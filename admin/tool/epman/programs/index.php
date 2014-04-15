@@ -51,6 +51,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
 ), true);
 
 $PAGE->requires->js('/admin/tool/epman/js/common.js');
+$PAGE->requires->js('/admin/tool/epman/js/userselect.js');
 $PAGE->requires->js('/admin/tool/epman/js/programs.js');
 
 admin_externalpage_setup('toolepman');
@@ -255,15 +256,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </span>
         <@ }
       }); @>
-  <@ if (more) { @>
-    <div class="keyword-input-box">
+    <div role="search" class="keyword-input-box">
       <input role="keyword-input" type="text" class="keyword-input"
              placeholder="<?php echo get_string('starttyping_user', 'tool_epman'); ?>">
       </input>
       <div role="search-list" class="search-list-overlay" style="display: none;">
       </div>
     </div>
-  <@ } @>
   </div>
 </div>
 <div id="user-search-list-template" style="display: none;">
@@ -271,7 +270,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <span role="search-item" data-id="<@= user.id @>">
       <@= user.firstname + " " + user.lastname @>
     </span>
-  <@ } @>
+  <@ }); @>
 </div>
 
 <!-- Dialog templates -->
@@ -291,7 +290,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('Responsible', 'tool_epman'); ?></td>
-        <td role="selet-responsible"></td>
+        <td role="select-responsible"></td>
       </tr>
       <tr class="name-value">
         <td><?php echo get_string('Assistants', 'tool_epman'); ?></td>

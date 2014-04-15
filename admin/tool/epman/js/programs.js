@@ -42,7 +42,6 @@ var EducationProgram = Model.extend({
     urlBase : "/programs",
 
     defaults : {
-        responsible : {},
         assistants : [],
     },
 
@@ -312,14 +311,14 @@ var ProgramDialog = Dialog.extend({
             $el : this.$("[role='select-responsible']"),
             template : templates.userselect,
             searchlistTemplate : templates.userSearchList,
-            selectedList : new Users([new User(this.model.get('responsible'))]),
+            selectedCollection : new Users(this.model.get('responsible') ? [new User(this.model.get('responsible'))] : []),
             max : 1,
         });
         this.assistants = new UserSelect({
             $el : this.$("[role='select-assistants']"),
             template : templates.userselect,
             searchlistTemplate : templates.userSearchList,
-            selectedList : new Users(_.map(this.model.get('assistants'), function (assistant) {
+            selectedCollection : new Users(_.map(this.model.get('assistants'), function (assistant) {
                 return new User(assistant)
             })),
         });   
@@ -351,7 +350,7 @@ var initPage = function () {
         userSearchList : _.template($("#user-search-list-template").html()),
     };
 
-    _.extend(restOptions, { options.restRoot, options.restParams });
+    _.extend(restOptions, _.pick(options || {}, 'restRoot', 'restParams'));
 
     var programs = new EducationPrograms([], {});
     var programList = new EducationProgramsList({
