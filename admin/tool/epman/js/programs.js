@@ -203,7 +203,7 @@ var EducationProgramsList = Backbone.View.extend({
             if (!$(e.target).hasClass("record-header")) {
                 return true;
             }
-            var rh = $(e.currentTarget);
+            var rh = $(e.target);
             var r = rh.parent();
             var rb = r.find(".record-body");
             var rid = r.attr("id").replace(/^program-/, "");
@@ -338,40 +338,6 @@ var EducationProgramsFilter = Backbone.View.extend({
 
 });
 
-var openDialog = function (el, template, data, options) {
-    if (dialogs['el'] != null) {
-        dialogs['el'].dialog("destroy");
-        dialogs['el'] = null;
-    }
-
-    var $el = $(el);
-    $el.html(template(data));
-
-    var options = _.extend({}, options, { autoOpen : true });
-    options = _.defaults({
-        modal : true,
-        dialogClass : 'no-close',
-        width : '48%',
-        buttons : [
-            {
-                text : i18n["OK"],
-                click : function () {
-                    $(this).dialog ("close");
-                }
-            },
-            {
-                text : i18n["Cancel"],
-                click : function () {
-                    $(this).dialog ("close");
-                }
-            }
-        ],
-    });
-
-    dialogs['el'] = $el.find('.dialog').dialog(options);
-}
-
-
 /* Init */
 
 var initPage = function () {
@@ -392,6 +358,8 @@ var initPage = function () {
         period : _.template($("#modules-period-template").html()),
         vacation : _.template($("#vacation-template").html()),
         programDialog : _.template($("#program-dialog-template").html()),
+        userselect : _.template($("#userselect-template").html()),
+        userSearchList : _.template($("#user-search-list-template").html()),
     };
 
     var programs = new EducationPrograms([], {

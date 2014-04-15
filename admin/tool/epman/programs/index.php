@@ -50,6 +50,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
     ),
 ), true);
 
+$PAGE->requires->js('/admin/tool/epman/js/common.js');
 $PAGE->requires->js('/admin/tool/epman/js/programs.js');
 
 admin_externalpage_setup('toolepman');
@@ -245,6 +246,33 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </span>
   </div>
 </div>
+<div id="userselect-template" style="display: none;">
+  <div role="selected-list" class="selected-list">
+  <@ _.each(collection, function (user) {
+        if (user.id) { @>
+        <span data-id="<@= user.id @>" class="responsible deletable">
+          <@= user.firstname + " " + user.lastname @>
+        </span>
+        <@ }
+      }); @>
+  <@ if (more) { @>
+    <div class="keyword-input-box">
+      <input role="keyword-input" type="text" class="keyword-input"
+             placeholder="<?php echo get_string('starttyping_user', 'tool_epman'); ?>">
+      </input>
+      <div role="search-list" class="search-list-overlay" style="display: none;">
+      </div>
+    </div>
+  <@ } @>
+  </div>
+</div>
+<div id="user-search-list-template" style="display: none;">
+  <@ _.each(collection, function (user) { @>
+    <span role="search-item" data-id="<@= user.id @>">
+      <@= user.firstname + " " + user.lastname @>
+    </span>
+  <@ } @>
+</div>
 
 <!-- Dialog templates -->
 <div id="program-dialog-template" style="display: none;">
@@ -263,31 +291,11 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('Responsible', 'tool_epman'); ?></td>
-        <td>
-        <@ if (p.responsible && p.responsible.id) { @>
-          <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
-          <@= p.responsible.firstname + " " + p.responsible.lastname @>
-          </a>
-        <@ } else { @>
-          <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
-        <@ } @>
-        </td>
+        <td role="userselet"></td>
       </tr>
       <tr class="name-value">
         <td><?php echo get_string('Assistants', 'tool_epman'); ?></td>
-        <td>
-        <@ if (p.assistants && p.assistants.length > 0) {
-          _.each(p.assistants, function (a) {
-            if (a.id) { @>
-            <a href="<@= '/user/profile.php?id=' + a.id @>">
-              <@= a.firstname + " " + a.lastname @>
-            </a>
-            <@ }
-          });
-        } else { @>
-          <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
-        <@ } @>
-        </td>
+        <td role="usermultiselect"></td>
       </tr>
     </table>
   </div>
