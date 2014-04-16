@@ -248,29 +248,33 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="userselect-template" style="display: none;">
-  <div role="selected-list" class="multiselect-box">
+  <div role="multiselect-box" class="multiselect-box">
   <@ _.each(collection, function (user) {
         if (user.id) { @>
-        <span data-id="<@= user.id @>" class="responsible deletable">
-          <@= user.firstname + " " + user.lastname @>
+        <span data-id="<@= user.id @>" class="link-button responsible deletable">
+          <a href="<@= '/user/profile.php?id=' + user.id @>" target="_blank">
+            <@= user.firstname + " " + user.lastname @>
+          </a>
+          <span role="delete-button" class="delete-button"></span>
         </span>
         <@ }
-      }); @>
-    <div role="search" class="keyword-input-box">
-      <input role="keyword-input" type="text" class="keyword-input"
-             placeholder="<?php echo get_string('starttyping_user', 'tool_epman'); ?>">
-      </input>
-      <div role="search-list" class="search-list-overlay" style="display: none;">
-      </div>
-    </div>
+     }); @>
+    <span role="search" class="search">
+      <span class="prompt">+</span>
+      <span role="keyword-input" class="keyword-input placeholder" contenteditable="true" style="outline: none;">
+        <?php echo get_string('starttyping_user', 'tool_epman'); ?>
+      </span>
+    </span>
   </div>
 </div>
 <div id="user-search-list-template" style="display: none;">
+  <select role="search-list" class="search-list-overlay" size="10" style="display: none;">
   <@ _.each(collection, function (user) { @>
-    <span role="search-item" data-id="<@= user.id @>">
+    <option class="search-list-item" role="search-item" name="<@= user.id @>" value="<@= user.id @>">
       <@= user.firstname + " " + user.lastname @>
-    </span>
+    </option>
   <@ }); @>
+  </select>
 </div>
 
 <!-- Dialog templates -->

@@ -120,6 +120,32 @@ var Dialog = Backbone.View.extend({
 
 });
 
+function addCompletion(input, template, data) {
+    var popup = $(template(data || {}));
+    popup.appendTo($(input).parent());
+    var origin = $(input).offset();
+    origin.top = origin.top + $(input).height();
+    var position = function (offX, offY) {
+        popup.position({
+            of : $(input),
+            my : "left top",
+            at : "left bottom",
+            using : function (offs) {
+                popup.css({
+                    left : (offs.left - (offX || 0) + "px"),
+                    top :  (offs.top - (offY || 0) + "px")
+                });
+            },
+        });
+        popup.width($(input).width());
+    };
+    position($(window).scrollLeft(), $(window).scrollTop());
+    $(window).scroll(position);
+    $(input).resize(position);
+
+    return popup;
+}
+
 var MultiSelect = Backbone.View.extend({
 
     selectedCollection : null,
@@ -131,16 +157,53 @@ var MultiSelect = Backbone.View.extend({
     keyword : "",
 
     events : {
+        "focus [role='keyword-input']" : function (e) {
+            var $target = $(e.target);
+            if ($target.hasClass("placeholder")) {
+                $(e.target)
+                    .html("")
+                    .toggleClass("placeholder", false);
+            }
+        },
+        "blur [role='keyword-input']" : function (e) {
+            if ($(e.target).html() == '') {
+                this.render();
+            }
+        },
         "input [role='keyword-input']" : function (e) {
-            this.search($(e.target).val());
+            var $target = $(e.target);
+            if ($target.html() == '') {
+                this.render();
+            } else if ($target.html().match(/^.*(\n|<br>).*$/)) {
+                $target.html($target.html().replace(/(\n|<br>)/, ""));
+                this.select();
+            } else {
+                this.search($target.html());
+            }
         },
         "keypress [role='keyword-input']" : function (e) {
             if ((e.keyCode ? e.keyCode : e.which) == 13) {
                 this.select();
+            } else if ((e.keyCode ? e.keyCode : e.which) == 8 && $(e.target).html() == '') {
+                this.render();
             }
         },
-        "click [role='search-item']" : function (e) {
-            this.select($(e.currentTarget).attrs()["data-id"]);
+        "keypress [role='search-list']" : function (e) {
+            if (((e.keyCode ? e.keyCode : e.which) == 13 ||
+                 (e.keyCode ? e.keyCode : e.which) == 0 ||
+                 e.key == "Spacebar") &&
+                $(e.target).val() != "")
+            {
+                this.select($(e.target).val());
+            }
+        },
+        "click [role='search-list']" : function (e) {
+            if ($(e.target).val() && $(e.target).val() != "") {
+                this.select($(e.target).val());
+            }
+        },
+        "click [role='delete-button']" : function (e) {
+            this.deleteItem($(e.currentTarget).parent().data("id"));
         },
     },
 
@@ -163,11 +226,6 @@ var MultiSelect = Backbone.View.extend({
         this.listenTo(this.searchCollection, "add", this.update);
         this.listenTo(this.searchCollection, "remove", this.update);
         this.render();
-        if (!this.max || this.selectedCollection.length < this.max) {
-            this.search(this.keyword);
-        } else {
-            this.search("");
-        }
     },
 
     configure : function (options) {
@@ -175,26 +233,26 @@ var MultiSelect = Backbone.View.extend({
 
     render : function () {
         this.undelegateEvents();
+        this.$searchlist = null;
         this.$el.html(this.template({
             collection : this.selectedCollection.toJSON(),
         }));
         this.$("[role='search']").toggle(!this.max || this.selectedCollection.length < this.max);
-        this.$searchlist = this.$("[role='search-list']");
-        var input = this.$("[role='keyword-input']");
-        input.val(this.keyword);
+        this.$("[role='keyword-input']").blur();
         this.delegateEvents();
     },
 
     update : function () {
         this.$searchlist.toggleClass("loading", false);
-        if (!this.searchCollection.isEmpty()) {            
-            this.$searchlist.html(this.searchlistTemplate({
+        if (!this.searchCollection.isEmpty()) {
+            this.$searchlist.html($(this.searchlistTemplate({
                 collection : this.searchCollection.toJSON(),
                 keyword : this.keyword,
-            }));
+            })).html());
+            this.$searchlist.show();
         } else {
-            this.$searchlist.hide();
             this.$searchlist.empty();
+            this.$searchlist.hide();
         }
     },
 
@@ -204,13 +262,16 @@ var MultiSelect = Backbone.View.extend({
         }
         this.keyword = keyword;
         if (keyword.length > 0) {
-            this.searchCollection.urlParams.search = keyword;
+            this.searchCollection.urlParams.like = keyword;
             this.searchCollection.urlParams.limit = this.searchLimit;
+            if (!this.$searchlist) {
+                this.$searchlist = addCompletion(this.$("[role='multiselect-box']"), this.searchlistTemplate, { collection : [], keyword : "" });
+            }
             this.$searchlist.toggleClass("loading", true);
             this.$searchlist.show();
             this.searchCollection.fetch({ reset : true });
         } else {
-            this.searchCollection.reset();
+            this.render();
         }
     },
 
@@ -218,10 +279,15 @@ var MultiSelect = Backbone.View.extend({
         if (!this.searchCollection.isEmpty()) {
             var selected = id ? this.searchCollection.get(id) : this.searchCollection.first();
             if (selected) {
-                this.search("");
                 this.trigger("select", selected);
                 this.selectedCollection.add([selected]);
             }
+        }
+    },
+
+    deleteItem : function (id) {
+        if (id) {
+            this.selectedCollection.remove(this.selectedCollection.get(id));
         }
     },
 

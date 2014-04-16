@@ -63,10 +63,9 @@
   background-image: url([[pix:tool_epman|expanded]]);
 }
 
-.tool-epman .link-button,
-.tool-epman .link-button > a {
+.tool-epman .link-button {
   display: inline-block;
-  padding-left: 0.75em;
+  padding-left: 1.4em;
   background-repeat: no-repeat;
   background-position: 0px center;
   font-size: small;
@@ -572,32 +571,89 @@
 
 .tool-epman .multiselect-box {
   text-align: left;
-}
-
-.tool-epman .keyword-input-box {
-  position: relative;
-  margin-left: 0.25em;
-}
-
-.tool-epman .keyword-input {
-  margin: 0px;
-  padding: 0px;
   border-radius: 0px;
   border-style: solid;
   border-width: 1px;
   border-color: #d0d0d0;
+  padding: 0.25em;
   font-size: small;
+  line-height: 1.8em;
+  vertical-align: middle;
+}
+
+.tool-epman .multiselect-box span {
+  margin-right: 0.5em;
+  height: 1.6em;
+  line-height: 1.6em;
+  vertical-align: middle;
+}
+
+.tool-epman .multiselect-box .link-button {
+  background-color: #eee8a0;
+  border-radius: 16px;
+  background-position: left 0.65em center;
+  padding-left: 1.75em;
+  padding-right: 0.45em;
+  margin-left: 0px;
+  height: 1.6em;
+  line-height: 1.6em;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.tool-epman .multiselect-box .link-button.deletable {
+  padding-right: 0.25em;
+}
+
+.tool-epman .multiselect-box .link-button .delete-button {
+  width: 1.0em;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url([[pix:tool_epman|delete_light]]);
+  cursor: pointer;
+  display: inline-block;
+}
+
+.tool-epman .multiselect-box .link-button .delete-button:hover {
+  background-image: url([[pix:tool_epman|delete]]);
+}
+
+.tool-epman .multiselect-box .search {
+  white-space: nowrap;
+}
+
+.tool-epman .multiselect-box .search .prompt {
+  margin: 0px;
+}
+
+.tool-epman .multiselect-box .search .keyword-input {
+  outline: none;
+  border-style: none;
+  border-bottom-style: dashed;
+  border-color: #d0d0d0;
+  border-width: 1px;
+}
+
+.tool-epman .keyword-input.placeholder {
+  color: #d0d0d0;
+  font-style: italic;
 }
 
 .tool-epman .search-list-overlay {
-  position: absolute;
-  margin: 0px;
-  padding: 0.25em;
-  left : 0px;
-  bottom : 0px;
+  position: fixed;
+  z-index: 200;
   border-radius: 0px;
   border-style: solid;
   border-width: 1px;
   border-color: #d0d0d0;
   font-size: small;
+  background-color: #ffffe8;
+}
+
+.tool-epman .search-list-item {
+  display: block;
+}
+
+.tool-epman .search-list-item:hover {
+  background-color: #d6e0ff;
 }
