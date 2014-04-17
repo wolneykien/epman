@@ -74,12 +74,33 @@ var Collection = Backbone.Collection.extend({
 var Dialog = Backbone.View.extend({
 
     dialog : null,
+    modal : true,
+    dialogClass : 'no-close',
+    width : '48%',
+    buttons : [
+        {
+            text : i18n["OK"],
+            click : function () {
+                this.ok();
+                $(this).dialog ("close");
+            }
+        },
+        {
+            text : i18n["Cancel"],
+            click : function () {
+                this.cancel();
+                $(this).dialog ("close");
+            }
+        }
+    ],
 
     initialize : function (options) {
-        _.extend(this, options || {});
-        if (!this.dialogOptions) {
-            this.dialogOptions = {};
-        }
+        _.extend(this, _.pick(options || {},
+            "buttons",
+            "modal",
+            "dialogClass",
+            "width",            
+        ));
         this.configure(options);
     },
 
@@ -94,28 +115,14 @@ var Dialog = Backbone.View.extend({
 
         this.render();
 
-        var options = _.extend({}, this.dialogOptions, options || {}, { autoOpen : true });
-        options = _.defaults(options, {
-            modal : true,
-            dialogClass : 'no-close',
-            width : '48%',
-            buttons : [
-                {
-                    text : i18n["OK"],
-                    click : function () {
-                        $(this).dialog ("close");
-                    }
-                },
-                {
-                    text : i18n["Cancel"],
-                    click : function () {
-                        $(this).dialog ("close");
-                    }
-                }
-            ],
-        });
-
+        var options = _.extend({}, this, options || {}, { autoOpen : true });
         this.dialog = this.$el.find('.dialog').dialog(options);
+    },
+
+    ok : function () {
+    },
+
+    cancel : function () {
     },
 
 });

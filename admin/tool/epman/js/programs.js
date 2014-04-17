@@ -45,6 +45,18 @@ var EducationProgram = Model.extend({
         assistants : [],
     },
 
+    validate : function(attrs, options) {
+        if (!attrs.responsible) {
+            attrs.responsible = user.id;
+        }
+
+        if (!attrs.year) {
+            attrs.year = 0;
+        }
+        
+        this.set(attrs);
+    },
+
 });
 
 /**
@@ -303,25 +315,53 @@ var ProgramDialog = Dialog.extend({
     responsible : null,
     assistants : null,
 
-    render : function () {
-        this.$el.html(templates.programDialog({
-            p : this.model.toJSON(),
-        }));
+    configure : function (options) {
         this.responsible = new UserSelect({
             $el : this.$("[role='select-responsible']"),
             template : templates.userselect,
             searchlistTemplate : templates.userSearchList,
-            selectedCollection : new Users(this.model.get('responsible') ? [new User(this.model.get('responsible'))] : []),
+            selectedCollection : new Users(),
             max : 1,
         });
         this.assistants = new UserSelect({
             $el : this.$("[role='select-assistants']"),
             template : templates.userselect,
             searchlistTemplate : templates.userSearchList,
-            selectedCollection : new Users(_.map(this.model.get('assistants'), function (assistant) {
-                return new User(assistant)
-            })),
-        });   
+            selectedCollection : new Users(),
+        });
+        this.listenTo(this.model, "change", update());
+    },
+
+    update : function () {
+        this.responsible.reset(this.model.get('responsible'));
+        this.assistants.reset(this.model.get('assistants'));
+    },
+
+    render : function () {
+        this.$el.html(templates.programDialog({
+            p : this.model.toJSON(),
+        }));
+    },
+
+    ok : function () {
+        this.model.save({
+            name : this.$("[name='name']").val(),
+            description : this.$("[name='description']").val(),
+            responsible : _.first(this.responsible.selectedCollection.pluck('id')),
+            assistants : this.assistants.selectedCollection.pluck('id'),
+        }, {
+            wait : true,
+            success : function (model) {
+                model.fetch({
+                    reset : true,
+                    success : function (model) {
+                        if (!model.collection && this.collection) {
+                            this.collection.add(model);
+                        }
+                    },
+                });
+            },
+        });
     },
 
 });

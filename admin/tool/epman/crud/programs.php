@@ -382,7 +382,7 @@ class epman_program_external extends crud_external_api {
             'Formal learning year',
             VALUE_DEFAULT,
             0),
-          'responsibleid' => new external_value(
+          'responsible' => new external_value(
             PARAM_INT,
             'ID of the responsible user',
             VALUE_DEFAULT,
@@ -412,7 +412,7 @@ class epman_program_external extends crud_external_api {
       );
       $program = $params['model'];
 
-      user_exists($program['responsibleid']);
+      user_exists($program['responsible']);
 
       $program['id'] = $DB->insert_record('tool_epman_program', $program);
 
@@ -447,7 +447,7 @@ class epman_program_external extends crud_external_api {
         'year' => new external_value(
           PARAM_INT,
           'Formal learning year'),
-        'responsibleid' => new external_value(
+        'responsible' => new external_value(
           PARAM_INT,
           'ID of the responsible user'),
         'assistants' => new external_multiple_structure(
@@ -487,7 +487,7 @@ class epman_program_external extends crud_external_api {
             PARAM_INT,
             'Formal learning year',
             VALUE_OPTIONAL),
-          'responsibleid' => new external_value(
+          'responsible' => new external_value(
             PARAM_INT,
             'ID of the responsible user',
             VALUE_OPTIONAL),
@@ -526,7 +526,7 @@ class epman_program_external extends crud_external_api {
       }
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        value_unchanged($program0, $program, 'responsibleid', 'responsible user of this education program');
+        value_unchanged($program0, $program, 'responsible', 'responsible user of this education program');
         if (!program_responsible($id, $USER->id)) {
           value_unchanged($program0, $program, 'name', 'name of this education program');
           value_unchanged($program0, $program, 'year', 'year of this education program');
@@ -539,8 +539,8 @@ class epman_program_external extends crud_external_api {
           }
         }
       } else {
-        if (isset($program['responsibleid'])) {
-          user_exists($program['responsibleid']);
+        if (isset($program['responsible'])) {
+          user_exists($program['responsible']);
         }
       }
 
@@ -576,7 +576,7 @@ class epman_program_external extends crud_external_api {
           PARAM_INT,
           'Formal learning year',
           VALUE_OPTIONAL),
-        'responsibleid' => new external_value(
+        'responsible' => new external_value(
           PARAM_INT,
           'ID of the responsible user',
           VALUE_OPTIONAL),
