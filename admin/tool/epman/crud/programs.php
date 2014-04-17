@@ -387,6 +387,13 @@ class epman_program_external extends crud_external_api {
             'ID of the responsible user',
             VALUE_DEFAULT,
             $USER->id),
+          'assistants' => new external_multiple_structure(
+            'id' => new external_value(
+              PARAM_INT,
+              'ID of an assistant user'
+            ),
+            'Array of the assistant user IDs',
+            VALUE_OPTIONAL),
         )),
       ));
     }
@@ -408,6 +415,13 @@ class epman_program_external extends crud_external_api {
       user_exists($program['responsibleid']);
 
       $program['id'] = $DB->insert_record('tool_epman_program', $program);
+
+      if ($program->assistants) {
+        clear_program_assistants($program->id);
+        foreach ($program->assistants as $userid) {
+          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program->id));
+        }
+      }
 
       return $program;
     }
@@ -436,6 +450,13 @@ class epman_program_external extends crud_external_api {
         'responsibleid' => new external_value(
           PARAM_INT,
           'ID of the responsible user'),
+        'assistants' => new external_multiple_structure(
+          'id' => new external_value(
+            PARAM_INT,
+            'ID of an assistant user'
+          ),
+          'Array of the assistant user IDs',
+          VALUE_OPTIONAL),
       ));
     }
 
@@ -470,6 +491,13 @@ class epman_program_external extends crud_external_api {
             PARAM_INT,
             'ID of the responsible user',
             VALUE_OPTIONAL),
+          'assistants' => new external_multiple_structure(
+            'id' => new external_value(
+              PARAM_INT,
+              'ID of an assistant user'
+            ),
+            'Array of the assistant user IDs',
+            VALUE_OPTIONAL),
         )),
       ));
     }
@@ -503,6 +531,9 @@ class epman_program_external extends crud_external_api {
           value_unchanged($program0, $program, 'name', 'name of this education program');
           value_unchanged($program0, $program, 'year', 'year of this education program');
           value_unchanged($program0, $program, 'description', 'description of this education program');
+          if ($program->assistants) {
+            throw new permission_exception("You don't have the right to change the set of assistant users of this education program");
+          }
           if (!program_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this education program");
           }
@@ -514,6 +545,13 @@ class epman_program_external extends crud_external_api {
       }
 
       $DB->update_record('tool_epman_program', $program);
+
+      if ($program->assistants) {
+        clear_program_assistants($program->id);        
+        foreach ($program->assistants as $userid) {
+          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program->id));
+        }
+      }
 
       return $program;
     }
@@ -541,6 +579,13 @@ class epman_program_external extends crud_external_api {
         'responsibleid' => new external_value(
           PARAM_INT,
           'ID of the responsible user',
+          VALUE_OPTIONAL),
+        'assistants' => new external_multiple_structure(
+          'id' => new external_value(
+            PARAM_INT,
+            'ID of an assistant user'
+          ),
+          'Array of the assistant user IDs',
           VALUE_OPTIONAL),
       ));
     }
