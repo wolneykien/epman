@@ -78,7 +78,7 @@ var Model = Backbone.Model.extend({
             },
         });
         Backbone.Model.prototype.save.apply(this, [attrs, options]);
-    }
+    },
 
 });
 
@@ -100,6 +100,66 @@ var Collection = Backbone.Collection.extend({
     },
 
     configure : function (options) {
+    },
+
+});
+
+var View = Backbone.View.extend({
+
+    initialize : function (options) {
+        if (options.$el) {
+            this.$el = options.$el;
+        }
+        this.configure(options);
+        if (this.model) {
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'request', this.onRequest);
+            this.listenTo(this.model, 'sync', this.onSync);
+            this.listenTo(this.model, 'error', this.onError);
+        }
+        if (this.collection) {
+            this.listenTo(this.collection, 'reset', this.render);
+            this.listenTo(this.collection, 'add', function (model) {
+                this.render({ model : model, action : "add" });
+            });
+            this.listenTo(this.collection, 'remove', function (model) {
+                this.render({ model : model, action : "remove" });
+            });
+            this.listenTo(this.collection, 'request', function (model, xhr, options) {
+                if (model == this.collection) {
+                    this.onRequest(model, xhr, options);
+                }
+            });
+            this.listenTo(this.collection, 'sync', function (model, resp, options) {
+                if (model == this.collection) {
+                    this.onSync(model, resp, options);
+                }
+            });
+            this.listenTo(this.collection, 'error', function (model, xhr, options) {
+                if (model == this.collection) {
+                    this.onError(model, xhr, options);
+                }
+            });
+        }
+    },
+
+    configure : function (options) {
+    },
+
+    syncing : function (status) {        
+        this.$el.toggleClass("loading", status);
+    },
+
+    onRequest : function(model, xhr, options) {
+        this.syncing(true);
+    },
+
+    onSync : function(model, resp, options) {
+        this.syncing(false);
+    },
+
+    onError : function(model, xhr, options) {
+        this.syncing(false);
     },
 
 });

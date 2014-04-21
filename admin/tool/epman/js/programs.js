@@ -53,7 +53,7 @@ var EducationProgram = Model.extend({
             attrs.year = 1;
         }
         
-        this.set(attrs);
+        this.set(attrs, { silent : options.silent });
     },
 
 });
@@ -88,32 +88,15 @@ var EducationPrograms = Collection.extend({
 /**
  * Renders the complete education program.
  */
-var EducationProgramView = Backbone.View.extend({
+var EducationProgramView = View.extend({
 
-    initialize : function (options) {
-        if (options.$el) {
-            this.$el = options.$el;
-        }
+    configure : function (options) {
         this.$header = options.$header;
         this.$body = options.$body;
-        this.listenTo(this.model, 'change', this.render);
-        this.listenTo(this.model, 'request', function(model) {
-            console.log("Loading the education program #" + this.model.id);
-            this.$body.empty();
-            this.$body.toggleClass("loading", true);
-            this.$body.show();
-        });
-        this.listenTo(this.model, 'sync', function() {
-            console.log("Done loading the education program #" + this.model.id);
-            this.$body.toggleClass("loading", false);
-            if (_.isEmpty(this.model.changed)) {
-                this.render();
-            }
-        });
+        this.render();
     },
 
     render : function () {
-        console.log("Render out the eduction program #" + this.model.id);
         var data = {
             f : this.model.collection.filter,
             p : this.model.toJSON(),
@@ -121,6 +104,7 @@ var EducationProgramView = Backbone.View.extend({
         };
         this.$header.html(templates.recordHeader(data));
         this.$body.html(templates.recordBody(data));
+        this.$body.show();
         var $modules = this.$body.find(".program-module-list");
         var period = null;
         var endDays = null;
@@ -144,15 +128,20 @@ var EducationProgramView = Backbone.View.extend({
             endDays = startDays + m.length;
         }, this);
         
+        self = this;
         this.$header.find("[role='edit-button']").click(function () {
             var program = new ProgramDialog({
-                model : this.model,
+                model : self.model,
                 el : "#program-dialog-template",
             });
             program.open();
         });
 
         return this;
+    },
+
+    syncing : function (status) {
+        this.$body.toggleClass("loading", status);
     },
 
 });
@@ -165,7 +154,7 @@ var EducationProgramView = Backbone.View.extend({
  * }
  *
  */
-var EducationProgramsList = Backbone.View.extend({
+var EducationProgramsList = View.extend({
 
     expandedPrograms : {},
 
@@ -197,24 +186,6 @@ var EducationProgramsList = Backbone.View.extend({
                 r.toggleClass("expanded", false);
             }
         },
-    },
-
-    initialize : function (options) {
-        this.listenTo(this.collection, 'reset', this.render);
-        this.listenTo(this.collection, 'add', this.render);
-        this.listenTo(this.collection, 'remove', this.render);
-        this.listenTo(this.collection, 'request', function(collection) {
-            if (collection != this.collection) return;
-            console.log("Loading the education programs");
-            this.$el.empty();
-            this.$el.toggleClass("loading", true);
-            this.$el.show();
-        });
-        this.listenTo(this.collection, 'sync', function(collection) {
-            if (collection != this.collection) return;
-            console.log("Done loading the education programs");
-            this.$el.toggleClass("loading", false);
-        });
     },
 
     render : function () {
@@ -352,6 +323,7 @@ var ProgramDialog = Dialog.extend({
             assistants : this.assistants.selectedCollection.pluck('id'),
         }, {
             wait : true,
+            silent : true,
             success : function (model) {
                 model.fetch({
                     reset : true,
