@@ -229,6 +229,15 @@ class epman_rest_server extends webservice_rest_server {
     }
   }
 
+  protected function load_function_info() {
+    try {
+      parent::load_function_info();
+    } catch (Exception $ex) {
+      $this->set_response_code($ex);
+      throw $ex;
+    }
+  }
+
   protected function send_response() {
     try {
       if ($this->function->returns_desc != null) {
