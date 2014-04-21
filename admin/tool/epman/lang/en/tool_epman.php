@@ -72,9 +72,13 @@ $string['Education_program_edit'] = 'Education program edit';
 $string['New_education_program'] = 'New education program';
 $string['OK'] = 'OK';
 $string['Cancel'] = 'Cancel';
+$string['Close'] = 'Close';
 $string['programName'] = 'Name';
 $string['Enter_the_programs_description'] = "Enter the program's description";
 $string['Add_program'] = 'Add program';
 $string['starttyping'] = 'start typing';
 $string['starttyping_user'] = 'start typing a user name';
+$string['Error'] = 'Error';
+$string['Error_message'] = 'Error message';
+$string['unknown_error'] = 'unknown error';
 ?>

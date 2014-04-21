@@ -387,14 +387,14 @@ class epman_program_external extends crud_external_api {
             'ID of the responsible user',
             VALUE_DEFAULT,
             $USER->id),
-          'assistants' => new external_multiple_structure(array(
-            'id' => new external_value(
+          'assistants' => new external_multiple_structure(
+            new external_value(
               PARAM_INT,
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
             VALUE_OPTIONAL
-          )),
+          ),
         )),
       ));
     }
@@ -412,8 +412,9 @@ class epman_program_external extends crud_external_api {
         array('model' => $model)
       );
       $program = $params['model'];
+      $program['responsibleid'] = $program['responsible'];
 
-      user_exists($program['responsible']);
+      user_exists($program['responsibleid']);
 
       $program['id'] = $DB->insert_record('tool_epman_program', $program);
 
@@ -424,6 +425,7 @@ class epman_program_external extends crud_external_api {
         }
       }
 
+      unset($program['responsibleid']);
       return $program;
     }
 
@@ -451,14 +453,14 @@ class epman_program_external extends crud_external_api {
         'responsible' => new external_value(
           PARAM_INT,
           'ID of the responsible user'),
-        'assistants' => new external_multiple_structure(array(
-          'id' => new external_value(
+        'assistants' => new external_multiple_structure(
+          new external_value(
             PARAM_INT,
             'ID of an assistant user'
           ),
           'Array of the assistant user IDs',
           VALUE_OPTIONAL
-        )),
+        ),
       ));
     }
 
@@ -493,14 +495,14 @@ class epman_program_external extends crud_external_api {
             PARAM_INT,
             'ID of the responsible user',
             VALUE_OPTIONAL),
-          'assistants' => new external_multiple_structure(array(
-            'id' => new external_value(
+          'assistants' => new external_multiple_structure(
+            new external_value(
               PARAM_INT,
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
             VALUE_OPTIONAL
-          )),
+          ),
         )),
       ));
     }
@@ -520,6 +522,7 @@ class epman_program_external extends crud_external_api {
       $id = $params['id'];
       $program = $params['model'];
       $program['id'] = $id;
+      $program['responsibleid'] = $program['responsible'];
 
       program_exists($id);
 
@@ -542,8 +545,8 @@ class epman_program_external extends crud_external_api {
           }
         }
       } else {
-        if (isset($program['responsible'])) {
-          user_exists($program['responsible']);
+        if (isset($program['responsibleid'])) {
+          user_exists($program['responsibleid']);
         }
       }
 
@@ -556,6 +559,7 @@ class epman_program_external extends crud_external_api {
         }
       }
 
+      unset($program['responsibleid']);
       return $program;
     }
 
@@ -583,14 +587,14 @@ class epman_program_external extends crud_external_api {
           PARAM_INT,
           'ID of the responsible user',
           VALUE_OPTIONAL),
-        'assistants' => new external_multiple_structure(array(
-          'id' => new external_value(
+        'assistants' => new external_multiple_structure(
+          new external_value(
             PARAM_INT,
             'ID of an assistant user'
           ),
           'Array of the assistant user IDs',
           VALUE_OPTIONAL
-        )),
+        ),
       ));
     }
 

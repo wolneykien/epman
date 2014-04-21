@@ -47,6 +47,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
     'i18n' => array(
       'OK' => get_string('OK', 'tool_epman'),
       'Cancel' => get_string('Cancel', 'tool_epman'),
+      'Close' => get_string('Close', 'tool_epman'),
     ),
 ), true);
 
@@ -301,6 +302,14 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <td role="select-assistants"></td>
       </tr>
     </table>
+  </div>
+</div>
+<div id="error-dialog-template" style="display: none;">
+  <div class="tool-epman dialog error" title="<?php echo get_string('Error_message', 'tool_epman'); ?>">
+    <div class="name-value">
+      <span><?php echo get_string('Error', 'tool_epman'); ?></span>
+      <span><@= (typeof message == 'undefined') ? "<?php echo get_string('unknown_error', 'tool_epman'); ?>" : message @></span>
+    </div>
   </div>
 </div>
 

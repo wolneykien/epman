@@ -6,6 +6,7 @@ var restOptions = {
     restRoot : "/",
     restParams : {},
 };
+var templates = {};
 
 function getUrl(urlBase, urlParams, id) {
     var url = urlBase;
@@ -16,6 +17,31 @@ function getUrl(urlBase, urlParams, id) {
         return url;
     } else {
         return url + '?' + $.param(urlParams);
+    }
+}
+
+function getTemplate(selector) {
+    if (templates[selector]) {
+        return templates[selector];
+    } else {
+        templates[selector] = _.template($(selector).html());
+        return templates[selector];
+    }
+}
+
+function logXHR(xhr) {
+    try {
+        var jsonResp = JSON.parse(xhr.responseText);
+        console.error(
+            "" + xhr.status + ": " +
+            (jsonResp.exception ? ("(" + jsonResp.exception + ") ") : "") +
+            (jsonResp.message ? jsonResp.message : "(error message is unknown)")
+        );
+        if (jsonResp.debuginfo) {
+            console.warn(jsonResp.debuginfo);
+        }
+    } catch (e) {
+        console.error(xhr.responseText);
     }
 }
 
@@ -42,6 +68,17 @@ var Model = Backbone.Model.extend({
 
     configure : function (options) {
     },
+
+    save : function (attrs, options) {
+        options = _.defaults(options, {
+            wait : true,
+            error : function (model, xhr, options) {
+                logXHR(xhr);
+                (new RestErrorDialog()).open({ xhr : xhr });
+            },
+        });
+        Backbone.Model.prototype.save.apply(this, [attrs, options]);
+    }
 
 });
 
@@ -109,7 +146,7 @@ var Dialog = Backbone.View.extend({
             return false;
         }
 
-        this.render();
+        this.render(options);
 
         var options = _.extend({
             buttons : this.buttons,
@@ -135,6 +172,56 @@ var Dialog = Backbone.View.extend({
     },
 
     close : function () {
+    },
+
+});
+
+var MessageDialog = Dialog.extend({
+
+    initialize : function (options) {
+        Dialog.prototype.initialize.apply(this, arguments);
+        if (!_.isUndefined(options) && !_.isUndefined(options.template)) {
+            this.template = options.template;
+        }
+        this.buttons = [
+            {
+                text : i18n["Close"],
+                click : function (self) {
+                    $(this).dialog ("close");
+                },
+            },
+        ];
+    },
+
+    render : function (options) {
+        this.$el.html(this.template(options));
+    },
+    
+});
+
+var ErrorDialog = MessageDialog.extend({
+
+    initialize : function (options) {
+        var options = _.defaults(options || {}, {
+            template : getTemplate("#error-dialog-template"),
+        });
+        MessageDialog.prototype.initialize.apply(this, [options]);
+    },
+    
+});
+
+var RestErrorDialog = ErrorDialog.extend({
+
+    render : function (options) {
+        if (options.xhr && !options.message) {
+            try {
+                var jsonResp = JSON.parse(options.xhr.responseText);
+                options = _.extend({}, options, jsonResp);
+            } catch (e) {
+                options = _.extend({}, options, { message : options.xhr.responseText });
+            }
+        }
+        return ErrorDialog.prototype.render.apply(this, [options]);
     },
 
 });

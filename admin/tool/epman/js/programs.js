@@ -3,7 +3,6 @@
  * Globals.
  */
 var user = {};
-var templates = {};
 var addProgram;
 
 /**
@@ -51,7 +50,7 @@ var EducationProgram = Model.extend({
         }
 
         if (!attrs.year) {
-            attrs.year = 0;
+            attrs.year = 1;
         }
         
         this.set(attrs);
@@ -202,6 +201,8 @@ var EducationProgramsList = Backbone.View.extend({
 
     initialize : function (options) {
         this.listenTo(this.collection, 'reset', this.render);
+        this.listenTo(this.collection, 'add', this.render);
+        this.listenTo(this.collection, 'remove', this.render);
         this.listenTo(this.collection, 'request', function(collection) {
             if (collection != this.collection) return;
             console.log("Loading the education programs");
@@ -343,6 +344,7 @@ var ProgramDialog = Dialog.extend({
     },
 
     ok : function () {
+        self = this;
         this.model.save({
             name : this.$("[name='name']").val(),
             description : this.$("[name='description']").val(),
@@ -354,8 +356,8 @@ var ProgramDialog = Dialog.extend({
                 model.fetch({
                     reset : true,
                     success : function (model) {
-                        if (!model.collection && this.collection) {
-                            this.collection.add(model);
+                        if (!model.collection && self.collection) {
+                            self.collection.add(model);
                         }
                     },
                 });
@@ -426,6 +428,7 @@ var initPage = function () {
     var addProgram = function () {
         var program = new ProgramDialog({
             model : new EducationProgram({}, {}),
+            collection : programs,
             el : "#program-dialog-template",
         });
         program.open();
