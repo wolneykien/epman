@@ -387,6 +387,7 @@
 
 .tool-epman .program-modules {
   padding: 0.25em;
+  font-size: small;
 }
 
 .tool-epman .program-module-list {
@@ -534,7 +535,7 @@
 
 .tool-epman .link-button.delete {
   background-image: url([[pix:tool_epman|delete]]);
-  padding-left: 0.5em;
+  padding-left: 1.25em;
  }
 
 .tool-epman .record.expanded > .record-header .link-button.light.delete,
