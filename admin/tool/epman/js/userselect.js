@@ -32,7 +32,7 @@ var UserSelect = MultiSelect.extend({
             if (!_.isArray(arg)) {
                 arg = [arg];
             }
-            users = _.(arg, function (user) {
+            users = _.map(arg, function (user) {
                 if (_.isObject(user)) {
                     return new User(user);
                 } else if (_.isNumber(user)) {

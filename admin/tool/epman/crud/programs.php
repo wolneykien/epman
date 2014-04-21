@@ -387,13 +387,14 @@ class epman_program_external extends crud_external_api {
             'ID of the responsible user',
             VALUE_DEFAULT,
             $USER->id),
-          'assistants' => new external_multiple_structure(
+          'assistants' => new external_multiple_structure(array(
             'id' => new external_value(
               PARAM_INT,
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
-            VALUE_OPTIONAL),
+            VALUE_OPTIONAL
+          )),
         )),
       ));
     }
@@ -450,13 +451,14 @@ class epman_program_external extends crud_external_api {
         'responsible' => new external_value(
           PARAM_INT,
           'ID of the responsible user'),
-        'assistants' => new external_multiple_structure(
+        'assistants' => new external_multiple_structure(array(
           'id' => new external_value(
             PARAM_INT,
             'ID of an assistant user'
           ),
           'Array of the assistant user IDs',
-          VALUE_OPTIONAL),
+          VALUE_OPTIONAL
+        )),
       ));
     }
 
@@ -491,13 +493,14 @@ class epman_program_external extends crud_external_api {
             PARAM_INT,
             'ID of the responsible user',
             VALUE_OPTIONAL),
-          'assistants' => new external_multiple_structure(
+          'assistants' => new external_multiple_structure(array(
             'id' => new external_value(
               PARAM_INT,
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
-            VALUE_OPTIONAL),
+            VALUE_OPTIONAL
+          )),
         )),
       ));
     }
@@ -580,13 +583,14 @@ class epman_program_external extends crud_external_api {
           PARAM_INT,
           'ID of the responsible user',
           VALUE_OPTIONAL),
-        'assistants' => new external_multiple_structure(
+        'assistants' => new external_multiple_structure(array(
           'id' => new external_value(
             PARAM_INT,
             'ID of an assistant user'
           ),
           'Array of the assistant user IDs',
-          VALUE_OPTIONAL),
+          VALUE_OPTIONAL
+        )),
       ));
     }
 

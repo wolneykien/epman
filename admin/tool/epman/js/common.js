@@ -27,11 +27,7 @@ var Model = Backbone.Model.extend({
         if (this.collection) {
             return this.collection.url(this.id);
         } else {
-            if (id) {
-                return getUrl(this.urlBase, this.urlParams, this.id);
-            } else {
-                return null;
-            }
+            return getUrl(this.urlBase, this.urlParams, this.id);
         }
     },
 
@@ -73,34 +69,35 @@ var Collection = Backbone.Collection.extend({
 
 var Dialog = Backbone.View.extend({
 
-    dialog : null,
+    $templateEl : null,
     modal : true,
     dialogClass : 'no-close',
     width : '48%',
-    buttons : [
-        {
-            text : i18n["OK"],
-            click : function () {
-                this.ok();
-                $(this).dialog ("close");
-            }
-        },
-        {
-            text : i18n["Cancel"],
-            click : function () {
-                this.cancel();
-                $(this).dialog ("close");
-            }
-        }
-    ],
+    buttons : [],
 
     initialize : function (options) {
-        _.extend(this, _.pick(options || {},
-            "buttons",
-            "modal",
-            "dialogClass",
-            "width",            
-        ));
+        _.extend(this, {
+            buttons : [
+                {
+                    text : i18n["OK"],
+                    click : _.partial(function (self) {
+                        self.ok();
+                        $(this).dialog ("close");
+                    }, this),
+                },
+                {
+                    text : i18n["Cancel"],
+                    click : _.partial(function (self) {
+                        self.cancel();
+                        $(this).dialog ("close");
+                    }, this),
+                }
+            ],
+        }, _.pick(options || {},
+                  "buttons",
+                  "modal",
+                  "dialogClass",
+                  "width"));
         this.configure(options);
     },
 
@@ -108,21 +105,36 @@ var Dialog = Backbone.View.extend({
     },
 
     open : function (options) {
-        if (this.dialog != null) {
-            this.dialog.dialog("destroy");
-            this.dialog = null;
+        if (this.$templateEl) {
+            return false;
         }
 
         this.render();
 
-        var options = _.extend({}, this, options || {}, { autoOpen : true });
-        this.dialog = this.$el.find('.dialog').dialog(options);
+        var options = _.extend({
+            buttons : this.buttons,
+            modal : this.modal,
+            dialogClass : this.dialogClass,
+            width : this.width,
+        }, options || {}, {
+            autoOpen : true,
+            close : _.partial(function (self) {
+                self.$el = self.$templateEl;
+                self.$templateEl = null;
+                self.close();
+            }, this),
+        });
+        this.$templateEl = this.$el;
+        this.$el = this.$el.find('.dialog').dialog(options);
     },
 
     ok : function () {
     },
 
     cancel : function () {
+    },
+
+    close : function () {
     },
 
 });

@@ -315,7 +315,16 @@ var ProgramDialog = Dialog.extend({
     responsible : null,
     assistants : null,
 
-    configure : function (options) {
+    update : function () {
+        this.responsible.reset(this.model.get('responsible'));
+        this.assistants.reset(this.model.get('assistants'));
+    },
+
+    render : function () {
+        this.stopListening(this.model, "change", this.update);
+        this.$el.html(templates.programDialog({
+            p : this.model.toJSON(),
+        }));
         this.responsible = new UserSelect({
             $el : this.$("[role='select-responsible']"),
             template : templates.userselect,
@@ -326,21 +335,11 @@ var ProgramDialog = Dialog.extend({
         this.assistants = new UserSelect({
             $el : this.$("[role='select-assistants']"),
             template : templates.userselect,
-            searchlistTemplate : templates.userSearchList,
+                searchlistTemplate : templates.userSearchList,
             selectedCollection : new Users(),
         });
-        this.listenTo(this.model, "change", update());
-    },
-
-    update : function () {
-        this.responsible.reset(this.model.get('responsible'));
-        this.assistants.reset(this.model.get('assistants'));
-    },
-
-    render : function () {
-        this.$el.html(templates.programDialog({
-            p : this.model.toJSON(),
-        }));
+        this.update();
+        this.listenTo(this.model, "change", this.update);
     },
 
     ok : function () {
