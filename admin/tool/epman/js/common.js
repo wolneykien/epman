@@ -323,13 +323,8 @@ var MultiSelect = Backbone.View.extend({
     keyword : "",
 
     events : {
-        "focus [role='keyword-input']" : function (e) {
-            var $target = $(e.target);
-            if ($target.hasClass("placeholder")) {
-                $(e.target)
-                    .html("")
-                    .toggleClass("placeholder", false);
-            }
+        "click [role='placeholder']" : function (e) {
+            this.$("[role='keyword-input']")[0].focus();
         },
         "blur [role='keyword-input']" : function (e) {
             if ($(e.target).html() == '') {
@@ -340,11 +335,14 @@ var MultiSelect = Backbone.View.extend({
             var $target = $(e.target);
             if ($target.html() == '') {
                 this.render();
-            } else if ($target.html().match(/^.*(\n|<br>).*$/)) {
-                $target.html($target.html().replace(/(\n|<br>)/, ""));
-                this.select();
             } else {
-                this.search($target.html());
+                this.$("[role='placeholder']").hide();
+                if ($target.html().match(/^.*(\n|<br>).*$/)) {
+                    $target.html($target.html().replace(/(\n|<br>)/, ""));
+                    this.select();
+                } else {
+                    this.search($target.html());
+                }
             }
         },
         "keypress [role='keyword-input']" : function (e) {

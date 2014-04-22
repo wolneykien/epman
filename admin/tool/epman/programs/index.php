@@ -262,9 +262,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
      }); @>
     <span role="search" class="search">
       <span class="prompt">+</span>
-      <span role="keyword-input" class="keyword-input placeholder" contenteditable="true" style="outline: none;">
-        <?php echo get_string('starttyping_user', 'tool_epman'); ?>
-      </span>
+      <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
+      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_user', 'tool_epman'); ?></span>
     </span>
   </div>
 </div>

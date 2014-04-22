@@ -635,9 +635,10 @@
   border-width: 1px;
 }
 
-.tool-epman .keyword-input.placeholder {
+.tool-epman .placeholder {
   color: #d0d0d0;
   font-style: italic;
+  font-size: small;
 }
 
 .tool-epman .search-list-overlay {
