@@ -33,7 +33,12 @@ var replaceHtmlEntities = (
 _.template_orig = _.template;
 _.template = function () {
     arguments [0] = replaceHtmlEntities (arguments [0]);
-    return _.template_orig.apply (_, arguments);
+    try {
+        return _.template_orig.apply (_, arguments);
+    } catch (e) {
+        console.error("Syntax error in the template:\n" + e.source);
+        throw e;
+    }
 }
 
 $.params = function (search) {
