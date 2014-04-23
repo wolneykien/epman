@@ -71,10 +71,11 @@ class epman_group_external extends crud_external_api {
         $groups = $DB->get_records_sql(
             'select g.id, '.
             'max(g.name) as name, '.
+            'max(g.year) as year, '.
             'max(g.programid) as programid, '.
+            'max(g.responsibleid) as responsibleid, '.
             'max(p.name) as programname, '.
-            'max(p.year) as year, '.
-            'max(p.responsibleid) as responsibleid, '.
+            'max(p.year) as programyear, '.
             'max(u.username) as username, '.
             'max(u.firstname) as firstname, '.
             'max(u.lastname) as lastname, '.
@@ -92,9 +93,12 @@ class epman_group_external extends crud_external_api {
             'order by year, name',
             array($userid, $userid, $programid));
       } else {
-        $groups = $DB->get_records(
-            'select p.*, u.username, '.
-            'u.firstname, u.lastname, u.email '.
+        $groups = $DB->get_records_sql(
+            'select g.id, '.
+            'g.programid as programid, '.
+            'p.name as programname, '.
+            'p.year as programyear, '.
+            'u.username, u.firstname, u.lastname, u.email '.
             'from {tool_epman_group} g '.
             'left join {tool_epman_program} p '.
             'on p.id = g.programid '.
@@ -112,6 +116,7 @@ class epman_group_external extends crud_external_api {
             $group['program'] = array(
               'id' => $group['programid'],
               'name' => $group['programname'],
+              'year' => $group['programyear'],
             );
           } else {
             $group['program'] = null;
@@ -228,7 +233,7 @@ class epman_group_external extends crud_external_api {
       }
 
       $students = $DB->get_records_sql(
-        'select g.id, gs.userid, u.username, '.
+        'select gs.id, g.id as groupid, gs.userid, u.username, '.
         'u.firstname, u.lastname, u.email '.
         'from {tool_epman_group} g left join '.
         '{tool_epman_group_student} gs '.
@@ -249,7 +254,7 @@ class epman_group_external extends crud_external_api {
       }
 
       $assistants = $DB->get_records_sql(
-        'select g.id, ga.userid, u.username, '.
+        'select ga.id, g.id as groupid, ga.userid, u.username, '.
         'u.firstname, u.lastname, u.email '.
         'from {tool_epman_group} g left join '.
         '{tool_epman_group_assistant} ga '.

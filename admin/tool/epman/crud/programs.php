@@ -227,6 +227,7 @@ class epman_program_external extends crud_external_api {
             'name' => $rec->fullname);
         }
       }
+
       $courses->close();
 
       $responsible = $DB->get_record('user', array('id' => $program['responsible']['id']));
@@ -240,7 +241,7 @@ class epman_program_external extends crud_external_api {
       }
 
       $assistants = $DB->get_records_sql(
-        'select p.id, pa.userid, u.username, '.
+        'select pa.id, p.id as programid, pa.userid, u.username, '.
         'u.firstname, u.lastname, u.email '.
         'from {tool_epman_program} p left join '.
         '{tool_epman_program_assistant} pa '.

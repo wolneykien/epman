@@ -134,7 +134,7 @@ class epman_module_external extends crud_external_api {
       program_exists($programid);
       module_exists($id);
 
-      $courses = $DB->get_records_sql(
+      $courses = $DB->get_recordset_sql(
         'select m.*, mc.courseid, c.fullname '.
         'from {tool_epman_module} m '.
         'left join {tool_epman_module_course} mc '.
@@ -158,6 +158,8 @@ class epman_module_external extends crud_external_api {
           'id' => $rec->courseid,
           'name' => $rec->fullname);
       }
+
+      $courses->close();
 
       return $program;
     }
