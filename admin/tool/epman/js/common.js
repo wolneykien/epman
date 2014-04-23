@@ -1,6 +1,7 @@
 /**
   * Globals
   */
+var user = {};
 var i18n = {};
 var restOptions = {
     restRoot : "/",
@@ -389,6 +390,7 @@ var MultiSelect = Backbone.View.extend({
 
     selectedCollection : null,
     searchCollection : null,
+    defValue : null,
     max : null,
     searchLimit : 10,
     template : null,
@@ -448,6 +450,7 @@ var MultiSelect = Backbone.View.extend({
         _.extend(this, _.pick(options || {},
             'selectedCollection',
             'searchCollection',
+            'defValue',
             'max',
             'searchLimit',
             'template',
@@ -473,6 +476,8 @@ var MultiSelect = Backbone.View.extend({
         this.$searchlist = null;
         this.$el.html(this.template({
             collection : this.selectedCollection.toJSON(),
+            defValue : this.defValue,
+            max : this.max,
         }));
         this.$("[role='search']").toggle(!this.max || this.selectedCollection.length < this.max);
         this.$("[role='keyword-input']").blur();
@@ -486,6 +491,8 @@ var MultiSelect = Backbone.View.extend({
                 this.$searchlist.html($(this.searchlistTemplate({
                     collection : this.formatResults(this.keyword, this.searchCollection),
                     keyword : this.keyword,
+                    defValue : this.defValue,
+                    max : this.max,
                 })).html());
                 this.$searchlist.show();
             } else {

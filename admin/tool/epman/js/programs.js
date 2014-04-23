@@ -2,7 +2,6 @@
 /**
  * Globals.
  */
-var user = {};
 var addProgram;
 
 /**
@@ -302,6 +301,7 @@ var ProgramDialog = Dialog.extend({
             template : templates.userselect,
             searchlistTemplate : templates.userSearchList,
             selectedCollection : new Users(),
+            defValue : user.id ? user.toJSON() : null,
             max : 1,
         });
         this.assistants = new UserSelect({
@@ -347,7 +347,12 @@ var initPage = function () {
     Backbone.emulateHTTP = options.emulateHTTP || false;
     Backbone.emulateJSON = options.emulateJSON || false;
 
-    _.extend(user, options.user);
+    _.extend(restOptions, _.pick(options || {}, 'restRoot', 'restParams'));
+
+    if (options.user && options.user.id) {
+        user = new User(options.user);
+        user.fetch();
+    }
     _.defaults(i18n, options.i18n);
 
     templates = {
@@ -362,8 +367,6 @@ var initPage = function () {
         userselect : _.template($("#userselect-template").html()),
         userSearchList : _.template($("#user-search-list-template").html()),
     };
-
-    _.extend(restOptions, _.pick(options || {}, 'restRoot', 'restParams'));
 
     var programs = new EducationPrograms([], {});
     var programList = new EducationProgramsList({

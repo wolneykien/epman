@@ -475,6 +475,8 @@ class epman_program_external extends crud_external_api {
      * @return external_function_parameters
      */
     public static function update_program_parameters() {
+      global $USER;
+
       return new external_function_parameters(array(
         'id' => new external_value(
           PARAM_INT,
@@ -495,7 +497,8 @@ class epman_program_external extends crud_external_api {
           'responsible' => new external_value(
             PARAM_INT,
             'ID of the responsible user',
-            VALUE_OPTIONAL),
+            VALUE_DEFAULT,
+            $USER->id),
           'assistants' => new external_multiple_structure(
             new external_value(
               PARAM_INT,

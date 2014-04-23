@@ -249,6 +249,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 </div>
 <div id="userselect-template" style="display: none;">
   <div role="multiselect-box" class="multiselect-box">
+  <@ if (_.isEmpty(collection) && defValue) { @>
+    <span data-id="<@= defValue.id @>" class="link-button light responsible">
+      <a href="<@= '/user/profile.php?id=' + defValue.id @>" target="_blank">
+        <@= defValue.firstname + " " + defValue.lastname @>
+      </a>
+    </span>
+  <@ } @>
   <@ _.each(collection, function (user) {
         if (user.id) { @>
         <span data-id="<@= user.id @>" class="link-button responsible deletable">
@@ -260,7 +267,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <@ }
      }); @>
     <span role="search" class="search">
-      <span class="prompt">+</span>
+      <span class="prompt"><@= defValue && max == 1 ? "←" : "+" @></span>
       <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
       <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_user', 'tool_epman'); ?></span>
     </span>

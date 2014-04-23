@@ -581,6 +581,7 @@
   line-height: 1.8em;
   vertical-align: middle;
   cursor: text;
+  overflow: hidden;
 }
 
 .tool-epman .multiselect-box span {
@@ -600,7 +601,10 @@
   height: 1.6em;
   line-height: 1.6em;
   vertical-align: middle;
-  overflow: hidden;
+}
+
+.tool-epman .multiselect-box .link-button.light {
+  background-color: #eeedea;
 }
 
 .tool-epman .multiselect-box .link-button.deletable {
