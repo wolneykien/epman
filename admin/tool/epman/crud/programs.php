@@ -418,10 +418,10 @@ class epman_program_external extends crud_external_api {
 
       $program['id'] = $DB->insert_record('tool_epman_program', $program);
 
-      if ($program['assistants']) {
+      if (array_key_exists('assistants', $program)) {
         clear_program_assistants($program['id']);
         foreach ($program['assistants'] as $userid) {
-          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program['id']));
+          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program['id']), false);
         }
       }
 
@@ -537,7 +537,7 @@ class epman_program_external extends crud_external_api {
           value_unchanged($program0, $program, 'name', 'name of this education program');
           value_unchanged($program0, $program, 'year', 'year of this education program');
           value_unchanged($program0, $program, 'description', 'description of this education program');
-          if ($program['assistants']) {
+          if (array_key_exists('assistants', $program)) {
             throw new permission_exception("You don't have the right to change the set of assistant users of this education program");
           }
           if (!program_assistant($id, $USER->id)) {
@@ -552,10 +552,10 @@ class epman_program_external extends crud_external_api {
 
       $DB->update_record('tool_epman_program', $program);
 
-      if ($program['assistants']) {
-        clear_program_assistants($program['id']);        
+      if (array_key_exists('assistants', $program)) {
+        clear_program_assistants($program['id']);
         foreach ($program['assistants'] as $userid) {
-          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program['id']));
+          $DB->insert_record('tool_epman_program_assistant', array('userid' => $userid, 'programid' => $program['id']), false);
         }
       }
 

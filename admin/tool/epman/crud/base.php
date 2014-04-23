@@ -39,17 +39,26 @@ class crud_external_api extends external_api {
   }
 
   protected static function cleanup_parameters(external_description $description, $params) {
+    if (is_null($params)) {
+      return null;
+    }
     if ($description instanceof external_single_structure) {
       $newparams = array();
       foreach ($params as $key => $value) {
         if (array_key_exists($key, $description->keys)) {
-          $newparams[$key] = self::cleanup_parameters($description->keys[$key], $params[$key]);
+          $newvalue = self::cleanup_parameters($description->keys[$key], $params[$key]);
+          if (!is_null($newvalue)) {
+            $newparams[$key] = $newvalue;
+          }
         }
       }
     } elseif ($description instanceof external_multiple_structure) {
       $newparams = array();
       foreach ($params as $param) {
-        $newparams[] = self::cleanup_parameters($description->content, $param);
+        $newvalue = self::cleanup_parameters($description->content, $param);
+        if (!is_null($newvalue)) {
+          $newparams[] = $newvalue;
+        }
       }
     } else {
       $newparams = $params;

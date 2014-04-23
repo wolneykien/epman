@@ -52,7 +52,7 @@ var EducationProgram = Model.extend({
         if (!attrs.year) {
             attrs.year = 1;
         }
-        
+
         this.set(attrs, { silent : options.silent });
     },
 
