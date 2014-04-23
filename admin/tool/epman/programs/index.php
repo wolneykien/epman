@@ -141,13 +141,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div class="name-value">
     <span><?php echo get_string('Assistants', 'tool_epman'); ?></span>
     <@ if (p.assistants && p.assistants.length > 0) {
-      _.each(p.assistants, function (a) {
-        if (a.id) { @>
+      _.each(p.assistants, function (a, i) {
+        if (i > 0) { @>, <@ } @>
         <a href="<@= '/user/profile.php?id=' + a.id @>">
           <@= a.firstname + " " + a.lastname @>
         </a>
-        <@ }
-      });
+      <@ });
     } else { @>
     <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
     <@ } @>

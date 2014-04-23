@@ -661,3 +661,11 @@
 .tool-epman .search-list-item:hover {
   background-color: #d6e0ff;
 }
+
+.tool-epman .csv *:before {
+  content: ", ";
+}
+
+.tool-epman .csv *:first-child:before {
+  content: "";
+}
