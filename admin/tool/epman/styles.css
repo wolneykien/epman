@@ -580,6 +580,7 @@
   font-size: small;
   line-height: 1.8em;
   vertical-align: middle;
+  cursor: text;
 }
 
 .tool-epman .multiselect-box span {

@@ -399,6 +399,9 @@ var MultiSelect = Backbone.View.extend({
         "click [role='placeholder']" : function (e) {
             this.$("[role='keyword-input']")[0].focus();
         },
+        "click [role='multiselect-box']" : function (e) {
+            this.$("[role='keyword-input']")[0].focus();
+        },
         "blur [role='keyword-input']" : function (e) {
             if ($(e.target).html() == '') {
                 this.render();
