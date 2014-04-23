@@ -650,6 +650,7 @@
   border-color: #d0d0d0;
   font-size: small;
   background-color: #ffffe8;
+  cursor: default;
 }
 
 .tool-epman .search-list-item {

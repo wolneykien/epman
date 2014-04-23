@@ -428,16 +428,13 @@ var MultiSelect = Backbone.View.extend({
         "keypress [role='search-list']" : function (e) {
             if (((e.keyCode ? e.keyCode : e.which) == 13 ||
                  (e.keyCode ? e.keyCode : e.which) == 0 ||
-                 e.key == "Spacebar") &&
-                $(e.target).val() != "")
+                 e.key == "Spacebar"))
             {
-                this.select($(e.target).val());
+                this.select();
             }
         },
-        "click [role='search-list']" : function (e) {
-            if ($(e.target).val() && $(e.target).val() != "") {
-                this.select($(e.target).val());
-            }
+        "click [role='search-list-item']" : function (e) {
+            this.select($(e.target).data("id"));
         },
         "click [role='delete-button']" : function (e) {
             this.deleteItem($(e.currentTarget).parent().data("id"));

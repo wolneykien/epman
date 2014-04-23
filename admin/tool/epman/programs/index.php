@@ -268,20 +268,20 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="user-search-list-template" style="display: none;">
-  <select role="search-list" class="search-list-overlay" size="10" style="display: none;">
+  <div role="search-list" class="search-list-overlay" style="display: none;">
   <@ _.each(collection, function (user) { @>
-    <option class="search-list-item" role="search-item" name="<@= user.id @>" value="<@= user.id @>">
+    <span class="search-list-item" role="search-list-item" data-id="<@= user.id @>">
       <@= user.firstname.format() + " " + user.lastname.format() @>
       <@ if (user.firstname.noMatches() && user.lastname.noMatches()) {
         if (user.email.hasMatches()) { @>
-          <@= " <" + user.email.format() + ">" @>
+          <@= " (" + user.email.format() + ")" @>
         <@ } else if (user.username.hasMatches()) { @>
           <@= " (" + user.username.format() + ")" @>
         <@ }
       } @>
-    </option>
+    </span>
   <@ }); @>
-  </select>
+  </div>
 </div>
 
 <!-- Dialog templates -->
