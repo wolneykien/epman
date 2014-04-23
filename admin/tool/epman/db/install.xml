@@ -43,26 +43,34 @@
     </TABLE>
     <TABLE NAME="tool_epman_program_assistant" COMMENT="Connects education programs with assistant users" PREVIOUS="tool_epman_module" NEXT="tool_epman_module_course">
       <FIELDS>
-        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="programid"/>
+        <FIELD NAME="programid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program ID" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="programid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="programid, userid" NEXT="fk_program" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_program" />
         <KEY NAME="fk_program" TYPE="foreign" FIELDS="programid" REFTABLE="tool_epman_program" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_assistant" />
         <KEY NAME="fk_assistant" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_program"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_relation" UNIQUE="true" FIELDS="programid, userid" COMMENT="Assistant user to education program relation must be unique"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="tool_epman_module_course" COMMENT="Connects education program modules with courses" PREVIOUS="tool_epman_program_assistant" NEXT="tool_epman_group">
       <FIELDS>
-        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" NEXT="courseid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="moduleid"/>
+        <FIELD NAME="moduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Education program module ID" PREVIOUS="id" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="moduleid" NEXT="coursetype" />
         <FIELD NAME="coursetype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course type" PREVIOUS="courseid" />
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="moduleid, courseid" NEXT="fk_module" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_module" />
         <KEY NAME="fk_module" TYPE="foreign" FIELDS="moduleid" REFTABLE="tool_epman_module" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_course"/>
         <KEY NAME="fk_course" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id" PREVIOUS="fk_module"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_relation" UNIQUE="true" FIELDS="moduleid, courseid" COMMENT="Course to education program module relation must be unique"/>
+      </INDEXES>
     </TABLE>
 
     <!-- Groups -->
@@ -87,26 +95,34 @@
     </TABLE>
     <TABLE NAME="tool_epman_group_student" COMMENT="Connects academic groups with the students" PREVIOUS="tool_epman_group" NEXT="tool_epman_group_assistant">
       <FIELDS>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid" NEXT="period" />
         <FIELD NAME="period" TYPE="int" LENGTH="2" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Period number" PREVIOUS="userid" />
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="groupid, userid" NEXT="fk_group" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_group" />
         <KEY NAME="fk_group" TYPE="foreign" FIELDS="groupid" REFTABLE="tool_epman_group" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_student" />
         <KEY NAME="fk_student" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_group"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_relation" UNIQUE="true" FIELDS="groupid, userid" COMMENT="Student user to academic group relation must be unique"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="tool_epman_group_assistant" COMMENT="Connects academic groups with assistant users" PREVIOUS="tool_epman_group_student">
       <FIELDS>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" NEXT="userid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Academic group ID" PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="groupid"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="groupid, userid" NEXT="fk_group" />
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="fk_group" />
         <KEY NAME="fk_group" TYPE="foreign" FIELDS="groupid" REFTABLE="tool_epman_group" REFFIELDS="id" PREVIOUS="primary" NEXT="fk_assistant" />
         <KEY NAME="fk_assistant" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="fk_group"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uq_relation" UNIQUE="true" FIELDS="groupid, userid" COMMENT="Assistant user to academic group relation must be unique"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

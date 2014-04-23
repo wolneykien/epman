@@ -294,7 +294,7 @@ class epman_group_student_external extends crud_external_api {
       }
 
       $student['groupid'] = $groupid;
-      $DB->insert_record('tool_epman_group_student', $student);
+      $DB->insert_record('tool_epman_group_student', $student, false);
 
       return self::get_group_student($groupid, $student['userid']);
     }

@@ -249,7 +249,7 @@ class epman_group_assistant_external extends crud_external_api {
       }
 
       $assistant['groupid'] = $groupid;
-      $DB->insert_record('tool_epman_group_assistant', $assistant);
+      $DB->insert_record('tool_epman_group_assistant', $assistant, false);
 
       return self::get_group_assistant($groupid, $assistant['userid']);
     }

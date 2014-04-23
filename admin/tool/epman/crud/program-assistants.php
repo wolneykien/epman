@@ -250,7 +250,7 @@ class epman_program_assistant_external extends crud_external_api {
       }
 
       $assistant['programid'] = $programid;
-      $DB->insert_record('tool_epman_program_assistant', $assistant);
+      $DB->insert_record('tool_epman_program_assistant', $assistant, false);
 
       return self::get_program_assistant($programid, $assistant['userid']);
     }

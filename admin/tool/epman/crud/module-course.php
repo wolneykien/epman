@@ -238,7 +238,7 @@ class epman_module_course_external extends crud_external_api {
       }
 
       $course['moduleid'] = $moduleid;
-      $DB->insert_record('tool_epman_module_course', $course);
+      $DB->insert_record('tool_epman_module_course', $course, false);
 
       return self::get_module_course($moduleid, $course['courseid']);
     }
