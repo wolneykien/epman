@@ -8,7 +8,80 @@ var restOptions = {
 };
 var templates = {};
 
-function getUrl(urlBase, urlParams, id) {
+function findAllMatches (pat, value) {
+    if (value == null) {
+        return [];
+    }
+    if (!(pat instanceof RegExp)) {
+        pat = new RegExp(pat, "gi");
+    }
+
+    if (_.isString(value)) {
+        var slices = [];
+        var match = pat.exec(value);
+        var pos = 0;
+        while (match != null) {
+            if (match.index > pos) {
+                slices.push({
+                    slice : value.substr(pos, match.index),
+                    match : false,
+                });
+            }
+            slices.push({
+                slice : match[0],
+                match : true,
+            });
+            pos = match.index + match[0].length;
+            match = pat.exec(value);
+        }
+        if (pos < value.length) {
+            slices.push({
+                slice : value.substr(pos),
+                match : false,
+            });
+        }
+        _.extend(slices, {
+            toString : function () {
+                return _.reduce(this, function (res, slice) {
+                    return res + slice.slice;
+                }, "");
+            },
+            matching : _.filter(slices, function (slice) {
+                return slice.match;
+            }),
+            noMatches : function () {
+                return _.isEmpty(this.matching);
+            },
+            hasMatches : function () {
+                return !_.isEmpty(this.matching);
+            },
+            format : function (emph) {
+                if (!emph) {
+                    emph = function (slice) {
+                        return "<b>" + slice + "</b>";
+                    };
+                }
+                return _.reduce(this, function (res, slice) {
+                    return res + (slice.match ? emph(slice.slice) : slice.slice);
+                }, "");
+            },
+        });
+
+        return slices;
+
+    } else if (_.isArray(value)) {
+        return _.map(value, _.partial(findAllMatches, pat));
+    } else if (_.isObject(value)) {
+        return _.reduce(value, function (res, val, key) {
+            res[key] = findAllMatches(pat, val);
+            return res;
+        }, {});
+    } else {
+        return findAllMatches(pat, "" + value);
+    }
+}
+
+function getUrl (urlBase, urlParams, id) {
     var url = urlBase;
     if (id) {
         url = url + "/" + id;
@@ -20,7 +93,7 @@ function getUrl(urlBase, urlParams, id) {
     }
 }
 
-function getTemplate(selector) {
+function getTemplate (selector) {
     if (templates[selector]) {
         return templates[selector];
     } else {
@@ -29,7 +102,7 @@ function getTemplate(selector) {
     }
 }
 
-function logXHR(xhr) {
+function logXHR (xhr) {
     try {
         var jsonResp = JSON.parse(xhr.responseText);
         console.error(
@@ -407,16 +480,18 @@ var MultiSelect = Backbone.View.extend({
     },
 
     update : function () {
-        this.$searchlist.toggleClass("loading", false);
-        if (!this.searchCollection.isEmpty()) {
-            this.$searchlist.html($(this.searchlistTemplate({
-                collection : this.searchCollection.toJSON(),
-                keyword : this.keyword,
-            })).html());
-            this.$searchlist.show();
-        } else {
-            this.$searchlist.empty();
-            this.$searchlist.hide();
+        if (this.$searchlist) {
+            this.$searchlist.toggleClass("loading", false);
+            if (!this.searchCollection.isEmpty()) {
+                this.$searchlist.html($(this.searchlistTemplate({
+                    collection : this.formatResults(this.keyword, this.searchCollection),
+                    keyword : this.keyword,
+                })).html());
+                this.$searchlist.show();
+            } else {
+                this.$searchlist.empty();
+                this.$searchlist.hide();
+            }
         }
     },
 
@@ -453,6 +528,10 @@ var MultiSelect = Backbone.View.extend({
         if (id) {
             this.selectedCollection.remove(this.selectedCollection.get(id));
         }
+    },
+
+    formatResults : function (keyword, collection) {
+        return findAllMatches(keyword, collection.toJSON());
     },
 
 });

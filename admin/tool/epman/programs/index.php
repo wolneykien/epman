@@ -271,7 +271,14 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <select role="search-list" class="search-list-overlay" size="10" style="display: none;">
   <@ _.each(collection, function (user) { @>
     <option class="search-list-item" role="search-item" name="<@= user.id @>" value="<@= user.id @>">
-      <@= user.firstname + " " + user.lastname @>
+      <@= user.firstname.format() + " " + user.lastname.format() @>
+      <@ if (user.firstname.noMatches() && user.lastname.noMatches()) {
+        if (user.email.hasMatches()) { @>
+          <@= " <" + user.email.format() + ">" @>
+        <@ } else if (user.username.hasMatches()) { @>
+          <@= " (" + user.username.format() + ")" @>
+        <@ }
+      } @>
     </option>
   <@ }); @>
   </select>
