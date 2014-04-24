@@ -43,18 +43,6 @@ var EducationProgram = Model.extend({
         assistants : [],
     },
 
-    validate : function(attrs, options) {
-        if (!attrs.responsible) {
-            attrs.responsible = user.id;
-        }
-
-        if (!attrs.year) {
-            attrs.year = 1;
-        }
-
-        this.set(attrs, { silent : options.silent });
-    },
-
 });
 
 /**
@@ -285,6 +273,12 @@ var ProgramDialog = Dialog.extend({
 
     responsible : null,
     assistants : null,
+
+    validations : {
+        "[name='name']" : function (val) {
+            return !_.isEmpty(val);
+        },
+    },
 
     update : function () {
         this.responsible.reset(this.model.get('responsible'));

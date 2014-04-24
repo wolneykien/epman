@@ -673,3 +673,8 @@
 .tool-epman .csv *:first-child:before {
   content: "";
 }
+
+.tool-epman .invalid,
+.tool-epman.dialog .invalid {
+  border-color: #ff8800;
+}

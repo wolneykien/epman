@@ -74,6 +74,7 @@ $string['OK'] = 'OK';
 $string['Cancel'] = 'Cancel';
 $string['Close'] = 'Close';
 $string['programName'] = 'Name';
+$string['Enter_the_name_of_the_program'] = "Enter the name of the program";
 $string['Enter_the_programs_description'] = "Enter the program's description";
 $string['Add_program'] = 'Add program';
 $string['starttyping'] = 'start typing';

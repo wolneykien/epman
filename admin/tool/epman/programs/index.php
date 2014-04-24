@@ -296,7 +296,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('programName', 'tool_epman'); ?></td>
-        <td><input name="name" value="<@= p.name @>"></input></td>
+        <td><input name="name" value="<@= p.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_program', 'tool_epman'); ?>"></input></td>
       </tr>
       <tr>
         <td colspan="2" class="fullrow">

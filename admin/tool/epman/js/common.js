@@ -246,10 +246,24 @@ var Dialog = Backbone.View.extend({
     width : '48%',
     buttons : [],
 
+    events : {
+        "input *" : "onInput",
+        "change *" : "onChange",
+    },
+
+    validations : {},
+
     initialize : function (options) {
-        _.extend(this, {
-            buttons : [
+        _.extend(this, _.pick(options || {},
+                  "modal",
+                  "dialogClass",
+                  "width"));
+        if (options.buttons) {
+            this.buttons = options.buttons;
+        } else {
+            this.buttons = [
                 {
+                    name : "ok",
                     text : i18n["OK"],
                     click : _.partial(function (self) {
                         self.ok();
@@ -257,18 +271,18 @@ var Dialog = Backbone.View.extend({
                     }, this),
                 },
                 {
+                    name : "cancel",
                     text : i18n["Cancel"],
                     click : _.partial(function (self) {
                         self.cancel();
                         $(this).dialog ("close");
                     }, this),
                 }
-            ],
-        }, _.pick(options || {},
-                  "buttons",
-                  "modal",
-                  "dialogClass",
-                  "width"));
+            ];
+        }
+        if (options.validations) {
+            _.extend(this.validations, options.validations);
+        }
         this.configure(options);
     },
 
@@ -280,6 +294,7 @@ var Dialog = Backbone.View.extend({
             return false;
         }
 
+        this.undelegateEvents();
         this.render(options);
 
         var options = _.extend({
@@ -297,6 +312,8 @@ var Dialog = Backbone.View.extend({
         });
         this.$templateEl = this.$el;
         this.$el = this.$el.find('.dialog').dialog(options);
+        this.onOpen();
+        this.delegateEvents();
     },
 
     ok : function () {
@@ -306,6 +323,44 @@ var Dialog = Backbone.View.extend({
     },
 
     close : function () {
+    },
+
+    toggleButton : function (id, flag) {
+        var $btn = this.$el.parent().find("[role='button'][name='" + id + "']");
+        if (flag) {
+            $btn.button("enable");
+        } else {
+            $btn.button("disable");
+        }
+    },
+
+    validate : function () {
+        return _.reduce(this.validations, function (valid, validator, selector) {
+            var $element = this.$(selector);
+            var passed = validator($element.val());
+            this.toggleValid($element, passed);
+            if (!passed) {
+                return false;
+            } else {
+                return valid;
+            }
+        }, true, this);
+    },
+
+    toggleValid : function ($element, flag) {
+        $element.toggleClass("invalid", !flag);
+    },
+
+    onInput : function (e) {
+        this.toggleButton("ok", this.validate());
+    },
+
+    onChange : function (e) {
+        this.toggleButton("ok", this.validate());
+    },
+
+    onOpen : function (e) {
+        this.toggleButton("ok", this.validate());
     },
 
 });
