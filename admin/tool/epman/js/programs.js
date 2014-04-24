@@ -115,7 +115,7 @@ var EducationProgramView = View.extend({
             endDays = startDays + m.length;
         }, this);
         
-        self = this;
+        var self = this;
         this.$header.find("[role='edit-button']").click(function () {
             var program = new ProgramDialog({
                 model : self.model,
@@ -309,7 +309,7 @@ var ProgramDialog = Dialog.extend({
     },
 
     ok : function () {
-        self = this;
+        var self = this;
         this.model.save({
             name : this.$("[name='name']").val(),
             description : this.$("[name='description']").val(),
