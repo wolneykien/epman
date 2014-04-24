@@ -249,6 +249,9 @@ var Dialog = Backbone.View.extend({
     events : {
         "input *" : "onInput",
         "change *" : "onChange",
+        "spin *" : function (e, spinner) {
+            this.onChange(e, $(e.target), spinner.value);
+        },
     },
 
     validations : {},
@@ -334,10 +337,11 @@ var Dialog = Backbone.View.extend({
         }
     },
 
-    validate : function () {
+    validate : function ($input, val) {
         return _.reduce(this.validations, function (valid, validator, selector) {
             var $element = this.$(selector);
-            var passed = validator($element.val());
+            validator = _.bind(validator, this);
+            var passed = validator($element.val(), $element, $input, val);
             this.toggleValid($element, passed);
             if (!passed) {
                 return false;
@@ -351,15 +355,15 @@ var Dialog = Backbone.View.extend({
         $element.toggleClass("invalid", !flag);
     },
 
-    onInput : function (e) {
-        this.toggleButton("ok", this.validate());
+    onInput : function (e, $input, val) {
+        this.toggleButton("ok", this.validate($input, val));
     },
 
-    onChange : function (e) {
-        this.toggleButton("ok", this.validate());
+    onChange : function (e, $input, val) {
+        this.toggleButton("ok", this.validate($input, val));
     },
 
-    onOpen : function (e) {
+    onOpen : function () {
         this.toggleButton("ok", this.validate());
     },
 

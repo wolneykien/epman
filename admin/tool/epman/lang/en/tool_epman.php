@@ -82,4 +82,6 @@ $string['starttyping_user'] = 'start typing a user name';
 $string['Error'] = 'Error';
 $string['Error_message'] = 'Error message';
 $string['unknown_error'] = 'unknown error';
+$string['Year'] = 'Year';
+$string['m-n'] = '%i - %i';
 ?>

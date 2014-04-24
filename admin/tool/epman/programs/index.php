@@ -140,14 +140,16 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div class="name-value">
     <span><?php echo get_string('Assistants', 'tool_epman'); ?></span>
-    <@ if (p.assistants && p.assistants.length > 0) {
-      _.each(p.assistants, function (a, i) {
+    <@ if (p.assistants && p.assistants.length > 0) { @>
+    <span>
+    <@ _.each(p.assistants, function (a, i) {
         if (i > 0) { @>, <@ } @>
         <a href="<@= '/user/profile.php?id=' + a.id @>">
           <@= a.firstname + " " + a.lastname @>
         </a>
-      <@ });
-    } else { @>
+    <@ }); @>
+    </span>
+    <@ } else { @>
     <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
     <@ } @>
   </div>
@@ -296,10 +298,12 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('programName', 'tool_epman'); ?></td>
-        <td><input name="name" value="<@= p.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_program', 'tool_epman'); ?>"></input></td>
+        <td class="fill"><input name="name" value="<@= p.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_program', 'tool_epman'); ?>"></input></td>
+        <td><?php echo get_string('Year', 'tool_epman'); ?></td>
+        <td><input class="year-spinner" name="year" value="<@= p.year @>" placeholder="<@= '<?php echo get_string('m-n', 'tool_epman'); ?>'.replace(/%i/, minyear).replace(/%i/, maxyear) @>"></input></td>
       </tr>
       <tr>
-        <td colspan="2" class="fullrow">
+        <td colspan="4" class="fullrow">
           <textarea name="description" class="description" placeholder="<?php echo get_string('Enter_the_programs_description', 'tool_epman'); ?>"><@= p.description @></textarea>
         </td>
       </tr>

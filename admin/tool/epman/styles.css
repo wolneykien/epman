@@ -349,13 +349,42 @@
   padding-right: 0.25em;
 }
 
-.tool-epman .name-value > span:first-child,
-.tool-epman .name-value > td:first-child { 
+.tool-epman .name-value > *:nth-child(odd) {
   font-weight: bold;
 }
 
-.tool-epman .name-value > span:first-child:after,
-.tool-epman .name-value > td:first-child:after {
+.tool-epman .name-value > span:nth-child(odd) {
+  margin-left: 0.5em;
+}
+
+.tool-epman .name-value > span:first-child {
+  margin-left: 0px;
+}
+
+.tool-epman .name-value > td {
+  width: 0px;
+  vertical-align: middle;
+}
+
+.tool-epman .fill,
+.tool-epman .name-value > td.fill,
+.tool-epman .name-value > td:nth-child(2):last-child {
+  width: 100%;
+}
+
+.tool-epman .name-value > td.fullrow {
+  width: 100%;
+}
+
+.tool-epman .name-value > td:nth-child(odd) {
+  padding-left: 0.5em;
+}
+
+.tool-epman .name-value > td:first-child {
+  padding-left: 0px;
+}
+
+.tool-epman .name-value > *:nth-child(odd):after {
   content: ":";
 }
 
@@ -364,14 +393,8 @@
   margin: 0px;
 }
 
-.tool-epman .name-value-table .name-value > td:last-child {
-  width: 100%;
-}
-
-.tool-epman .name-value-table .name-value > td.fullrow {
-  width: 100%;
-}
-
+.tool-epman input,
+.tool-epman textarea,
 .tool-epman.dialog input,
 .tool-epman.dialog textarea {
   width: 100%;
@@ -416,7 +439,7 @@
 /*  font-size: medium; */
 }
 
-.tool-epman .program-module .module-header .name-value:first-child {
+.tool-epman .program-module .module-header .name-value:nth-child(odd) {
   padding-left: 0px;
 }
 
@@ -677,4 +700,9 @@
 .tool-epman .invalid,
 .tool-epman.dialog .invalid {
   border-color: #ff8800;
+}
+
+.tool-epman .year-spinner,
+.tool-epman.dialog .year-spinner {
+  width: 6.0em;
 }

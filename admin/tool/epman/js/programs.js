@@ -175,11 +175,15 @@ var EducationProgramsList = View.extend({
         },
     },
 
+    configure : function (options) {
+        this.listenTo(this.collection, "change:year", this.render);
+    },
+
     render : function () {
         console.log("Render out the eduction program list");
         this.$el.empty();
         this.$el.show();
-        var section = null;
+        var section = { year : 0 };
         if (!this.collection.isEmpty()) {
             this.collection.forEach(function (program) {
                 var data = {
@@ -187,12 +191,18 @@ var EducationProgramsList = View.extend({
                     p : program.toJSON(),
                     year : program.get('year'),
                 };
-                if (section == null || section.year != data.year) {
-                    this.$el.append(templates.listSection(data));
-                    section = {
+                if (section.year != data.year) {
+                    for (var y = section.year + 1; y <= data.year; y++) {
+                        this.$el.append(templates.listSection({
+                            f : this.collection.filter,
+                            p : null,
+                            year : y,
+                        }));
+                    }
+                    _.extend(section, {
                         $el : this.$("#year-" + data.year),
                         year : data.year,
-                    };
+                    });
                 }
                 section.$el.append(templates.record(data));
             }, this);
@@ -200,10 +210,7 @@ var EducationProgramsList = View.extend({
             console.log("Empty");
         }
 
-        if (!section) {
-            section = { year : 0};
-        }
-        for (y = section.year + 1; y < 7; y++) {
+        for (var y = section.year + 1; y < 7; y++) {
             this.$el.append(templates.listSection({
                 f : this.collection.filter,
                 p : null,
@@ -274,9 +281,22 @@ var ProgramDialog = Dialog.extend({
     responsible : null,
     assistants : null,
 
+    minyear : 1,
+    maxyear : 6,
+
     validations : {
         "[name='name']" : function (val) {
             return !_.isEmpty(val);
+        },
+        "[name='year']" : function (val, $el, $input, inputval) {
+            if ($input && $input.is($el)) {
+                val = inputval;
+            } else {
+                val = $el.spinner("value");
+            }
+            return _.isNumber(val) &&
+                   val >= this.minyear &&
+                   val <= this.maxyear;
         },
     },
 
@@ -286,10 +306,17 @@ var ProgramDialog = Dialog.extend({
     },
 
     render : function () {
+        var self = this;
         this.stopListening(this.model, "change", this.update);
         this.$el.html(templates.programDialog({
             p : this.model.toJSON(),
+            minyear : this.minyear,
+            maxyear : this.maxyear,
         }));
+        this.$("[name='year']").spinner({
+            min : this.minyear,
+            max : this.maxyear,
+        }).spinner("value", this.model.get('year') || this.minyear);
         this.responsible = new UserSelect({
             $el : this.$("[role='select-responsible']"),
             template : templates.userselect,
@@ -312,12 +339,12 @@ var ProgramDialog = Dialog.extend({
         var self = this;
         this.model.save({
             name : this.$("[name='name']").val(),
+            year : Number(this.$("[name='year']").val()),
             description : this.$("[name='description']").val(),
             responsible : _.first(this.responsible.selectedCollection.pluck('id')),
             assistants : this.assistants.selectedCollection.pluck('id'),
         }, {
             wait : true,
-            silent : true,
             success : function (model) {
                 model.fetch({
                     reset : true,
