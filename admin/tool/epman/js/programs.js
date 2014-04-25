@@ -1,10 +1,5 @@
 
 /**
- * Globals.
- */
-var addProgram;
-
-/**
  * Education program list router.
  *
  * @param options {
@@ -48,10 +43,6 @@ var EducationProgram = Model.extend({
 /**
  * Models a collection of the education programs.
  *
- * @param options {
- *   restRoot : "REST script URI",
- * }
- *
  */
 var EducationPrograms = Collection.extend({
 
@@ -71,6 +62,24 @@ var EducationPrograms = Collection.extend({
     },
 
 });
+
+/**
+ * Education program module model.
+ */
+var EducationProgramModule = Model.extend({
+
+    urlBase : "/programs/:programid/modules",
+
+    defaults : {
+        assistants : [],
+    },
+
+    configuration : function (attrs, options) {
+        _.extend(this.urlParams, { programid : attrs.programid });
+    },
+
+});
+
 
 /**
  * Renders the complete education program.
@@ -117,11 +126,16 @@ var EducationProgramView = View.extend({
         
         var self = this;
         this.$header.find("[role='edit-button']").click(function () {
-            var program = new ProgramDialog({
+            (new ProgramDialog({
                 model : self.model,
                 el : "#program-dialog-template",
-            });
-            program.open();
+            })).open();
+        });
+        this.$body.find("[role='add-module-button']").click(function () {
+            (new ModuleDialog({
+                model : new EducationProgramModule({ programid : self.model.id, length : 30 }, {}),
+                el : "#module-dialog-template",
+            })).open();
         });
 
         return this;
@@ -300,14 +314,7 @@ var ProgramDialog = Dialog.extend({
         },
     },
 
-    update : function () {
-        this.responsible.reset(this.model.get('responsible'));
-        this.assistants.reset(this.model.get('assistants'));
-    },
-
     render : function () {
-        var self = this;
-        this.stopListening(this.model, "change", this.update);
         this.$el.html(templates.programDialog({
             p : this.model.toJSON(),
             minyear : this.minyear,
@@ -331,8 +338,8 @@ var ProgramDialog = Dialog.extend({
                 searchlistTemplate : templates.userSearchList,
             selectedCollection : new Users(),
         });
-        this.update();
-        this.listenTo(this.model, "change", this.update);
+        this.responsible.reset(this.model.get('responsible'));
+        this.assistants.reset(this.model.get('assistants'));
     },
 
     ok : function () {
@@ -356,6 +363,30 @@ var ProgramDialog = Dialog.extend({
                 });
             },
         });
+    },
+
+});
+
+var ModuleDialog = Dialog.extend({
+
+    render : function () {
+        var self = this;
+        this.$el.html(getTemplate("#module-dialog-template")({
+            m : this.model.toJSON(),
+        }));
+        this.$("[name='startdate']").datepicker({
+            defaultDate: this.model.get("startdate") ? new Date(this.model.get("startdate") * 1000) : "+1w",
+            changeMonth: true,
+            numberOfMonths: 3,
+            dateFormat : i18n['dateFormat'],
+        });
+        this.$("[name='enddate']").datepicker({
+            defaultDate: this.model.get("startdate") &&this.model.get("length")  ? new Date((m.startdate + m.length * 24 * 3600) * 1000) : "+2w",
+            changeMonth: true,
+            numberOfMonths: 3,
+            dateFormat : i18n['dateFormat'],
+        });
+        this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);
     },
 
 });
@@ -421,15 +452,13 @@ var initPage = function () {
         }
     }
 
-    var addProgram = function () {
-        var program = new ProgramDialog({
+    $("#add-program-button").click(function () {
+        (new ProgramDialog({
             model : new EducationProgram({}, {}),
             collection : programs,
             el : "#program-dialog-template",
-        });
-        program.open();
-    };
-    $("#add-program-button").click(addProgram);
+        })).open();
+    });
 
     $(window).scroll (checkFooter);
     checkFooter();

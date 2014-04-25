@@ -83,7 +83,17 @@ function findAllMatches (pat, value) {
 }
 
 function getUrl (urlBase, urlParams, id) {
+    var urlParams = _.extend({}, urlParams);
+    var pathParams = {};
+    var pat = /:([^:\/]+)/;
     var url = urlBase;
+    var match = pat.exec(url);
+    while (match != null) {
+        pathParams[match[1]] = urlParams[match[1]] || pathParams[match[1]];
+        urlParams = _.omit(urlParams, match[1]);
+        url = url.substr(0, match.index) + pathParams[match[1]] + url.substr(match.lastindex);
+        match = pat.exec(url);
+    }
     if (id) {
         url = url + "/" + id;
     }
@@ -137,10 +147,10 @@ var Model = Backbone.Model.extend({
             this.urlBase = options.restRoot.replace(/\/$/, "") + this.urlBase;
         }
         _.extend(this.urlParams, options.restParams);
-        this.configure(options);
+        this.configure(attrs, options);
     },
 
-    configure : function (options) {
+    configure : function (attrs, options) {
     },
 
     save : function (attrs, options) {
