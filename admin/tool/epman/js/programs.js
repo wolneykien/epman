@@ -302,12 +302,8 @@ var ProgramDialog = Dialog.extend({
         "[name='name']" : function (val) {
             return !_.isEmpty(val);
         },
-        "[name='year']" : function (val, $el, $input, inputval) {
-            if ($input && $input.is($el)) {
-                val = inputval;
-            } else {
-                val = $el.spinner("value");
-            }
+        "[name='year']" : function (val, $el) {
+            val = $el.spinner("value");
             return _.isNumber(val) &&
                    val >= this.minyear &&
                    val <= this.maxyear;
@@ -389,15 +385,17 @@ var ModuleDialog = Dialog.extend({
         this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);
     },
 
-    fix : function ($input, val) {
+    fix : function ($input) {
+        var updated = [];
         if (!$input) {
-            return val;
+            return updated;
         }
         if ($input.is(this.$("[name='startdate']"))) {
             var start = $input.datepicker("getDate");
             if (start) {
                 var $end = this.$("[name='enddate']");
                 $end.datepicker("option", "minDate", start);
+                updated.push($end);
                 var len = this.$("[name='length']").spinner("value");
                 if (len) {
                     $end.datepicker("setDate", new Date(start.getTime() + (len - 1) * 24 * 3600 * 1000));
@@ -409,19 +407,25 @@ var ModuleDialog = Dialog.extend({
             if (end) {
                 var $start = this.$("[name='startdate']");
                 $start.datepicker("option", "maxDate", end);
+                updated.push($start);
                 var start = $start.datepicker("getDate");
                 if (start) {
-                    this.$("[name='length']").spinner("value", (end.getTime() - start.getTime()) / (24 * 3600 * 1000) + 1);
+                    var $len = this.$("[name='length']");
+                    $len.spinner("value", (end.getTime() - start.getTime()) / (24 * 3600 * 1000) + 1);
+                    updated.push($len);
                 }
             }
         }
         if ($input.is(this.$("[name='length']"))) {
             var start = this.$("[name='startdate']").datepicker("getDate");
-            if (start && val) {
-                this.$("[name='enddate']").datepicker("setDate", new Date(start.getTime() + (val - 1) * 24 * 3600 * 1000));
+            var len = $input.spinner("value");
+            if (start && len) {
+                var $end = this.$("[name='enddate']");
+                $end.datepicker("setDate", new Date(start.getTime() + (len - 1) * 24 * 3600 * 1000));
+                updated.push($end);
             }
         }
-        return val;
+        return updated;
     },
 
 });

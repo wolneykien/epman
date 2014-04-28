@@ -258,13 +258,16 @@ var Dialog = Backbone.View.extend({
 
     events : {
         "input *" : function (e) {
-            this.onInput(e, $(e.target), $(e.target).val());
+            this.onInput(e, $(e.target));
         },
         "change *" : function (e) {
-            this.onChange(e, $(e.target), $(e.target).val());
+            this.onChange(e, $(e.target));
         },
         "spin *" : function (e, spinner) {
-            this.onChange(e, $(e.target), spinner.value);
+            var $spinner = $(e.target);
+            $spinner.spinner("value", spinner.value);
+            this.onChange(e, $spinner);
+            return false;
         },
     },
 
@@ -351,13 +354,17 @@ var Dialog = Backbone.View.extend({
         }
     },
 
-    validate : function ($input, val) {
+    validate : function ($input) {
         this.undelegateEvents();
-        val = this.fix($input, val);
+        _.each(this.fix($input), function ($el) {
+            if ($el.size() > 0) {
+                this.updateValue($el[0], $el.val());
+            }
+        }, this);
         var valid = _.reduce(this.validations, function (valid, validator, selector) {
             var $element = this.$(selector);
             validator = _.bind(validator, this);
-            var passed = validator($element.val(), $element, $input, val);
+            var passed = validator($element.val(), $element, $input);
             this.toggleValid($element, passed);
             if (!passed) {
                 return false;
@@ -369,39 +376,44 @@ var Dialog = Backbone.View.extend({
         return valid;
     },
 
-    fix : function ($input, val) {
-        return val;
+    fix : function ($input) {
+        return [];
     },
 
     toggleValid : function ($element, flag) {
         $element.toggleClass("invalid", !flag);
     },
 
-    onInput : function (e, $input, val) {
-        if (!this.filterEvent(e, val)) {
+    onInput : function (e, $input) {
+        if (!this.filterEvent(e)) {
             return false;
         }
-        this.toggleButton("ok", this.validate($input, val));
+        this.toggleButton("ok", this.validate($input));
     },
 
-    onChange : function (e, $input, val) {
-        if (!this.filterEvent(e, val)) {
+    onChange : function (e, $input) {
+        if (!this.filterEvent(e)) {
             return false;
         }
-        this.toggleButton("ok", this.validate($input, val));
+        this.toggleButton("ok", this.validate($input));
     },
 
     onOpen : function () {
         this.toggleButton("ok", this.validate());
     },
 
-    filterEvent : function (e, val) {
+    filterEvent : function (e) {
+        var val = $(e.target).val();
         if ($.data(e.target, "prevVal") == val) {
             return false;
         } else {
-            $.data(e.target, "prevVal", val);
+            this.updateValue(e.target, val);
             return true;
         }
+    },
+
+    updateValue : function (el, val) {
+        $.data(el, "prevVal", val);
     },
 
 });
