@@ -257,8 +257,12 @@ var Dialog = Backbone.View.extend({
     buttons : [],
 
     events : {
-        "input *" : "onInput",
-        "change *" : "onChange",
+        "input *" : function (e) {
+            this.onInput(e, $(e.target), $(e.target).val());
+        },
+        "change *" : function (e) {
+            this.onChange(e, $(e.target), $(e.target).val());
+        },
         "spin *" : function (e, spinner) {
             this.onChange(e, $(e.target), spinner.value);
         },
@@ -348,7 +352,9 @@ var Dialog = Backbone.View.extend({
     },
 
     validate : function ($input, val) {
-        return _.reduce(this.validations, function (valid, validator, selector) {
+        this.undelegateEvents();
+        val = this.fix($input, val);
+        var valid = _.reduce(this.validations, function (valid, validator, selector) {
             var $element = this.$(selector);
             validator = _.bind(validator, this);
             var passed = validator($element.val(), $element, $input, val);
@@ -359,6 +365,12 @@ var Dialog = Backbone.View.extend({
                 return valid;
             }
         }, true, this);
+        this.delegateEvents();
+        return valid;
+    },
+
+    fix : function ($input, val) {
+        return val;
     },
 
     toggleValid : function ($element, flag) {
@@ -366,15 +378,30 @@ var Dialog = Backbone.View.extend({
     },
 
     onInput : function (e, $input, val) {
+        if (!this.filterEvent(e, val)) {
+            return false;
+        }
         this.toggleButton("ok", this.validate($input, val));
     },
 
     onChange : function (e, $input, val) {
+        if (!this.filterEvent(e, val)) {
+            return false;
+        }
         this.toggleButton("ok", this.validate($input, val));
     },
 
     onOpen : function () {
         this.toggleButton("ok", this.validate());
+    },
+
+    filterEvent : function (e, val) {
+        if ($.data(e.target, "prevVal") == val) {
+            return false;
+        } else {
+            $.data(e.target, "prevVal", val);
+            return true;
+        }
     },
 
 });

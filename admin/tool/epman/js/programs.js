@@ -389,6 +389,41 @@ var ModuleDialog = Dialog.extend({
         this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);
     },
 
+    fix : function ($input, val) {
+        if (!$input) {
+            return val;
+        }
+        if ($input.is(this.$("[name='startdate']"))) {
+            var start = $input.datepicker("getDate");
+            if (start) {
+                var $end = this.$("[name='enddate']");
+                $end.datepicker("option", "minDate", start);
+                var len = this.$("[name='length']").spinner("value");
+                if (len) {
+                    $end.datepicker("setDate", new Date(start.getTime() + (len - 1) * 24 * 3600 * 1000));
+                }
+            }
+        }
+        if ($input.is(this.$("[name='enddate']"))) {
+            var end = $input.datepicker("getDate");
+            if (end) {
+                var $start = this.$("[name='startdate']");
+                $start.datepicker("option", "maxDate", end);
+                var start = $start.datepicker("getDate");
+                if (start) {
+                    this.$("[name='length']").spinner("value", (end.getTime() - start.getTime()) / (24 * 3600 * 1000) + 1);
+                }
+            }
+        }
+        if ($input.is(this.$("[name='length']"))) {
+            var start = this.$("[name='startdate']").datepicker("getDate");
+            if (start && val) {
+                this.$("[name='enddate']").datepicker("setDate", new Date(start.getTime() + (val - 1) * 24 * 3600 * 1000));
+            }
+        }
+        return val;
+    },
+
 });
 
 /* Init */
