@@ -105,12 +105,19 @@ function getUrl (urlBase, urlParams, id) {
 }
 
 function getTemplate (selector) {
-    if (templates[selector]) {
-        return templates[selector];
-    } else {
-        templates[selector] = _.template($(selector).html());
-        return templates[selector];
+    var template = templates[selector];
+    if (!template) {
+        template = _.template($(selector).html());
+        templates[selector] = template;
     }
+    _.each(_.rest(arguments), function (arg) {
+        var fullselector = selector + " " + arg;
+        if (!templates[fullselector]) {
+            templates[fullselector] = _.template($(fullselector).html());
+        }
+    });
+
+    return template;
 }
 
 function logXHR (xhr) {

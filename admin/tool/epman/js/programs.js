@@ -382,9 +382,10 @@ var ModuleDialog = Dialog.extend({
 
     render : function () {
         var self = this;
-        this.$el.html(getTemplate("#module-dialog-template")({
+        this.$el.html(getTemplate("#module-dialog-template", "[role='days']")({
             m : this.model.toJSON(),
         }));
+        this.$("[name='period']").spinner({ min : 1 }).spinner("value", this.model.get('period') || 1);
         this.$("[name='startdate']").datepicker({
             defaultDate: this.model.get("startdate") ? new Date(this.model.get("startdate") * 1000) : "+1w",
             changeMonth: true,
@@ -397,7 +398,9 @@ var ModuleDialog = Dialog.extend({
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
         });
-        this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);        
+        this.$("[name='length']").spinner({
+            min : 1,
+        }).spinner("value", this.model.get('length') || 30);
         this.courses = new CourseSelect({
             $el : this.$("[role='select-courses']"),
             template : getTemplate("#courseselect-template"),
@@ -445,6 +448,9 @@ var ModuleDialog = Dialog.extend({
                 var $end = this.$("[name='enddate']");
                 $end.datepicker("setDate", new Date(start.getTime() + (len - 1) * 24 * 3600 * 1000));
                 updated.push($end);
+            }
+            if (len) {
+                this.$("[role='days']").html(getTemplate("#module-dialog-template [role='days']")({ m : { length : len } }));
             }
         }
         return updated;

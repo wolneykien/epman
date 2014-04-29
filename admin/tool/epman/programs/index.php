@@ -369,14 +369,20 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div class="tool-epman dialog" title="<@= m.id ? '<?php echo get_string('Education_program_module_edit', 'tool_epman'); ?>' : '<?php echo get_string('New_education_program_module', 'tool_epman'); ?>' @>">
     <table class="name-value-table">
       <tr class="name-value">
+        <td style="white-space: nowrap;"><?php echo get_string('Edication_period', 'tool_epman'); ?></td>
+        <td><input type="text" class="period-spinner" name="period"></input></td>
+      </tr>
+    </table>
+    <table class="name-value-table">
+      <tr class="name-value">
         <td><?php echo get_string('moduleStart', 'tool_epman'); ?></td>
         <td><input type="text" name="startdate" placeholder="<?php echo get_string('dateFormatLabel', 'tool_epman'); ?>"></input></td>
         <td><?php echo get_string('moduleEnd', 'tool_epman'); ?></td>
         <td><input type="text" name="enddate" placeholder="<?php echo get_string('dateFormatLabel', 'tool_epman'); ?>"></input></td>
         <td><?php echo get_string('moduleLength', 'tool_epman'); ?></td>
         <td><table><tr>
-          <td><input type="text" class="length-days" name="length" value="<@= m.length @>"></input></td>
-          <td><span role="days" style="white-space: nowrap;">
+          <td><input type="text" class="length-spinner" name="length" value="<@= m.length @>"></input></td>
+          <td><span role="days" class="days-suffix">
             &amp;nbsp;
             <@= (function (len) {
               switch (("" + len).substr(-1)) {

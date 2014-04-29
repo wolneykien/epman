@@ -702,9 +702,21 @@
   width: 6.0em;
 }
 
-.tool-epman .length-days,
-.tool-epman.dialog .length-days {
+.tool-epman .length-spinner,
+.tool-epman.dialog .length-spinner {
   width: 6.0em;
+}
+
+.tool-epman .period-spinner,
+.tool-epman.dialog .period-spinner {
+  width: 6.0em;
+}
+
+.tool-epman .days-suffix,
+.tool-epman.dialog .days-suffix {
+  white-space: nowrap;
+  min-width: 4.0em;
+  display: inline-block;
 }
 
 .tool-epman .name-value table,
