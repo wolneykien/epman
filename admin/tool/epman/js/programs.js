@@ -367,6 +367,19 @@ var ModuleDialog = Dialog.extend({
 
     courses : null,
 
+    validations : {
+        "[name='startdate']" : function (val) {
+            return !_.isEmpty(val);
+        },
+        "[name='enddate']" : function (val) {
+            return !_.isEmpty(val);
+        },
+        "[name='length']" : function (val, $el) {
+            val = $el.spinner("value");
+            return _.isNumber(val) && val >= 1;
+        },
+    },
+
     render : function () {
         var self = this;
         this.$el.html(getTemplate("#module-dialog-template")({
