@@ -153,15 +153,20 @@ var Model = Backbone.Model.extend({
     configure : function (attrs, options) {
     },
 
-    save : function (attrs, options) {
+    sync : function (method, model, options) {
+        var onerror = options.error;
+        options.error = undefined;
         options = _.defaults(options, {
             wait : true,
-            error : function (model, xhr, options) {
+            error : function (xhr) {
                 logXHR(xhr);
                 (new RestErrorDialog()).open({ xhr : xhr });
+                if (onerror) {
+                    onerror.apply(this, arguments);
+                }
             },
         });
-        Backbone.Model.prototype.save.apply(this, [attrs, options]);
+      return Backbone.sync.apply(this, arguments);
     },
 
 });
@@ -184,6 +189,22 @@ var Collection = Backbone.Collection.extend({
     },
 
     configure : function (options) {
+    },
+
+    sync : function (method, model, options) {
+        var onerror = options.error;
+        options.error = undefined;
+        options = _.defaults(options, {
+            wait : true,
+            error : function (xhr) {
+                logXHR(xhr);
+                (new RestErrorDialog()).open({ xhr : xhr });
+                if (onerror) {
+                    onerror.apply(this, arguments);
+                }
+            },
+        });
+      return Backbone.sync.apply(this, arguments);
     },
 
 });
