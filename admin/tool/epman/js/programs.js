@@ -365,6 +365,8 @@ var ProgramDialog = Dialog.extend({
 
 var ModuleDialog = Dialog.extend({
 
+    courses : null,
+
     render : function () {
         var self = this;
         this.$el.html(getTemplate("#module-dialog-template")({
@@ -382,7 +384,14 @@ var ModuleDialog = Dialog.extend({
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
         });
-        this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);
+        this.$("[name='length']").spinner({ min : 1 }).spinner("value", this.model.get('length') || 30);        
+        this.courses = new CourseSelect({
+            $el : this.$("[role='select-courses']"),
+            template : getTemplate("#courseselect-template"),
+            searchlistTemplate : getTemplate("#course-searchlist-template"),
+            selectedCollection : new Courses(),
+        });
+        this.courses.reset(this.model.get('courses'));
     },
 
     fix : function ($input) {

@@ -45,6 +45,19 @@ class epman_program_external extends crud_external_api {
         'Output only the programs editable by the given user (id)',
         VALUE_DEFAULT,
         0),
+      'like' => new external_value(
+        PARAM_TEXT,
+        'Matching pattern',
+        VALUE_OPTIONAL),
+      'skip' => new external_value(
+        PARAM_INT,
+        'Skip that number of records',
+        VALUE_DEFAULT,
+        0),
+      'limit' => new external_value(
+        PARAM_INT,
+        'Limit the number of selected records',
+        VALUE_OPTIONAL),
     ));
   }
 
@@ -53,14 +66,19 @@ class epman_program_external extends crud_external_api {
    *
    * @return array of education programs
    */
-    public static function list_programs($userid) {
+    public static function list_programs($userid, $like, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
         self::list_programs_parameters(),
-        array('userid' => $userid)
+        array('userid' => $userid, 'like' => $like, 'skip' => $skip, 'limit' => $limit)
       );
       $userid = $params['userid'];
+      $like = $params['like'];
+      $skip = $params['skip'];
+      $limit = $params['limit'];
+
+      $like = "%${like}%";
 
       if ($userid) {
         $programs = $DB->get_records_sql(
@@ -78,10 +96,13 @@ class epman_program_external extends crud_external_api {
             'on pa.programid = p.id '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.
-            'where p.responsibleid = ? or pa.userid = ? '.
+            'where (p.responsibleid = ? or pa.userid = ?) '.
+            ($like ? 'and p.name like ?' : '').
             'group by p.id '.
             'order by year, name',
-            array($userid, $userid));
+            array_merge(array($userid, $userid), ($like ? array($like) : array()))
+            $skip,
+            $limit);
       } else {
         $programs = $DB->get_records_sql(
             'select p.*, u.username, '.
@@ -89,7 +110,11 @@ class epman_program_external extends crud_external_api {
             'from {tool_epman_program} p '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.
-            'order by year, name');
+            ($like ? 'where p.name like ?' : '').
+            'order by year, name',
+            ($like ? array($like) : null)
+            $skip,
+            $limit);
       }
 
       return array_map(

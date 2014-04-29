@@ -292,6 +292,41 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <@ }); @>
   </div>
 </div>
+<div id="courseselect-template" style="display: none;">
+  <div role="multiselect-box" class="multiselect-box">
+  <@ if (_.isEmpty(collection) && defValue) { @>
+    <span data-id="<@= defValue.id @>" class="link-button light course">
+      <a href="<@= '/course/view.php?id=' + defValue.id @>" target="_blank">
+        <@= defValue.fullname @>
+      </a>
+    </span>
+  <@ } @>
+  <@ _.each(collection, function (course) {
+        if (course.id) { @>
+        <span data-id="<@= course.id @>" class="link-button course deletable">
+          <a href="<@= '/course/view.php?id=' + course.id @>" target="_blank">
+            <@= course.fullname @>
+          </a>
+          <span role="delete-button" class="delete-button"></span>
+        </span>
+        <@ }
+     }); @>
+    <span role="search" class="search">
+      <span class="prompt"><@= defValue && max == 1 ? "←" : "+" @></span>
+      <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
+      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_course_program', 'tool_epman'); ?></span>
+    </span>
+  </div>
+</div>
+<div id="course-searchlist-template" style="display: none;">
+  <div role="search-list" class="search-list-overlay" style="display: none;">
+  <@ _.each(collection, function (course) { @>
+    <span class="search-list-item" role="search-list-item" data-id="<@= course.id @>">
+      <@= course.shortname.format() @>
+    </span>
+  <@ }); @>
+  </div>
+</div>
 
 <!-- Dialog templates -->
 <div id="program-dialog-template" style="display: none;">
@@ -354,6 +389,14 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
             })(m.length) @>
           </span></td>
         </tr></table></td>
+      </tr>
+    </table>
+    <table class="name-value-table">
+      <tr class="name-value">
+        <td><?php echo get_string('Courses', 'tool_epman'); ?></td>
+      </tr>
+      <tr>
+        <td role="select-courses"></td>
       </tr>
     </table>
   </div>

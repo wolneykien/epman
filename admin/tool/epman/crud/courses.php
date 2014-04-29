@@ -17,7 +17,7 @@
 /**
  * Functions implementing the core web services of the education
  * process management module. This module defines CRUD functions
- * for the users (read only).
+ * for the courses (read only).
  *
  * @package    tool
  * @subpackage epman
@@ -28,17 +28,17 @@
 require_once("base.php");
 require_once("helpers.php");
 
-class epman_user_external extends crud_external_api {
+class epman_course_external extends crud_external_api {
 
-  /* Define the `list_users` implementation functions. */
+  /* Define the `list_courses` implementation functions. */
   
   /**
-   * Returns the description of the `list_users` method's
+   * Returns the description of the `list_courses` method's
    * parameters.
    *
    * @return external_function_parameters
    */
-  public static function list_users_parameters() {
+  public static function list_courses_parameters() {
     return new external_function_parameters(array(
       'like' => new external_value(
         PARAM_TEXT,
@@ -57,15 +57,15 @@ class epman_user_external extends crud_external_api {
   }
 
   /**
-   * Returns the list of users matching the given pattern.
+   * Returns the list of courses matching the given pattern.
    *
    * @return array of education program modules
    */
-   public static function list_users($like, $skip = 0, $limit = null) {
+   public static function list_courses($like, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
-        self::list_users_parameters(),
+        self::list_courses_parameters(),
         array('like' => $like, 'skip' => $skip, 'limit' => $limit)
       );
       $like = $params['like'];
@@ -74,116 +74,100 @@ class epman_user_external extends crud_external_api {
 
       $like = "%${like}%";
 
-      $users = $DB->get_records_select(
-        'user',
-        ($like ? 'username like ? or firstname like ? or lastname like ? or email like ?' : null),
-        ($like ? array($like, $like, $like, $like) : null),
+      $courses = $DB->get_records_select(
+        'course',
+        ($like ? 'shortname like ? or fullname like ? or lastname like ?' : null),
+        ($like ? array($like, $like, $like) : null),
         '',
-        'id, username, firstname, lastname, email',
+        'id, shortname, fullname',
         $skip,
         $limit);
 
       return array_map(
-        function($user) {
-          return (array) $user;
+        function($course) {
+          return (array) $course;
         },
-        $users
+        $courses
       );
     }
 
     /**
-     * Returns the description of the `list_users` method's
+     * Returns the description of the `list_courses` method's
      * return value.
      *
      * @return external_description
      */
-    public static function list_users_returns() {
+    public static function list_courses_returns() {
       return new external_multiple_structure(
         new external_single_structure(array(
           'id' => new external_value(
             PARAM_INT,
-            'ID of the user user'),
-          'username' => new external_value(
+            'ID of the course'),
+          'shortname' => new external_value(
             PARAM_TEXT,
-            'System name of the user user',
+            'Short name of the course',
             VALUE_OPTIONAL),
-          'firstname' => new external_value(
+          'fullname' => new external_value(
             PARAM_TEXT,
-            'First name of the user user',
-            VALUE_OPTIONAL),
-          'lastname' => new external_value(
-            PARAM_TEXT,
-            'Last name of the user user',
-            VALUE_OPTIONAL),
-          'email' => new external_value(
-            PARAM_TEXT,
-            'E-mail of the user user',
+            'Full name of the course',
             VALUE_OPTIONAL),
         )));
     }
 
 
     /**
-     * Returns the description of the `get_user` method's
+     * Returns the description of the `get_course` method's
      * parameters.
      *
      * @return external_function_parameters
      */
-    public static function get_user_parameters() {
+    public static function get_course_parameters() {
       return new external_function_parameters(array(
         'id' => new external_value(
           PARAM_INT,
-          'The ID of the user to get'),
+          'The ID of the course to get'),
     ));
   }
 
   /**
-   * Returns the user's data.
+   * Returns the course's data.
    *
-   * @return array (user)
+   * @return array (course)
    */
-    public static function get_user($id) {
+    public static function get_course($id) {
       global $DB;
 
       $params = self::validate_parameters(
-        self::get_user_parameters(),
+        self::get_course_parameters(),
         array('id' => $id)
       );
       $id = $params['id'];
 
-      user_exists($id);
+      course_exists($id);
 
-      $user = $DB->get_record('user', array('id' => $id));
+      $course = $DB->get_record('course', array('id' => $id));
 
-      return (array) $user;
+      return (array) $course;
     }
 
     /**
-     * Returns the description of the `get_user` method's
+     * Returns the description of the `get_course` method's
      * return value.
      *
-     * @return external_description (user)
+     * @return external_description (course)
      */
-    public static function get_user_returns() {
+    public static function get_course_returns() {
       return new external_single_structure(array(
         'id' => new external_value(
           PARAM_INT,
-           'ID of the user user'),
-        'username' => new external_value(
+          'ID of the course course'),
+        'shortname' => new external_value(
           PARAM_TEXT,
-          'System name of the user user',
+          'Short name of the course',
           VALUE_OPTIONAL),
-        'firstname' => new external_value(
+        'fullname' => new external_value(
           PARAM_TEXT,
-          'First name of the user user',
-          VALUE_OPTIONAL),
-        'lastname' => new external_value(
-          PARAM_TEXT,
-          'Last name of the user user',
-          VALUE_OPTIONAL),
-        'email' => new external_value(
-          PARAM_TEXT,
-          'E-mail of the user user',
+          'Full name of the course',
           VALUE_OPTIONAL),
       ));
     }

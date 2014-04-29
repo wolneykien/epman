@@ -79,6 +79,10 @@ $services = array(
             /* Users (read-only) */
             'tool_epman_get_users',
             'tool_epman_get_user',
+
+            /* Courses (read-only) */
+            'tool_epman_get_courses',
+            'tool_epman_get_course',
             
         ),
         'requiredcapability' => 'tool/epman:view',
@@ -365,6 +369,24 @@ $functions = array(
         'methodname'  => 'get_user',
         'classpath'   => 'admin/tool/epman/crud/users.php',
         'description' => 'Returns the definition of the specified user (by id)',
+        'type'        => 'read',
+    ),
+
+
+    /* Courses (read-only) */
+    
+    'tool_epman_get_courses' => array(
+        'classname'   => 'epman_course_external',
+        'methodname'  => 'list_courses',
+        'classpath'   => 'admin/tool/epman/crud/courses.php',
+        'description' => 'Returns the list of courses defined in the system',
+        'type'        => 'read',
+    ),
+    'tool_epman_get_course' => array(
+        'classname'   => 'epman_course_external',
+        'methodname'  => 'get_course',
+        'classpath'   => 'admin/tool/epman/crud/courses.php',
+        'description' => 'Returns the definition of the specified course (by id)',
         'type'        => 'read',
     ),
 
