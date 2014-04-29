@@ -72,7 +72,9 @@ class epman_user_external extends crud_external_api {
       $skip = $params['skip'];
       $limit = $params['limit'];
 
-      $like = "%${like}%";
+      if ($like) {
+        $like = "%${like}%";
+      }
 
       $users = $DB->get_records_select(
         'user',

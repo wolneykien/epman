@@ -78,7 +78,9 @@ class epman_program_external extends crud_external_api {
       $skip = $params['skip'];
       $limit = $params['limit'];
 
-      $like = "%${like}%";
+      if ($like) {
+        $like = "%${like}%";
+      }
 
       if ($userid) {
         $programs = $DB->get_records_sql(
@@ -100,7 +102,7 @@ class epman_program_external extends crud_external_api {
             ($like ? 'and p.name like ?' : '').
             'group by p.id '.
             'order by year, name',
-            array_merge(array($userid, $userid), ($like ? array($like) : array()))
+            array_merge(array($userid, $userid), ($like ? array($like) : array())),
             $skip,
             $limit);
       } else {
@@ -112,7 +114,7 @@ class epman_program_external extends crud_external_api {
             'on u.id = p.responsibleid '.
             ($like ? 'where p.name like ?' : '').
             'order by year, name',
-            ($like ? array($like) : null)
+            ($like ? array($like) : null),
             $skip,
             $limit);
       }
