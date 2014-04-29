@@ -323,7 +323,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div role="search-list" class="search-list-overlay" style="display: none;">
   <@ _.each(collection, function (course) { @>
     <span class="search-list-item" role="search-list-item" data-id="<@= course.id @>">
-      <@= course.shortname.format() @>
+      <@= course.fullname.format() @>
     </span>
   <@ }); @>
   </div>

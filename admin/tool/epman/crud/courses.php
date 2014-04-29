@@ -78,8 +78,8 @@ class epman_course_external extends crud_external_api {
 
       $courses = $DB->get_records_select(
         'course',
-        ($like ? 'shortname like ? or fullname like ? or lastname like ?' : null),
-        ($like ? array($like, $like, $like) : null),
+        ($like ? 'shortname like ? or fullname like ?' : null),
+        ($like ? array($like, $like) : null),
         '',
         'id, shortname, fullname',
         $skip,
