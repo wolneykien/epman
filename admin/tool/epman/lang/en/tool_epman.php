@@ -96,6 +96,5 @@ $string['moduleLength'] = 'Length';
 $string['dateFormat'] = 'mm/dd/yy';
 $string['dateFormatLabel'] = 'mm/dd/yyyy';
 $string['starttyping_course'] = 'start typing the name of a course';
-$string['starttyping_course_program'] = 'start typing the name of a course or a program';
 $string['Courses'] = 'Courses';
 ?>

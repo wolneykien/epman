@@ -54,6 +54,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
 
 $PAGE->requires->js('/admin/tool/epman/js/common.js');
 $PAGE->requires->js('/admin/tool/epman/js/userselect.js');
+$PAGE->requires->js('/admin/tool/epman/js/courseselect.js');
 $PAGE->requires->js('/admin/tool/epman/js/programs.js');
 
 admin_externalpage_setup('toolepman');
@@ -314,7 +315,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <span role="search" class="search">
       <span class="prompt"><@= defValue && max == 1 ? "←" : "+" @></span>
       <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
-      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_course_program', 'tool_epman'); ?></span>
+      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_course', 'tool_epman'); ?></span>
     </span>
   </div>
 </div>
