@@ -733,3 +733,23 @@
   text-align: left;
   vertical-align: middle;
 }
+
+.tool-epman .link-button.course {
+  background-image: url([[pix:tool_epman|book]]);
+  padding-left: 2.0em; 
+}
+
+.tool-epman .record > .record-header .link-button.course,
+.tool-epman .record .section-header .link-button.course,
+.tool-epman .program-module > .module-header .link-button.course
+{
+  background-image: url([[pix:tool_epman|book_light]]);
+}
+
+.tool-epman .record > .record-header:hover .link-button.course,
+.tool-epman .record.expanded > .record-header .link-button.course,
+.tool-epman .record .section-header:hover .link-button.course,
+.tool-epman .program-module > .module-header:hover .link-button.course
+{
+  background-image: url([[pix:tool_epman|book]]);
+}
