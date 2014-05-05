@@ -222,6 +222,17 @@ var Model = Backbone.Model.extend({
       return Backbone.sync.apply(this, arguments);
     },
 
+    toJSON : function (options) {
+        var json = _.clone(this.attributes);
+        _.each(json, function (val, key) {
+            if (_.isFunction(val.toJSON)) {
+                json[key] = val.toJSON(options);
+            }
+        });
+
+        return json;
+    },
+
 });
 
 var Collection = Backbone.Collection.extend({

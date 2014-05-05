@@ -38,6 +38,26 @@ var EducationProgram = Model.extend({
         assistants : [],
     },
 
+    parse : function (resp, options) {
+        if (!this.isNew() && !_.isArray(resp.modules)) {
+            var modules = new EducationProgramModules(resp.modules, this.id);
+            resp.modules = modules;
+            this.listenTo(modules, "change", function (model, options) {
+                this.trigger("change", this, options);
+                this.trigger("change:modules", this, this.get('modules').toJSON(), options);
+            });
+            this.listenTo(modules, "add", function (model, collection, options) {
+                this.trigger("change", this, options);
+                this.trigger("change:modules", this, this.get('modules').toJSON(), options);
+            });
+            this.listenTo(modules, "remove", function (model, collection, options) {
+                this.trigger("change", this, options);
+                this.trigger("change:modules", this, this.get('modules').toJSON(), options);
+            });
+        }
+        return resp;
+    },
+
 });
 
 /**
@@ -71,8 +91,22 @@ var EducationProgramModule = Model.extend({
     urlBase : "/programs/:programid/modules",
 
     defaults : {
-        assistants : [],
+        courses : [],
     },
+
+    configuration : function (attrs, options) {
+        _.extend(this.urlParams, { programid : attrs.programid });
+    },
+
+});
+
+/**
+ * Education program module collection.
+ */
+var EducationProgramModules = Collection.extend({
+
+    model : EducationProgramModule,
+    urlBase : "/programs/:programid/modules",
 
     configuration : function (attrs, options) {
         _.extend(this.urlParams, { programid : attrs.programid });
@@ -90,6 +124,7 @@ var EducationProgramView = View.extend({
         this.$header = options.$header;
         this.$body = options.$body;
         this.render();
+        this.listenTo(this.model, "change", this.render);
     },
 
     render : function () {
@@ -133,6 +168,7 @@ var EducationProgramView = View.extend({
         });
         this.$body.find("[role='add-module-button']").click(function () {
             (new ModuleDialog({
+                collection : this.model.get('modules'),
                 model : new EducationProgramModule({ programid : self.model.id, length : 30 }, {}),
                 el : "#module-dialog-template",
             })).open();
@@ -368,6 +404,10 @@ var ModuleDialog = Dialog.extend({
     courses : null,
 
     validations : {
+        "[name='period']" : function (val, $el) {
+            val = $el.spinner("value");
+            return _.isNumber(val) && val >= 1;
+        },
         "[name='startdate']" : function (val) {
             return !_.isEmpty(val);
         },
@@ -454,6 +494,28 @@ var ModuleDialog = Dialog.extend({
             }
         }
         return updated;
+    },
+
+    ok : function () {
+        var self = this;
+        this.model.save({
+            startdate : this.$("[name='startdate']").datepicker("getDate").getTime(),
+            length : Number(this.$("[name='length']").val()),
+            period : Number(this.$("[name='period']").val()),
+            courses : this.courses.selectedCollection.pluck('id'),
+        }, {
+            wait : true,
+            success : function (model) {
+                model.fetch({
+                    reset : true,
+                    success : function (model) {
+                        if (!model.collection && self.collection) {
+                            self.collection.add(model);
+                        }
+                    },
+                });
+            },
+        });
     },
 
 });

@@ -229,6 +229,14 @@ class epman_module_external extends crud_external_api {
             'Education period number',
             VALUE_DEFAULT,
             -1),
+          'courses' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of an education course'
+            ),
+            'Array of the course IDs',
+            VALUE_OPTIONAL
+          ),
         )),
       ));
     }
@@ -264,6 +272,13 @@ class epman_module_external extends crud_external_api {
       }
       $module['id'] = $DB->insert_record('tool_epman_module', $module);
 
+      if (array_key_exists('courses', $module)) {
+        clear_module_courses($module[id]);
+        foreach ($program['courses'] as $courseid) {
+          $DB->insert_record('tool_epman_module_course', array('courseid' => $courseid, 'moduleid' => $module['id']), false);
+        }
+      }
+
       return $module;
     }
 
@@ -290,6 +305,14 @@ class epman_module_external extends crud_external_api {
         'period' => new external_value(
           PARAM_INT,
           'Education period number'),
+        'courses' => new external_multiple_structure(
+          new external_value(
+            PARAM_INT,
+            'ID of an education course'
+          ),
+          'Array of the course IDs',
+          VALUE_OPTIONAL
+        ),
       ));
     }
 
@@ -323,6 +346,14 @@ class epman_module_external extends crud_external_api {
             PARAM_INT,
             'Education period number',
             VALUE_OPTIONAL),
+          'courses' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of an education course'
+            ),
+            'Array of the course IDs',
+            VALUE_OPTIONAL
+          ),
         )),
       ));
     }
@@ -357,6 +388,13 @@ class epman_module_external extends crud_external_api {
 
       $DB->update_record('tool_epman_module', $module);
 
+      if (array_key_exists('courses', $module)) {
+        clear_module_courses($module[id]);
+        foreach ($program['courses'] as $courseid) {
+          $DB->insert_record('tool_epman_module_course', array('courseid' => $courseid, 'moduleid' => $module['id']), false);
+        }
+      }
+
       return $module;
     }
 
@@ -380,6 +418,14 @@ class epman_module_external extends crud_external_api {
             PARAM_INT,
             'Education period number',
             VALUE_OPTIONAL),
+          'courses' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of an education course'
+            ),
+            'Array of the course IDs',
+            VALUE_OPTIONAL
+          ),
       ));
     }
 
