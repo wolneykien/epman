@@ -48,6 +48,11 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'OK' => get_string('OK', 'tool_epman'),
       'Cancel' => get_string('Cancel', 'tool_epman'),
       'Close' => get_string('Close', 'tool_epman'),
+      'courseyear' => get_string('courseyear', 'tool_epman'),
+      'N_days' => get_string('N_days', 'tool_epman'),
+      'Ndays' => get_string('Ndays', 'tool_epman'),
+      'Nth_period' => get_string('Nth_period', 'tool_epman'),
+      'vacation_N_days' => get_string('vacation_N_days', 'tool_epman'),
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
     ),
 ), true);
@@ -70,17 +75,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div id="year-<@= year @>" class="list-section">
     <div class="list-section-header">
       <span>
-        <@= (function (year) {
-          switch (year) {
-              case 1: return "<?php echo get_string('courseyear1', 'tool_epman'); ?>";
-              case 2: return "<?php echo get_string('courseyear2', 'tool_epman'); ?>";
-              case 3: return "<?php echo get_string('courseyear3', 'tool_epman'); ?>";
-              case 4: return "<?php echo get_string('courseyear4', 'tool_epman'); ?>";
-              case 5: return "<?php echo get_string('courseyear5', 'tool_epman'); ?>";
-              case 6: return "<?php echo get_string('courseyear6', 'tool_epman'); ?>";
-             default: return "<?php echo get_string('courseyear', 'tool_epman'); ?>".replace(/%i/, year);
-          }
-        })(year) @>
+        <@= decline('courseyear', year) @>
       </span>
       <hr />
     </div>
@@ -180,16 +175,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 <div id="modules-period-template" style="display: none;">
   <div id="module-<@= m.id @>-period-<@= m.period + 1 @>" class="modules-period">
     <div class="modules-period-header">
-      <@= (function (period) {
-        switch (("" + period).substr(-1)) {
-          case "1": return "<?php echo get_string('N1st_period', 'tool_epman'); ?>".replace(/%i/, period);
-          case "2": return "<?php echo get_string('N2nd_period', 'tool_epman'); ?>".replace(/%i/, period);
-          case "3": return "<?php echo get_string('N3rd_period', 'tool_epman'); ?>".replace(/%i/, period);
-          case "4": return "<?php echo get_string('N4th_period', 'tool_epman'); ?>".replace(/%i/, period);
-          case "5": return "<?php echo get_string('N5th_period', 'tool_epman'); ?>".replace(/%i/, period);
-           default: return "<?php echo get_string('Nth_period', 'tool_epman'); ?>".replace(/%i/, period);
-        }
-      })(m.period + 1) @>
+      <@= decline('Nth_period', m.period + 1) @>
     </div>
   </div>
 </div>
@@ -205,16 +191,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <span>
           <@= (new Date((m.startdate + m.length * 24 * 3600) * 1000)).toLocaleDateString() @>
           <span class="comment">
-            <@= (function (len) {
-              switch (("" + len).substr(-1)) {
-                  case "1": return "<?php echo get_string('N1_day', 'tool_epman'); ?>".replace(/%i/, len);
-                  case "2": return "<?php echo get_string('N2_days', 'tool_epman'); ?>".replace(/%i/, len);
-                  case "3": return "<?php echo get_string('N3_days', 'tool_epman'); ?>".replace(/%i/, len);
-                  case "4": return "<?php echo get_string('N4_days', 'tool_epman'); ?>".replace(/%i/, len);
-                  case "5": return "<?php echo get_string('N5_days', 'tool_epman'); ?>".replace(/%i/, len);
-                   default: return "<?php echo get_string('N_days', 'tool_epman'); ?>".replace(/%i/, len);
-              }
-            })(m.length) @>
+            <@= decline('N_days', m.length) @>
           </span>
         </span>
       </div>
@@ -238,16 +215,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 <div id="vacation-template" style="display: none;">
   <div class="program-vacation">
     <span>
-      <@= (function (len) {
-        switch (("" + len).substr(-1)) {
-          case "1": return "<?php echo get_string('vacation_N1day', 'tool_epman'); ?>".replace(/%i/, len);
-          case "2": return "<?php echo get_string('vacation_N2days', 'tool_epman'); ?>".replace(/%i/, len);
-          case "3": return "<?php echo get_string('vacation_N3days', 'tool_epman'); ?>".replace(/%i/, len);
-          case "4": return "<?php echo get_string('vacation_N4days', 'tool_epman'); ?>".replace(/%i/, len);
-          case "5": return "<?php echo get_string('vacation_N5days', 'tool_epman'); ?>".replace(/%i/, len);
-           default: return "<?php echo get_string('vacation_Ndays', 'tool_epman'); ?>".replace(/%i/, len);
-        }
-      })(length) @>
+      <@= decline('vacation_N_days', length) @>
     </span>
   </div>
 </div>
@@ -337,7 +305,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <td><?php echo get_string('programName', 'tool_epman'); ?></td>
         <td class="fill"><input type="text" name="name" value="<@= p.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_program', 'tool_epman'); ?>"></input></td>
         <td><?php echo get_string('Year', 'tool_epman'); ?></td>
-        <td><input type="text" class="year-spinner" name="year" value="<@= p.year @>" placeholder="<@= '<?php echo get_string('m-n', 'tool_epman'); ?>'.replace(/%i/, minyear).replace(/%i/, maxyear) @>"></input></td>
+        <td><input type="text" class="year-spinner" name="year" value="<@= p.year @>" placeholder="<@= '' + minyear + ' - ' + maxyear @>"></input></td>
       </tr>
       <tr>
         <td colspan="4" class="fullrow">
@@ -383,17 +351,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <td><table><tr>
           <td><input type="text" class="length-spinner" name="length" value="<@= m.length @>"></input></td>
           <td><span role="days" class="days-suffix">
-            &amp;nbsp;
-            <@= (function (len) {
-              switch (("" + len).substr(-1)) {
-                case "1": return "<?php echo get_string('N1day', 'tool_epman'); ?>";
-                case "2": return "<?php echo get_string('N2days', 'tool_epman'); ?>";
-                case "3": return "<?php echo get_string('N3days', 'tool_epman'); ?>";
-                case "4": return "<?php echo get_string('N4days', 'tool_epman'); ?>";
-                case "5": return "<?php echo get_string('N5days', 'tool_epman'); ?>";
-                 default: return "<?php echo get_string('Ndays', 'tool_epman'); ?>";
-              }
-            })(m.length) @>
+            &amp;nbsp;<@= decline('Ndays', m.length) @>
           </span></td>
         </tr></table></td>
       </tr>

@@ -9,6 +9,52 @@ var restOptions = {
 };
 var templates = {};
 
+function decline(key, arg) {
+    var cases = i18n[key];
+    if (_.isFunction(cases)) {
+        return cases(arg);
+    } else if (!_.isArray(cases)) {
+        try {
+            cases = JSON.parse(cases, function (k, v) {
+                if (/^\/.+\/([gimy]+)?$/.test(v)) {
+                    return RegExp.prototype.constructor.apply(this, _.rest(v.split('/')));
+                } else {
+                    return v;
+                }
+            });
+        } catch (e) {
+            cases = [ cases ];
+        }
+    }
+    cases = _.reduce(cases, function (res, val) {
+        if (val instanceof RegExp) {
+            res.push({ regexp : val });
+        } else if (res.length > 0 &&
+                   !_.isUndefined(res[res.length - 1].regexp) &&
+                   _.isUndefined(res[res.length - 1].val))
+        {
+            res[res.length - 1].val = val;
+        } else {
+            res.push({ regexp : /^.*$/, val : val });
+        }
+        return res;
+    }, []);
+    var f = function (arg) {
+        arg = "" + arg;
+        var val = _.find(cases, function (val) {
+            return (val.regexp && val.regexp.test(arg));
+        });
+        if (!val && !_.isEmpty(cases)) {
+            return arg.replace(/^.*$/, (_.last(cases)).val);
+        } else {
+            return arg.replace(val.regexp, val.val);
+        }
+    }
+
+    i18n[key] = f;
+    return f(arg);
+}
+
 function findAllMatches (pat, value) {
     if (value == null) {
         return [];
