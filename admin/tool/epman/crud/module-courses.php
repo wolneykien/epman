@@ -47,7 +47,7 @@ class epman_module_course_external extends crud_external_api {
   }
 
   /**
-   * Returns the list of education module course users.
+   * Returns the list of education module courses.
    *
    * @return array of education module modules
    */
@@ -68,7 +68,7 @@ class epman_module_course_external extends crud_external_api {
         'from {tool_epman_module_course} mc '.
         'left join {course} c on c.id = mc.courseid '
         'where mc.moduleid = :moduleid '.
-        'order by lastname, firstname, username',
+        'order by fullname',
         array('moduleid' => $moduleid)
       );
 
@@ -123,14 +123,14 @@ class epman_module_course_external extends crud_external_api {
           'Education module ID'),
         'id' => new external_value(
           PARAM_INT,
-          'The ID of the education module course user to get'),
+          'The ID of the education module course to get'),
     ));
   }
 
   /**
    * Returns the complete education module module_course's data.
    *
-   * @return array (education module course user)
+   * @return array (education module course)
    */
     public static function get_module_course($moduleid, $id) {
       global $DB;
@@ -211,8 +211,7 @@ class epman_module_course_external extends crud_external_api {
     }
 
     /**
-     * Adds the given user to the given education module
-     * as an course.
+     * Adds the given course to the given education module.
      *
      * @return array course
      */
@@ -277,7 +276,7 @@ class epman_module_course_external extends crud_external_api {
     }
 
     /**
-     * Updates the membership info for the given course user.
+     * Updates the membership info for the given course.
      *
      * @return array course (updated fields)
      */
@@ -344,12 +343,12 @@ class epman_module_course_external extends crud_external_api {
           'Education module ID'),
         'id' => new external_value(
           PARAM_INT,
-          'Education module course user ID'),
+          'Education module course ID'),
       ));
     }
 
     /**
-     * Removes the given user from the set of courses of
+     * Removes the given course from the set of courses of
      * the given education module.
      *
      * @return bool success flag
@@ -370,7 +369,7 @@ class epman_module_course_external extends crud_external_api {
         if (!has_sys_capability('tool/epman:editmodule', $USER->id)) {
           if (!module_responsible($moduleid, $USER->id)) {
             if (!module_assistant($moduleid, $USER->id)) {
-              throw new moodle_exception("You don't have right to modify the asistant user set of this education module");
+              throw new moodle_exception("You don't have right to modify the course set of this education module");
             }
           }
         }
