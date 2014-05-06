@@ -135,14 +135,14 @@ class epman_module_external extends crud_external_api {
       module_exists($id);
 
       $courses = $DB->get_recordset_sql(
-        'select m.*, mc.courseid, c.fullname '.
+        'select m.*, mc.courseid, mc.coursetype, c.fullname '.
         'from {tool_epman_module} m '.
         'left join {tool_epman_module_course} mc '.
         'on mc.moduleid = m.id '.
         'left join {course} c on c.id = mc.courseid '.
-        'where m.id = :id '.
-        'order by m.startdate, c.fullname',
-        array('id' => $id));
+        'where m.programid = :programid and m.id = :id '.
+        'order by m.startdate, mc.coursetype, c.fullname',
+        array('programid' => $programid, 'id' => $id));
 
       foreach ($courses as $rec) {
         if (!isset($module)) {
@@ -154,14 +154,17 @@ class epman_module_external extends crud_external_api {
             'period' => $rec->period,
             'courses' => array());
         }
-        $module['courses'][] = array(
-          'id' => $rec->courseid,
-          'name' => $rec->fullname);
+        if ($rec->courseid) {
+          $module['courses'][] = array(
+              'id' => $rec->courseid,
+              'name' => $rec->fullname,
+              'type' => $rec->coursetype);
+        }
       }
 
       $courses->close();
 
-      return $program;
+      return $module;
     }
 
     /**
@@ -196,6 +199,9 @@ class epman_module_external extends crud_external_api {
                 PARAM_TEXT,
                 'Name of the course',
                 VALUE_OPTIONAL),
+              'type' => new external_value(
+                PARAM_INT,
+                'Type of the course'),
             ))
           ),
       ));
@@ -230,11 +236,17 @@ class epman_module_external extends crud_external_api {
             VALUE_DEFAULT,
             -1),
           'courses' => new external_multiple_structure(
-            new external_value(
-              PARAM_INT,
-              'ID of an education course'
-            ),
-            'Array of the course IDs',
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the education course'
+              ),
+              'type' => new external_value(
+                PARAM_INT,
+                'Type of the education course'
+              ),
+            )),
+            'Array of the course reference data: {id, type}',
             VALUE_OPTIONAL
           ),
         )),
@@ -273,9 +285,9 @@ class epman_module_external extends crud_external_api {
       $module['id'] = $DB->insert_record('tool_epman_module', $module);
 
       if (array_key_exists('courses', $module)) {
-        clear_module_courses($module[id]);
-        foreach ($program['courses'] as $courseid) {
-          $DB->insert_record('tool_epman_module_course', array('courseid' => $courseid, 'moduleid' => $module['id']), false);
+        clear_module_courses($module['id']);
+        foreach ($module['courses'] as $course) {
+          $DB->insert_record('tool_epman_module_course', array('moduleid' => $module['id'], 'courseid' => $course['id'], 'coursetype' => $course['type']), false);
         }
       }
 
@@ -306,12 +318,18 @@ class epman_module_external extends crud_external_api {
           PARAM_INT,
           'Education period number'),
         'courses' => new external_multiple_structure(
-          new external_value(
-            PARAM_INT,
-            'ID of an education course'
-          ),
-          'Array of the course IDs',
-          VALUE_OPTIONAL
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the education course'
+              ),
+              'type' => new external_value(
+                PARAM_INT,
+                'Type of the education course'
+              ),
+            )),
+            'Array of the course reference data: {id, type}',
+            VALUE_OPTIONAL
         ),
       ));
     }
@@ -347,11 +365,17 @@ class epman_module_external extends crud_external_api {
             'Education period number',
             VALUE_OPTIONAL),
           'courses' => new external_multiple_structure(
-            new external_value(
-              PARAM_INT,
-              'ID of an education course'
-            ),
-            'Array of the course IDs',
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the education course'
+              ),
+              'type' => new external_value(
+                PARAM_INT,
+                'Type of the education course'
+              ),
+            )),
+            'Array of the course reference data: {id, type}',
             VALUE_OPTIONAL
           ),
         )),
@@ -389,9 +413,9 @@ class epman_module_external extends crud_external_api {
       $DB->update_record('tool_epman_module', $module);
 
       if (array_key_exists('courses', $module)) {
-        clear_module_courses($module[id]);
-        foreach ($program['courses'] as $courseid) {
-          $DB->insert_record('tool_epman_module_course', array('courseid' => $courseid, 'moduleid' => $module['id']), false);
+        clear_module_courses($module['id']);
+        foreach ($module['courses'] as $course) {
+          $DB->insert_record('tool_epman_module_course', array('moduleid' => $module['id'], 'courseid' => $course['id'], 'coursetype' => $course['type']), false);
         }
       }
 
@@ -419,11 +443,17 @@ class epman_module_external extends crud_external_api {
             'Education period number',
             VALUE_OPTIONAL),
           'courses' => new external_multiple_structure(
-            new external_value(
-              PARAM_INT,
-              'ID of an education course'
-            ),
-            'Array of the course IDs',
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of the education course'
+              ),
+              'type' => new external_value(
+                PARAM_INT,
+                'Type of the education course'
+              ),
+            )),
+            'Array of the course reference data: {id, type}',
             VALUE_OPTIONAL
           ),
       ));

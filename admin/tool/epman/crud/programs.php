@@ -214,7 +214,7 @@ class epman_program_external extends crud_external_api {
 
       $courses = $DB->get_recordset_sql(
         'select p.*, m.id as moduleid, m.startdate, m.period, '.
-        'm.length, mc.courseid, c.fullname '.
+        'm.length, mc.courseid, mc.coursetype, c.fullname '.
         'from {tool_epman_program} p '.
         'left join {tool_epman_module} m '.
         'on m.programid = p.id '.
@@ -222,7 +222,7 @@ class epman_program_external extends crud_external_api {
         'on mc.moduleid = m.id '.
         'left join {course} c on c.id = mc.courseid '.
         'where p.id = :id '.
-        'order by m.startdate, c.fullname',
+        'order by m.startdate, mc.coursetype, c.fullname',
         array('id' => $id));
 
       foreach ($courses as $rec) {
@@ -251,7 +251,8 @@ class epman_program_external extends crud_external_api {
         if ($rec->courseid && $lastmodule >= 0) {
           $program['modules'][$lastmodule]['courses'][] = array(
             'id' => $rec->courseid,
-            'name' => $rec->fullname);
+            'name' => $rec->fullname,
+            'type' => $rec->coursetype);
         }
       }
 
@@ -356,6 +357,9 @@ class epman_program_external extends crud_external_api {
                     PARAM_TEXT,
                     'Name of the course',
                     VALUE_OPTIONAL),
+                  'type' => new external_value(
+                    PARAM_INT,
+                    'Type of the course'),
               ))),
           ))),
           'assistants' => new external_multiple_structure(

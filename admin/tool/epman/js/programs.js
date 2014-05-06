@@ -39,7 +39,7 @@ var EducationProgram = Model.extend({
     },
 
     parse : function (resp, options) {
-        if (!this.isNew() && !_.isArray(resp.modules)) {
+        if (!this.isNew() && _.isArray(resp.modules)) {
             var modules = new EducationProgramModules(resp.modules, { programid : this.id });
             resp.modules = modules;
             this.listenTo(modules, "change", function (model, options) {
@@ -500,10 +500,12 @@ var ModuleDialog = Dialog.extend({
     ok : function () {
         var self = this;
         this.model.save({
-            startdate : this.$("[name='startdate']").datepicker("getDate").getTime(),
+            startdate : Math.round(this.$("[name='startdate']").datepicker("getDate").getTime() / 1000),
             length : Number(this.$("[name='length']").val()),
-            period : Number(this.$("[name='period']").val()),
-            courses : this.courses.selectedCollection.pluck('id'),
+            period : Number(this.$("[name='period']").val() - 1),
+            courses : this.courses.selectedCollection.map(function (course) {
+                return course.pick('id', 'type');
+            }),
         }, {
             wait : true,
             success : function (model) {

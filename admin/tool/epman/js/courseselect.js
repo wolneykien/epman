@@ -1,6 +1,10 @@
 
 var Course = Model.extend({
 
+    defaults : {
+        type : 0,
+    },
+
     urlBase : "/courses",
 
 });
