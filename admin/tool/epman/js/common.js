@@ -137,7 +137,8 @@ function getUrl (urlBase, urlParams, id) {
     while (match != null) {
         pathParams[match[1]] = urlParams[match[1]] || pathParams[match[1]];
         urlParams = _.omit(urlParams, match[1]);
-        url = url.substr(0, match.index) + pathParams[match[1]] + url.substr(match.lastindex);
+        var next = match.index + match[0].length;
+        url = url.substr(0, match.index) + pathParams[match[1]] + (next < url.length ? url.substr(next) : "");
         match = pat.exec(url);
     }
     if (id) {
@@ -225,7 +226,7 @@ var Model = Backbone.Model.extend({
     toJSON : function (options) {
         var json = _.clone(this.attributes);
         _.each(json, function (val, key) {
-            if (_.isFunction(val.toJSON)) {
+            if (_.isObject(val) && _.isFunction(val.toJSON)) {
                 json[key] = val.toJSON(options);
             }
         });

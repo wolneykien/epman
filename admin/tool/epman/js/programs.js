@@ -40,7 +40,7 @@ var EducationProgram = Model.extend({
 
     parse : function (resp, options) {
         if (!this.isNew() && !_.isArray(resp.modules)) {
-            var modules = new EducationProgramModules(resp.modules, this.id);
+            var modules = new EducationProgramModules(resp.modules, { programid : this.id });
             resp.modules = modules;
             this.listenTo(modules, "change", function (model, options) {
                 this.trigger("change", this, options);
@@ -94,7 +94,7 @@ var EducationProgramModule = Model.extend({
         courses : [],
     },
 
-    configuration : function (attrs, options) {
+    configure : function (attrs, options) {
         _.extend(this.urlParams, { programid : attrs.programid });
     },
 
@@ -108,8 +108,9 @@ var EducationProgramModules = Collection.extend({
     model : EducationProgramModule,
     urlBase : "/programs/:programid/modules",
 
-    configuration : function (attrs, options) {
-        _.extend(this.urlParams, { programid : attrs.programid });
+    configure : function (options) {
+        this.programid = options.programid;
+        _.extend(this.urlParams, { programid : this.programid });
     },
 
 });
@@ -168,7 +169,7 @@ var EducationProgramView = View.extend({
         });
         this.$body.find("[role='add-module-button']").click(function () {
             (new ModuleDialog({
-                collection : this.model.get('modules'),
+                collection : self.model.get('modules'),
                 model : new EducationProgramModule({ programid : self.model.id, length : 30 }, {}),
                 el : "#module-dialog-template",
             })).open();
