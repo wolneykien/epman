@@ -437,7 +437,7 @@ var ModuleDialog = Dialog.extend({
         }));
         this.$("[name='period']").spinner({ min : 1 }).spinner("value", this.model.get('period') || 1);
         this.$("[name='startdate']").datepicker({
-            defaultDate: this.model.get("startdate") ? new Date(this.model.get("startdate") * 1000) : "+1w",
+            defaultDate: "+1w",
             changeMonth: true,
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
@@ -446,13 +446,13 @@ var ModuleDialog = Dialog.extend({
             this.$("[name='startdate']").datepicker("setDate", new Date(this.model.get("startdate") * 1000));
         }
         this.$("[name='enddate']").datepicker({
-            defaultDate: this.model.get("startdate") && this.model.get("length") ? new Date((this.model.get("startdate") + this.model.get("length") * 24 * 3600) * 1000) : "+2w",
+            defaultDate: "+2w",
             changeMonth: true,
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
         });
         if (this.model.get("startdate") && this.model.get("length")) {
-            this.$("[name='enddate']").datepicker("setDate", new Date((this.model.get("startdate") + this.model.get("length") * 24 * 3600) * 1000));
+            this.$("[name='enddate']").datepicker("setDate", new Date((this.model.get("startdate") + (this.model.get("length") - 1) * 24 * 3600) * 1000));
         }
         this.$("[name='length']").spinner({
             min : 1,

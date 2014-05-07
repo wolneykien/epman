@@ -189,7 +189,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <div class="name-value">
         <span><?php echo get_string('moduleEnd', 'tool_epman'); ?></span>
         <span>
-          <@= (new Date((m.startdate + m.length * 24 * 3600) * 1000)).toLocaleDateString() @>
+          <@= (new Date((m.startdate + (m.length - 1) * 24 * 3600) * 1000)).toLocaleDateString() @>
           <span class="comment">
             <@= decline('N_days', m.length) @>
           </span>
