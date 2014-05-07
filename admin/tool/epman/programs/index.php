@@ -266,7 +266,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <@ if (_.isEmpty(collection) && defValue) { @>
     <span data-id="<@= defValue.id @>" class="link-button light course">
       <a href="<@= '/course/view.php?id=' + defValue.id @>" target="_blank">
-        <@= defValue.fullname @>
+        <@= defValue.name @>
       </a>
     </span>
   <@ } @>
@@ -274,7 +274,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         if (course.id) { @>
         <span data-id="<@= course.id @>" class="link-button course deletable">
           <a href="<@= '/course/view.php?id=' + course.id @>" target="_blank">
-            <@= course.fullname @>
+            <@= course.name @>
           </a>
           <span role="delete-button" class="delete-button"></span>
         </span>
@@ -291,7 +291,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div role="search-list" class="search-list-overlay" style="display: none;">
   <@ _.each(collection, function (course) { @>
     <span class="search-list-item" role="search-list-item" data-id="<@= course.id @>">
-      <@= course.fullname.format() @>
+      <@= course.name.format() @>
     </span>
   <@ }); @>
   </div>

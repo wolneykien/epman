@@ -442,12 +442,18 @@ var ModuleDialog = Dialog.extend({
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
         });
+        if (this.model.get("startdate")) {
+            this.$("[name='startdate']").datepicker("setDate", new Date(this.model.get("startdate") * 1000));
+        }
         this.$("[name='enddate']").datepicker({
             defaultDate: this.model.get("startdate") && this.model.get("length") ? new Date((this.model.get("startdate") + this.model.get("length") * 24 * 3600) * 1000) : "+2w",
             changeMonth: true,
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
         });
+        if (this.model.get("startdate") && this.model.get("length")) {
+            this.$("[name='enddate']").datepicker("setDate", new Date((this.model.get("startdate") + this.model.get("length") * 24 * 3600) * 1000));
+        }
         this.$("[name='length']").spinner({
             min : 1,
         }).spinner("value", this.model.get('length') || 30);

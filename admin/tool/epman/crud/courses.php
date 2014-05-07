@@ -80,14 +80,17 @@ class epman_course_external extends crud_external_api {
         'course',
         ($like ? 'shortname like ? or fullname like ?' : null),
         ($like ? array($like, $like) : null),
-        '',
-        'id, shortname, fullname',
+        'fullname',
+        'id, fullname, shortname',
         $skip,
         $limit);
 
       return array_map(
         function($course) {
-          return (array) $course;
+          return array(
+              'id' => $course->id,
+              'shortname' => $course->shortname,
+              'name' => $course->fullname);
         },
         $courses
       );
@@ -109,7 +112,7 @@ class epman_course_external extends crud_external_api {
             PARAM_TEXT,
             'Short name of the course',
             VALUE_OPTIONAL),
-          'fullname' => new external_value(
+          'name' => new external_value(
             PARAM_TEXT,
             'Full name of the course',
             VALUE_OPTIONAL),
@@ -147,9 +150,9 @@ class epman_course_external extends crud_external_api {
 
       course_exists($id);
 
-      $course = $DB->get_record('course', array('id' => $id));
+      $course = $DB->get_record('course', array('id' => $id), 'id, shortname, fullname');
 
-      return (array) $course;
+      return array('id' => $course->id, 'shortname' => $course->shortname, 'name' => $course->fullname);
     }
 
     /**
@@ -167,7 +170,7 @@ class epman_course_external extends crud_external_api {
           PARAM_TEXT,
           'Short name of the course',
           VALUE_OPTIONAL),
-        'fullname' => new external_value(
+        'name' => new external_value(
           PARAM_TEXT,
           'Full name of the course',
           VALUE_OPTIONAL),
