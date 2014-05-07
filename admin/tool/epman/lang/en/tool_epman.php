@@ -72,4 +72,8 @@ $string['dateFormatLabel'] = 'mm/dd/yyyy';
 $string['starttyping_course'] = 'start typing the name of a course';
 $string['Courses'] = 'Courses';
 $string['Edication_period'] = 'Education period';
+$string['Lower_above'] = 'Lower above';
+$string['Lift_below'] = 'Lift below';
+$string['Lift_above'] = 'Lift above';
+$string['Lower_below'] = 'Lower below';
 ?>

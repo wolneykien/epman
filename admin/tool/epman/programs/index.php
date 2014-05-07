@@ -218,6 +218,20 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <span>
       <@= decline('N_day_vacation', length) @>
     </span>
+    <@ if (aboveId) { @>
+    <div class="link-button light nolink shift-above">
+      <a role="vacation-shift-above-button" data-above="<@= aboveId @>" href="javascript:void(0)">
+        <?php echo get_string('Lower_above', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
+    <@ if (belowId) { @>
+    <div class="link-button light nolink shift-below">
+      <a role="vacation-shift-below-button" data-below="<@= belowId @>" href="javascript:void(0)">
+        <?php echo get_string('Lift_below', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
   </div>
 </div>
 <div id="overlap-template" style="display: none;">
@@ -225,6 +239,20 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <span>
       <@= decline('N_day_overlap', length) @>
     </span>
+    <@ if (aboveId) { @>
+    <div class="link-button light nolink shift-above">
+      <a role="overlap-shift-above-button" data-above="<@= aboveId @>" href="javascript:void(0)">
+        <?php echo get_string('Lift_above', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
+    <@ if (belowId) { @>
+    <div class="link-button light nolink shift-below">
+      <a role="overlap-shift-below-button" data-below="<@= belowId @>" href="javascript:void(0)">
+        <?php echo get_string('Lower_below', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
   </div>
 </div>
 <div id="userselect-template" style="display: none;">

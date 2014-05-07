@@ -140,15 +140,16 @@ var EducationProgramView = View.extend({
         var $modules = this.$body.find(".program-module-list");
         var period = null;
         var endDays = null;
+        var aboveId = undefined;
         _.each(data.p.modules, function (m) {
             var startDays = Math.ceil(m.startdate / (24 * 3600));
             if (period == null || period.num != m.period) {
                 if (endDays != null && startDays != (endDays + 1)) {
                     var length = startDays - endDays - 1;
                     if (length > 0) {
-                        $modules.append(templates.vacation({ length : length }));
+                        $modules.append(templates.vacation({ length : length, aboveId : aboveId, belowId : m.id }));
                     } else {
-                        $modules.append(getTemplate("#overlap-template")({ length : -length }));
+                        $modules.append(getTemplate("#overlap-template")({ length : -length, aboveId : aboveId, belowId : m.id }));
                     }
                     endDays = startDays - 1;
                 }
@@ -161,13 +162,14 @@ var EducationProgramView = View.extend({
             if (endDays != null && startDays != (endDays + 1)) {
                 var length = startDays - endDays - 1;
                 if (length > 0) {
-                    period.$el.append(templates.vacation({ length : length }));
+                    period.$el.append(templates.vacation({ length : length, aboveId : aboveId, belowId : m.id }));
                 } else {
-                    period.$el.append(getTemplate("#overlap-template")({ length : -length }));
+                    period.$el.append(getTemplate("#overlap-template")({ length : -length, aboveId : aboveId, belowId : m.id }));
                 }
             }
             period.$el.append(templates.module({ m : m }));
             endDays = startDays + m.length - 1;
+            aboveId = m.id;
         }, this);
         
         var self = this;

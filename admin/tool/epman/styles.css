@@ -146,10 +146,14 @@
 
 .tool-epman .record > .record-header:hover .link-button.light.nolink,
 .tool-epman .record > .record-header:hover .link-button.light.nolink > a,
-.tool-epman .record .section-header:hover .link-button.light.nolink,
-.tool-epman .program-module > .module-header:hover .link-button.light.nolink,
-.tool-epman .record .section-header:hover .link-button.light.nolink > a,
-.tool-epman .program-module > .module-header:hover .link-button.light.nolink > a
+.tool-epman .record .section-header:hover > .link-button.light.nolink,
+.tool-epman .record .section-header:hover > .link-button.light.nolink > a,
+.tool-epman .program-module > .module-header:hover > .link-button.light.nolink,
+.tool-epman .program-module > .module-header:hover > .link-button.light.nolink > a,
+.tool-epman .program-vacation:hover > .link-button.light.nolink,
+.tool-epman .program-vacation:hover > .link-button.light.nolink > a,
+.tool-epman .module-overlap:hover > .link-button.light.nolink,
+.tool-epman .module-overlap:hover > .link-button.light.nolink > a
 {
   color: black;
 }
@@ -158,8 +162,12 @@
 .tool-epman .record > .record-header:hover .link-button.light > a,
 .tool-epman .record .section-header:hover .link-button.light,
 .tool-epman .program-module > .module-header:hover .link-button.light,
+.tool-epman .program-module > .module-header:hover .link-button.light > a,
 .tool-epman .record .section-header:hover .link-button.light > a,
-.tool-epman .program-module > .module-header:hover .link-button.light > a
+.tool-epman .program-vacation:hover > .link-button.light,
+.tool-epman .program-vacation:hover > .link-button.light > a,
+.tool-epman .module-overlap:hover > .link-button.light,
+.tool-epman .module-overlap:hover > .link-button.light > a
 {
   color: #098aba;
 }
@@ -749,17 +757,50 @@
   padding-left: 2.0em; 
 }
 
-.tool-epman .record > .record-header .link-button.course,
-.tool-epman .record .section-header .link-button.course,
-.tool-epman .program-module > .module-header .link-button.course
+.tool-epman .link-button.shift-above-up,
+.tool-epman .module-overlap:hover > .link-button.shift-above
 {
-  background-image: url([[pix:tool_epman|book_light]]);
+  background-image: url([[pix:tool_epman|shift_above_up]]);
 }
 
-.tool-epman .record > .record-header:hover .link-button.course,
-.tool-epman .record.expanded > .record-header .link-button.course,
-.tool-epman .record .section-header:hover .link-button.course,
-.tool-epman .program-module > .module-header:hover .link-button.course
+.tool-epman .link-button.light.shift-above-up,
+.tool-epman .module-overlap > .link-button.shift-above
 {
-  background-image: url([[pix:tool_epman|book]]);
+  background-image: url([[pix:tool_epman|shift_above_up_light]]);
+}
+
+.tool-epman .link-button.shift-below-down,
+.tool-epman .module-overlap:hover > .link-button.shift-below
+{
+  background-image: url([[pix:tool_epman|shift_below_down]]);
+}
+
+.tool-epman .link-button.light.shift-below-down,
+.tool-epman .module-overlap > .link-button.shift-below
+{
+  background-image: url([[pix:tool_epman|shift_below_down_light]]);
+}
+
+.tool-epman .link-button.shift-above-down,
+.tool-epman .program-vacation:hover > .link-button.shift-above
+{
+  background-image: url([[pix:tool_epman|shift_above_down]]);
+}
+
+.tool-epman .link-button.light.shift-above-down,
+.tool-epman .program-vacation > .link-button.shift-above
+{
+  background-image: url([[pix:tool_epman|shift_above_down_light]]);
+}
+
+.tool-epman .link-button.shift-below-up,
+.tool-epman .program-vacation:hover > .link-button.shift-below
+{
+  background-image: url([[pix:tool_epman|shift_below_up]]);
+}
+
+.tool-epman .link-button.light.shift-below-up,
+.tool-epman .program-vacation > .link-button.shift-below
+{
+  background-image: url([[pix:tool_epman|shift_below_up_light]]);
 }
