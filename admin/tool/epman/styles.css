@@ -484,16 +484,26 @@
   padding: 0px;
 }
 
-.tool-epman .program-vacation {
+.tool-epman .program-vacation,
+.tool-epman .module-overlap {
   font-size: small;
   padding-left: 0.25em;
   padding-right: 0.25em;
   font-weight: normal;
   margin-top: 0.5em;
+}
+
+.tool-epman .program-vacation {
   border-left: 3px solid #ba8a09;
 }
 
-.tool-epman .program-module-list > .program-vacation {
+.tool-epman .module-overlap {
+  border-left: 3px solid #ff0000;
+  background-color: #ff7777;
+}
+
+.tool-epman .program-module-list > .program-vacation,
+.tool-epman .program-module-list > .module-overlap {
   margin-top: 1.0em;
 }
 

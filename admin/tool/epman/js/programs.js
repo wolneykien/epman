@@ -144,7 +144,12 @@ var EducationProgramView = View.extend({
             var startDays = Math.ceil(m.startdate / (24 * 3600));
             if (period == null || period.num != m.period) {
                 if (endDays != null && startDays != (endDays + 1)) {
-                    $modules.append(templates.vacation({ length : (startDays - endDays - 1) }));
+                    var length = startDays - endDays - 1;
+                    if (length > 0) {
+                        $modules.append(templates.vacation({ length : length }));
+                    } else {
+                        $modules.append(getTemplate("#overlap-template")({ length : -length }));
+                    }
                     endDays = startDays - 1;
                 }
                 $modules.append(templates.period({ m : m }));
@@ -154,10 +159,15 @@ var EducationProgramView = View.extend({
                 };
             }
             if (endDays != null && startDays != (endDays + 1)) {
-                period.$el.append(templates.vacation({ length : (startDays - endDays - 1) }));
+                var length = startDays - endDays - 1;
+                if (length > 0) {
+                    period.$el.append(templates.vacation({ length : length }));
+                } else {
+                    period.$el.append(getTemplate("#overlap-template")({ length : -length }));
+                }
             }
             period.$el.append(templates.module({ m : m }));
-            endDays = startDays + m.length;
+            endDays = startDays + m.length - 1;
         }, this);
         
         var self = this;

@@ -52,7 +52,8 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'N_days' => get_string('N_days', 'tool_epman'),
       'Ndays' => get_string('Ndays', 'tool_epman'),
       'Nth_period' => get_string('Nth_period', 'tool_epman'),
-      'vacation_N_days' => get_string('vacation_N_days', 'tool_epman'),
+      'N_day_vacation' => get_string('N_day_vacation', 'tool_epman'),
+      'N_day_overlap' => get_string('N_day_overlap', 'tool_epman'),
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
     ),
 ), true);
@@ -215,7 +216,14 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 <div id="vacation-template" style="display: none;">
   <div class="program-vacation">
     <span>
-      <@= decline('vacation_N_days', length) @>
+      <@= decline('N_day_vacation', length) @>
+    </span>
+  </div>
+</div>
+<div id="overlap-template" style="display: none;">
+  <div class="module-overlap">
+    <span>
+      <@= decline('N_day_overlap', length) @>
     </span>
   </div>
 </div>
