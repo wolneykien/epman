@@ -196,7 +196,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </span>
       </div>
       <div class="link-button light nolink edit">
-        <a href="javascript:void(0)">
+        <a role="edit-button" data-id="<@= m.id @>" href="javascript:void(0)">
           <?php echo get_string('Edit_module', 'tool_epman'); ?>
         </a>
       </div>

@@ -174,6 +174,15 @@ var EducationProgramView = View.extend({
                 el : "#module-dialog-template",
             })).open();
         });
+        $modules.find("[role='edit-button']").click(function (e) {
+            var modules = self.model.get('modules');
+            var module = modules.get($(e.target).data("id"));
+            (new ModuleDialog({
+                collection : modules,
+                model : module,
+                el : "#module-dialog-template",
+            })).open();
+        });
 
         return this;
     },
@@ -434,7 +443,7 @@ var ModuleDialog = Dialog.extend({
             dateFormat : i18n['dateFormat'],
         });
         this.$("[name='enddate']").datepicker({
-            defaultDate: this.model.get("startdate") &&this.model.get("length")  ? new Date((m.startdate + m.length * 24 * 3600) * 1000) : "+2w",
+            defaultDate: this.model.get("startdate") && this.model.get("length") ? new Date((this.model.get("startdate") + this.model.get("length") * 24 * 3600) * 1000) : "+2w",
             changeMonth: true,
             numberOfMonths: 3,
             dateFormat : i18n['dateFormat'],
