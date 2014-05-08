@@ -106,17 +106,24 @@ var EducationProgramModule = Model.extend({
     },
 
     rollback : function () {
-        var undo = undo;
+        var undo = this.undo;
+        var attrs = {};
+        if (undo.startdate) {
+            if (_.isFunction(undo.startdate)) {
+                undo.startdate();
+            } else {
+                attrs.startdate = undo.startdate;
+            }
+        }
+        if (!_.isEmpty(attrs)) {
+            this.set(attrs);
+        }
         this.undo = {};
-        this.set(undo);
     },
 
-    move : function (newDate) {
-        _.extend(this.undo, { startdate : this.get("startdate") });
-        if (newDate instanceof Date) {
-            newDate = Math.round(newDate.getTime / 1000);
-        }
-        this.set({ startdate : newDate });
+    move : function (delta, options) {
+        this.undo.startdate = this.get("startdate");
+        this.set({ startdate : this.get("startdate") + delta }, options);
     },
 
 });
@@ -139,33 +146,46 @@ var EducationProgramModules = Collection.extend({
     },
 
     shiftAbove : function (idOrModule) {
-        if (_.isNumber(idOrModule)) {
-            idOrModule = this.get(id);
-        }
-        if (idOrModule) {
-            var idx = this.indexOf(idOrModule);
-            var current = idOrModule;
-            if (idx > 0) {
-                idx = idx - 1;
-                var above = this.at(idx);
-                if (above.get("startdate") && above.get("length") && current.get("startdate")) {
-                    var delta = current.get("startdate") - above.get("startdate") + (above.get("length") - 1) * 24 * 3600;
-                    if (delta != 0) {
-                        above.set({ startdate : above.get("startdate") + delta }, { silent : true });
-                        idx = idx - 1;
-                        while (idx >= 0) {
-                            above = this.at(idx);
-                            above.set({ startdate : above.get("startdate") + delta }, { silent : true });
-                            idx = idx - 1;
-                        }
-                        this.trigger("reset", this);
-                    }
-                }
-            }            
-        }
+        this.shift(idOrModule, -1);
     },
 
     shiftBelow : function (idOrModule) {
+        this.shift(idOrModule, 1);
+    },
+
+    shift : function (current, step, delta) {
+        if (_.isNumber(current)) {
+            current = this.get(id);
+        }
+        var idx = this.indexOf(current);        
+        if (idx && current.get("startdate")) {
+            if (_.isUndefined(delta)) {
+                if ((idx + step) >= 0 && (idx + step) < this.length) {
+                    idx = idx + step;
+                    var next = this.at(idx);
+                    if (next.get("startdate")) {
+                        if (step < 0 && next.get("length")) {
+                            delta = current.get("startdate") - next.get("startdate") + (next.get("length") - 1) * 24 * 3600;
+                        } else if (step > 0 && current.get("length")) {
+                            delta = current.get("startdate") + (current.get("length") - 1) * 24 * 3600 - next.get("startdate");
+                        }
+                        current = next;                        
+                    }
+                }
+            }
+
+            if (delta) {
+                current.set({ startdate : current.get("startdate") + delta }, { silent : true });
+                current.undo.startdate = _.bind(this.shift, this, current, step, -delta);
+                idx = idx + step;            
+                while (idx >= 0 && idx < this.length) {
+                    current = this.at(idx);
+                    current.set({ startdate : current.get("startdate") + delta }, { silent : true });
+                    idx = idx + step;
+                }
+                this.trigger("reset", this);
+            }
+        }
     },
 
 });
