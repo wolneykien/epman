@@ -804,3 +804,9 @@
 {
   background-image: url([[pix:tool_epman|shift_below_up_light]]);
 }
+
+.tool-epman .link-button.undo {
+  background-image: url([[pix:tool_epman|undo]]);
+  font-style: italic;
+  color: black;
+}

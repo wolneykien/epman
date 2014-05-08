@@ -94,8 +94,29 @@ var EducationProgramModule = Model.extend({
         courses : [],
     },
 
+    undo : {},
+
     configure : function (attrs, options) {
         _.extend(this.urlParams, { programid : attrs.programid });
+    },
+
+    toJSON : function (options) {
+        var json = Model.prototype.toJSON.apply(this, arguments);
+        return _.extend(json, { undo : this.undo });
+    },
+
+    rollback : function () {
+        var undo = undo;
+        this.undo = {};
+        this.set(undo);
+    },
+
+    move : function (newDate) {
+        _.extend(this.undo, { startdate : this.get("startdate") });
+        if (newDate instanceof Date) {
+            newDate = Math.round(newDate.getTime / 1000);
+        }
+        this.set({ startdate : newDate });
     },
 
 });
@@ -111,6 +132,40 @@ var EducationProgramModules = Collection.extend({
     configure : function (options) {
         this.programid = options.programid;
         _.extend(this.urlParams, { programid : this.programid });
+    },
+
+    comparator : function(module) {
+        return module.get("startdate");
+    },
+
+    shiftAbove : function (idOrModule) {
+        if (_.isNumber(idOrModule)) {
+            idOrModule = this.get(id);
+        }
+        if (idOrModule) {
+            var idx = this.indexOf(idOrModule);
+            var current = idOrModule;
+            if (idx > 0) {
+                idx = idx - 1;
+                var above = this.at(idx);
+                if (above.get("startdate") && above.get("length") && current.get("startdate")) {
+                    var delta = current.get("startdate") - above.get("startdate") + (above.get("length") - 1) * 24 * 3600;
+                    if (delta != 0) {
+                        above.set({ startdate : above.get("startdate") + delta }, { silent : true });
+                        idx = idx - 1;
+                        while (idx >= 0) {
+                            above = this.at(idx);
+                            above.set({ startdate : above.get("startdate") + delta }, { silent : true });
+                            idx = idx - 1;
+                        }
+                        this.trigger("reset", this);
+                    }
+                }
+            }            
+        }
+    },
+
+    shiftBelow : function (idOrModule) {
     },
 
 });

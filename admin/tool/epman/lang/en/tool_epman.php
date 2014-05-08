@@ -76,4 +76,5 @@ $string['Lower_above'] = 'Lower above';
 $string['Lift_below'] = 'Lift below';
 $string['Lift_above'] = 'Lift above';
 $string['Lower_below'] = 'Lower below';
+$string['Rollback_start_date'] = 'Rollback start date';
 ?>
