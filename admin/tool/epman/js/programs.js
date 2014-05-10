@@ -152,14 +152,14 @@ var EducationProgramModules = Collection.extend({
             }
 
             if (delta) {
-                current.set({ startdate : current.get("startdate") + delta }, { silent : true });
+                current.save({ startdate : current.get("startdate") + delta }, { silent : true });
                 if (!options.irreversible) {
                     current.setRollback({ startdate : _.bind(this.shift, this, current, step, -delta, { irreversible : true }) });
                 }
                 idx = idx + step;            
                 while (idx >= 0 && idx < this.length) {
                     current = this.at(idx);
-                    current.set({ startdate : current.get("startdate") + delta }, { silent : true });
+                    current.save({ startdate : current.get("startdate") + delta }, { silent : true });
                     idx = idx + step;
                 }
                 if (!options.silent) {
