@@ -129,7 +129,8 @@ var EducationProgramModules = Collection.extend({
         this.shift(idOrModule, 1);
     },
 
-    shift : function (current, step, delta) {
+    shift : function (current, step, delta, options) {
+        options = options || {};
         if (_.isNumber(current)) {
             current = this.get(current);
         }
@@ -151,15 +152,19 @@ var EducationProgramModules = Collection.extend({
             }
 
             if (delta) {
-                current.set({ startdate : current.get("startdate") + delta }, { silent : true });                
-                current.setRollback({ startdate : _.bind(this.shift, this, current, step, -delta) });
+                current.set({ startdate : current.get("startdate") + delta }, { silent : true });
+                if (!options.irreversible) {
+                    current.setRollback({ startdate : _.bind(this.shift, this, current, step, -delta, { irreversible : true }) });
+                }
                 idx = idx + step;            
                 while (idx >= 0 && idx < this.length) {
                     current = this.at(idx);
                     current.set({ startdate : current.get("startdate") + delta }, { silent : true });
                     idx = idx + step;
                 }
-                this.trigger("reset", this);
+                if (!options.silent) {
+                    this.trigger("reset", this);
+                }
             }
         }
     },
@@ -251,6 +256,9 @@ var EducationProgramView = View.extend({
         });
         $modules.find("[role='shift-below-button']").click(function (e) {
             self.model.get('modules').shiftBelow($(e.target).data("id"));
+        });
+        $modules.find("[role='rollback-button']").click(function (e) {
+            self.model.get('modules').get($(e.target).data("id")).rollback();
         });
 
         return this;

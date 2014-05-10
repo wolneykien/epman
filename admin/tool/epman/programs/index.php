@@ -201,15 +201,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <?php echo get_string('Edit_module', 'tool_epman'); ?>
         </a>
       </div>
-      <@ if (m.undo) {
-           if (m.undo.startdate) { @>
-      <div class="link-button nolink undo right">
-        <a role="rollback-startdate-button" data-id="<@= m.id @>" href="javascript:void(0)">
-          <?php echo get_string('Rollback_start_date', 'tool_epman'); ?>
+      <@ if (!_.isEmpty(m.undo)) { @>
+      <div class="link-button nolink undo color right">
+        <a role="rollback-button" data-id="<@= m.id @>" href="javascript:void(0)">
+          <?php echo get_string('Rollback', 'tool_epman'); ?>
         </a>
       </div>
-      <@   }
-      } @>
+      <@ } @>
     </div>
     <div class="module-courses">
       <ul class="module-course-list">

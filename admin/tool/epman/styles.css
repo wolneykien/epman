@@ -71,6 +71,7 @@
   font-size: small;
   font-weight: normal;
   cursor: pointer;
+  color: #098aba;
 }
 
 .tool-epman .link-button {
@@ -81,55 +82,36 @@
   margin-left: 0px;
 }
 
-.tool-epman .link-button > a {
-  color: inherit;
-  font: inherit;
-}
-
-.tool-epman .link-button,
 .tool-epman .link-button > a,
-.tool-epman .link-button > a:visited,
-.tool-epman .link-button:active,
-.tool-epman .link-button:active > a,
+.tool-epman .link-button > a:hover,
 .tool-epman .link-button > a:active,
-.tool-epman .link-button:focus,
-.tool-epman .link-button:focus > a,
+.tool-epman .link-button > a:visited,
 .tool-epman .link-button > a:focus
 {
-  color: #098aba;
+  color: inherit;
+  font: inherit;
   outline: none;
 }
 
-.tool-epman .record > .record-header .link-button,
-.tool-epman .record > .record-header .link-button > a
-{
+.tool-epman .record > .record-header .link-button {
   color: #d0d0d0;
 }
 
 .tool-epman .record-header:hover .link-button,
-.tool-epman .record.expanded > .record-header .link-button,
-.tool-epman .record-header:hover .link-button > a,
-.tool-epman .record.expanded > .record-header .link-button > a
-{
+.tool-epman .record.expanded > .record-header .link-button {
   color: #098aba;
 }
 
-.tool-epman .link-button.nolink,
-.tool-epman .link-button.nolink > a {
+.tool-epman .link-button.nolink {
   color: black;
 }
 
-.tool-epman .record > .record-header .link-button.nolink,
-.tool-epman .record > .record-header .link-button.nolink > a,
-{
+.tool-epman .record > .record-header .link-button.nolink {
   color: #d0d0d0;
 }
 
 .tool-epman .record > .record-header:hover .link-button.nolink,
-.tool-epman .record > .record-header:hover .link-button.nolink > a,
-.tool-epman .record.expanded > .record-header .link-button.nolink,
-.tool-epman .record.expanded > .record-header .link-button.nolink > a
-{
+.tool-epman .record.expanded > .record-header .link-button.nolink {
   color: black;
 }
 
@@ -142,37 +124,25 @@
 }
 
 .tool-epman .link-button.light,
-.tool-epman .link-button.light > a,
-.tool-epman .record.expanded > .record-header .link-button.light,
-.tool-epman .record.expanded > .record-header .link-button.light > a
+.tool-epman .record.expanded > .record-header .link-button.light
 {
   color: #a0a0a0;
 }
 
 .tool-epman .record > .record-header:hover .link-button.light.nolink,
-.tool-epman .record > .record-header:hover .link-button.light.nolink > a,
 .tool-epman .record .section-header:hover > .link-button.light.nolink,
-.tool-epman .record .section-header:hover > .link-button.light.nolink > a,
 .tool-epman .program-module > .module-header:hover > .link-button.light.nolink,
-.tool-epman .program-module > .module-header:hover > .link-button.light.nolink > a,
 .tool-epman .program-vacation:hover > .link-button.light.nolink,
-.tool-epman .program-vacation:hover > .link-button.light.nolink > a,
-.tool-epman .module-overlap:hover > .link-button.light.nolink,
-.tool-epman .module-overlap:hover > .link-button.light.nolink > a
+.tool-epman .module-overlap:hover > .link-button.light.nolink
 {
   color: black;
 }
 
 .tool-epman .record > .record-header:hover .link-button.light,
-.tool-epman .record > .record-header:hover .link-button.light > a,
 .tool-epman .record .section-header:hover .link-button.light,
 .tool-epman .program-module > .module-header:hover .link-button.light,
-.tool-epman .program-module > .module-header:hover .link-button.light > a,
-.tool-epman .record .section-header:hover .link-button.light > a,
 .tool-epman .program-vacation:hover > .link-button.light,
-.tool-epman .program-vacation:hover > .link-button.light > a,
-.tool-epman .module-overlap:hover > .link-button.light,
-.tool-epman .module-overlap:hover > .link-button.light > a
+.tool-epman .module-overlap:hover > .link-button.light
 {
   color: #098aba;
 }
@@ -814,4 +784,9 @@
   background-image: url([[pix:tool_epman|undo]]);
   font-style: italic;
   color: black;
+}
+
+.tool-epman .link-button.undo.color {
+  background-image: url([[pix:tool_epman|undo_color]]);
+  color: #bb0000;
 }

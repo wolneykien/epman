@@ -232,25 +232,26 @@ var Model = Backbone.Model.extend({
     },
 
     rollback : function (keys) {
-        var undo = this.undo || {};
+        this.undo = this.undo || {};
         var attrs = {};
         keys = _.union(arguments);
         if (keys.length == 0) {
             keys = this.keys();
         }
         _.each(keys, function (key) {
-            if (undo[key]) {
-                if (_.isFunction(undo[key])) {
-                    undo[key]();
+            if (this.undo[key]) {
+                var undoval = this.undo[key];
+                delete this.undo[key];
+                if (_.isFunction(undoval)) {
+                    undoval();
                 } else {
-                    attrs[key] = undo[key];
+                    attrs[key] = undoval;
                 }
             }
-        });
+        }, this);
         if (!_.isEmpty(attrs)) {
             this.set(attrs);
         }
-        this.undo = {};
     },
 
     setRollback : function (rollbacks) {
