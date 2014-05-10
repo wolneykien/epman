@@ -54,6 +54,10 @@ var EducationProgram = Model.extend({
                 this.trigger("change", this, options);
                 this.trigger("change:modules", this, this.get('modules').toJSON(), options);
             });
+            this.listenTo(modules, "reset", function (collection, options) {
+                this.trigger("change", this, options);
+                this.trigger("change:modules", this, this.get('modules').toJSON(), options);
+            });
         }
         return resp;
     },
@@ -94,36 +98,8 @@ var EducationProgramModule = Model.extend({
         courses : [],
     },
 
-    undo : {},
-
     configure : function (attrs, options) {
         _.extend(this.urlParams, { programid : attrs.programid });
-    },
-
-    toJSON : function (options) {
-        var json = Model.prototype.toJSON.apply(this, arguments);
-        return _.extend(json, { undo : this.undo });
-    },
-
-    rollback : function () {
-        var undo = this.undo;
-        var attrs = {};
-        if (undo.startdate) {
-            if (_.isFunction(undo.startdate)) {
-                undo.startdate();
-            } else {
-                attrs.startdate = undo.startdate;
-            }
-        }
-        if (!_.isEmpty(attrs)) {
-            this.set(attrs);
-        }
-        this.undo = {};
-    },
-
-    move : function (delta, options) {
-        this.undo.startdate = this.get("startdate");
-        this.set({ startdate : this.get("startdate") + delta }, options);
     },
 
 });
@@ -155,19 +131,19 @@ var EducationProgramModules = Collection.extend({
 
     shift : function (current, step, delta) {
         if (_.isNumber(current)) {
-            current = this.get(id);
+            current = this.get(current);
         }
-        var idx = this.indexOf(current);        
-        if (idx && current.get("startdate")) {
+        var idx = this.indexOf(current);
+        if (idx >= 0 && current.get("startdate")) {
             if (_.isUndefined(delta)) {
                 if ((idx + step) >= 0 && (idx + step) < this.length) {
                     idx = idx + step;
                     var next = this.at(idx);
                     if (next.get("startdate")) {
                         if (step < 0 && next.get("length")) {
-                            delta = current.get("startdate") - next.get("startdate") + (next.get("length") - 1) * 24 * 3600;
+                            delta = current.get("startdate") - next.get("startdate") - next.get("length") * 24 * 3600;
                         } else if (step > 0 && current.get("length")) {
-                            delta = current.get("startdate") + (current.get("length") - 1) * 24 * 3600 - next.get("startdate");
+                            delta = current.get("startdate") + current.get("length") * 24 * 3600 - next.get("startdate");
                         }
                         current = next;                        
                     }
@@ -175,8 +151,8 @@ var EducationProgramModules = Collection.extend({
             }
 
             if (delta) {
-                current.set({ startdate : current.get("startdate") + delta }, { silent : true });
-                current.undo.startdate = _.bind(this.shift, this, current, step, -delta);
+                current.set({ startdate : current.get("startdate") + delta }, { silent : true });                
+                current.setRollback({ startdate : _.bind(this.shift, this, current, step, -delta) });
                 idx = idx + step;            
                 while (idx >= 0 && idx < this.length) {
                     current = this.at(idx);
@@ -269,6 +245,12 @@ var EducationProgramView = View.extend({
                 model : module,
                 el : "#module-dialog-template",
             })).open();
+        });
+        $modules.find("[role='shift-above-button']").click(function (e) {
+            self.model.get('modules').shiftAbove($(e.target).data("id"));
+        });
+        $modules.find("[role='shift-below-button']").click(function (e) {
+            self.model.get('modules').shiftBelow($(e.target).data("id"));
         });
 
         return this;

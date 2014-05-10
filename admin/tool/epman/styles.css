@@ -81,6 +81,11 @@
   margin-left: 0px;
 }
 
+.tool-epman .link-button > a {
+  color: inherit;
+  font: inherit;
+}
+
 .tool-epman .link-button,
 .tool-epman .link-button > a,
 .tool-epman .link-button > a:visited,

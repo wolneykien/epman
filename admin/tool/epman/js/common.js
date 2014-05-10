@@ -194,6 +194,7 @@ var Model = Backbone.Model.extend({
             return getUrl(this.urlBase, this.urlParams, this.id);
         }
     },
+    undo : undefined,
 
     initialize : function (attrs, options) {
         options = _.defaults(options || {}, restOptions);
@@ -201,6 +202,7 @@ var Model = Backbone.Model.extend({
             this.urlBase = options.restRoot.replace(/\/$/, "") + this.urlBase;
         }
         _.extend(this.urlParams, options.restParams);
+        this.undo = {};
         this.configure(attrs, options);
     },
 
@@ -208,10 +210,10 @@ var Model = Backbone.Model.extend({
     },
 
     sync : function (method, model, options) {
+        options = _.defaults(options || {}, { wait : true });
         var onerror = options.error;
-        options.error = undefined;
-        options = _.defaults(options, {
-            wait : true,
+        var onsuccess = options.success;
+        _.extend(options, {
             error : function (xhr) {
                 logXHR(xhr);
                 (new RestErrorDialog()).open({ xhr : xhr });
@@ -219,8 +221,40 @@ var Model = Backbone.Model.extend({
                     onerror.apply(this, arguments);
                 }
             },
+            success : function () {
+                this.undo = {};
+                if (onsuccess) {
+                    onsuccess.apply(this, arguments);
+                }
+            },
         });
-      return Backbone.sync.apply(this, arguments);
+        return Backbone.sync.apply(this, [method, model, options]);
+    },
+
+    rollback : function (keys) {
+        var undo = this.undo || {};
+        var attrs = {};
+        keys = _.union(arguments);
+        if (keys.length == 0) {
+            keys = this.keys();
+        }
+        _.each(keys, function (key) {
+            if (undo[key]) {
+                if (_.isFunction(undo[key])) {
+                    undo[key]();
+                } else {
+                    attrs[key] = undo[key];
+                }
+            }
+        });
+        if (!_.isEmpty(attrs)) {
+            this.set(attrs);
+        }
+        this.undo = {};
+    },
+
+    setRollback : function (rollbacks) {
+        this.undo = _.extend(this.undo || {}, rollbacks);
     },
 
     toJSON : function (options) {
@@ -230,6 +264,7 @@ var Model = Backbone.Model.extend({
                 json[key] = val.toJSON(options);
             }
         });
+        _.extend(json, { undo : this.undo || {} });
 
         return json;
     },
