@@ -194,13 +194,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="module-template" style="display: none;">
-  <table class="program-module-table"><tr>
+  <div class="program-module-table"><div>
   <@ if (action.deleteModules) { @>
-  <td class="selector">
+  <div class="selector">
     <input type="checkbox"></input>
-  </td>
+  </div>
   <@ } @>
-  <td id="module-<@= m.id @>" class="program-module">
+  <div id="module-<@= m.id @>" class="program-module">
     <div class="module-header">
       <div class="name-value">
         <span><?php echo get_string('moduleStart', 'tool_epman'); ?></span>
@@ -237,8 +237,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <@ }); @>
       </ul>
     </div>
-  </td>
-  </tr></table>
+  </div>
+  </div></div>
 </div>
 <div id="vacation-template" style="display: none;">
   <div class="program-vacation">

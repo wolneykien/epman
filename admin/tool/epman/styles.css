@@ -405,9 +405,18 @@
   margin-top: 0.5em;
   border-collapse: collapse;
   border-style: none;
+  display: table;
 }
 
-.tool-epman .program-module-table td.selector {
+.tool-epman .program-module-table > * {
+  display: table-row;
+}
+
+.tool-epman .program-module-table > * > * {
+  display: table-cell;
+}
+
+.tool-epman .program-module-table .selector {
   vertical-align: middle;
 }
 
