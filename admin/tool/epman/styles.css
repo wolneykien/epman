@@ -65,7 +65,6 @@
 
 .tool-epman .link-button {
   display: inline-block;
-  padding-left: 1.4em;
   background-repeat: no-repeat;
   background-position: 0px center;
   font-size: small;
@@ -158,7 +157,8 @@
 }
 
 .tool-epman .link-button.responsible {
-   background-image: url([[pix:tool_epman|user]]);
+  background-image: url([[pix:tool_epman|user]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .record > .record-header .link-button.responsible,
@@ -177,8 +177,9 @@
 }
 
 .tool-epman .link-button.groups {
-   background-image: url([[pix:tool_epman|group]]);
- }
+  background-image: url([[pix:tool_epman|group]]);
+  padding-left: 1.4em;
+}
 
 .tool-epman .record > .record-header .link-button.groups,
 .tool-epman .record .section-header .link-button.groups,
@@ -392,11 +393,22 @@
 }
 
 .tool-epman .program-modules {
-  padding: 0.25em;
   font-size: small;
 }
 
 .tool-epman .program-module-list {
+}
+
+.tool-epman .program-module-table {
+  margin: 0px;
+  padding: 0px;
+  margin-top: 0.5em;
+  border-collapse: collapse;
+  border-style: none;
+}
+
+.tool-epman .program-module-table td.selector {
+  vertical-align: middle;
 }
 
 .tool-epman .program-module {
@@ -404,7 +416,6 @@
   padding-left: 0.25em;
   padding-right: 0.25em;
   font-weight: normal;
-  margin-top: 0.5em;
   border-left: 3px solid #098aba;
 }
 
@@ -515,8 +526,8 @@
   background-color: #efefff;
 }
 
-.tool-epman .record > .section-header,
-.tool-epman .record > .record-body > .section-header {
+.tool-epman .record .section-header,
+.tool-epman .record > .record-body .section-header {
   text-align: left;
   font-size: small;
   color: black;
@@ -527,8 +538,9 @@
 }
 
 .tool-epman .link-button.edit {
-   background-image: url([[pix:tool_epman|edit]]);
- }
+  background-image: url([[pix:tool_epman|edit]]);
+  padding-left: 1.4em;
+}
 
 .tool-epman .record.expanded > .record-header .link-button.light.edit,
 .tool-epman .record .section-header .link-button.light.edit,
@@ -564,8 +576,9 @@
 }
 
 .tool-epman .link-button.add {
-   background-image: url([[pix:tool_epman|add_color]]);
- }
+  background-image: url([[pix:tool_epman|add_color]]);
+  padding-left: 1.4em;
+}
 
 .tool-epman .record.expanded > .record-header .link-button.light.add,
 .tool-epman .record .section-header .link-button.light.add,
@@ -736,54 +749,63 @@
 .tool-epman .module-overlap:hover > .link-button.shift-above
 {
   background-image: url([[pix:tool_epman|shift_above_up]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.light.shift-above-up,
 .tool-epman .module-overlap > .link-button.shift-above
 {
   background-image: url([[pix:tool_epman|shift_above_up_light]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.shift-below-down,
 .tool-epman .module-overlap:hover > .link-button.shift-below
 {
   background-image: url([[pix:tool_epman|shift_below_down]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.light.shift-below-down,
 .tool-epman .module-overlap > .link-button.shift-below
 {
   background-image: url([[pix:tool_epman|shift_below_down_light]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.shift-above-down,
 .tool-epman .program-vacation:hover > .link-button.shift-above
 {
   background-image: url([[pix:tool_epman|shift_above_down]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.light.shift-above-down,
 .tool-epman .program-vacation > .link-button.shift-above
 {
   background-image: url([[pix:tool_epman|shift_above_down_light]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.shift-below-up,
 .tool-epman .program-vacation:hover > .link-button.shift-below
 {
   background-image: url([[pix:tool_epman|shift_below_up]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.light.shift-below-up,
 .tool-epman .program-vacation > .link-button.shift-below
 {
   background-image: url([[pix:tool_epman|shift_below_up_light]]);
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.undo {
   background-image: url([[pix:tool_epman|undo]]);
   font-style: italic;
   color: black;
+  padding-left: 1.4em;
 }
 
 .tool-epman .link-button.undo.color {

@@ -193,11 +193,15 @@ var EducationProgramView = View.extend({
         this.listenTo(this.model, "change", this.render);
     },
 
-    render : function () {
+    render : function (options) {
+        options = _.defaults(options || {}, {
+            action : {},
+        });
         var data = {
             f : this.model.collection.filter,
             p : this.model.toJSON(),
             year : this.model.get('year'),
+            action : options.action,
         };
         this.$header.html(templates.recordHeader(data));
         this.$body.html(templates.recordBody(data));
@@ -207,6 +211,7 @@ var EducationProgramView = View.extend({
         var endDays = null;
         var aboveId = undefined;
         _.each(data.p.modules, function (m) {
+            var mdata = _.extend({}, data, { m : m });
             var startDays = Math.ceil(m.startdate / (24 * 3600));
             if (period == null || period.num != m.period) {
                 if (endDays != null && startDays != (endDays + 1)) {
@@ -218,7 +223,7 @@ var EducationProgramView = View.extend({
                     }
                     endDays = startDays - 1;
                 }
-                $modules.append(templates.period({ m : m }));
+                $modules.append(templates.period(mdata));
                 period = {
                     $el : $modules.find("#module-" + m.id + "-period-" + (m.period + 1)),
                     num : m.period,
@@ -232,7 +237,7 @@ var EducationProgramView = View.extend({
                     period.$el.append(getTemplate("#overlap-template")({ length : -length, aboveId : aboveId, belowId : m.id }));
                 }
             }
-            period.$el.append(templates.module({ m : m }));
+            period.$el.append(templates.module(mdata));
             endDays = startDays + m.length - 1;
             aboveId = m.id;
         }, this);
@@ -252,10 +257,10 @@ var EducationProgramView = View.extend({
             })).open();
         });
         this.$body.find("[role='delete-modules-button']").click(function (e) {
-            $(e.target).parent()[0].scrollIntoView();
-            $("body").css({ "overflow-y" : "hidden" });
-            $modules.css({ height : "100vh", "overflow-y" : "scroll" });
-            disableCheckFooter();
+            self.render({ action : { deleteModules : true } });
+        });
+        this.$body.find("[role='cancel-action-button']").click(function (e) {
+            self.render({ action : { cancel : true } });
         });
         $modules.find("[role='edit-button']").click(function (e) {
             var modules = self.model.get('modules');
@@ -275,6 +280,20 @@ var EducationProgramView = View.extend({
         $modules.find("[role='rollback-button']").click(function (e) {
             self.model.get('modules').get($(e.target).data("id")).rollback();
         });
+
+        if (options.action.deleteModules) {
+            $("#program-" + self.model.id + "-modules")[0].scrollIntoView();
+            $("body").css({ "overflow-y" : "hidden" });
+            $modules.css({ height : "100vh", "overflow-y" : "scroll" });
+            disableCheckFooter();
+        }
+
+        if (options.action.cancel) {
+            $modules.css({ height : "", "overflow-y" : "" });
+            this.$header[0].scrollIntoView();
+            $("body").css({ "overflow-y" : "scroll" });
+            enableCheckFooter();
+        }
 
         return this;
     },

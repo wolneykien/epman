@@ -48,6 +48,7 @@ $string['Edit_program'] = 'Edit program';
 $string['Delete_program'] = 'Delete program';
 $string['Add_module'] = 'Add module';
 $string['Delete_modules'] = 'Delete modules';
+$string['Delete_selected_modules'] = 'Delete selected modules';
 $string['Edit_module'] = 'Edit module';
 $string['Education_program_edit'] = 'Education program edit';
 $string['New_education_program'] = 'New education program';

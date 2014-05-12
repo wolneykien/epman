@@ -151,20 +151,33 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
     <@ } @>
   </div>
-  <div class="section-header">
-    <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
-    <div role="add-module-button" class="link-button light nolink add">
-      <a href="javascript:void(0)">
-        <?php echo get_string('Add_module', 'tool_epman'); ?>
-      </a>
-    </div>
-    <div role="delete-modules-button" class="link-button light nolink delete">
-      <a href="javascript:void(0)">
-        <?php echo get_string('Delete_modules', 'tool_epman'); ?>
-      </a>
-    </div>
-  </div>
   <div id="program-<@= p.id @>-modules" class="program-modules">
+    <div class="section-header">
+      <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
+      <@ if (action.deleteModules) { @>
+      <div role="delete-modules-button" class="link-button nolink delete">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Delete_selected_modules', 'tool_epman'); ?>
+        </a>
+      </div>
+      <div role="cancel-action-button" class="link-button nolink cancel">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Cancel', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ } else { @>
+      <div role="add-module-button" class="link-button light nolink add">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Add_module', 'tool_epman'); ?>
+        </a>
+      </div>
+      <div role="delete-modules-button" class="link-button light nolink delete">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Delete_modules', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ } @>
+    </div>
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>
     <span class="comment"><?php echo get_string('nomodules', 'tool_epman'); ?></span>
     <@ } else { @>
@@ -181,7 +194,13 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="module-template" style="display: none;">
-  <div id="module-<@= m.id @>" class="program-module">
+  <table class="program-module-table"><tr>
+  <@ if (action.deleteModules) { @>
+  <td class="selector">
+    <input type="checkbox"></input>
+  </td>
+  <@ } @>
+  <td id="module-<@= m.id @>" class="program-module">
     <div class="module-header">
       <div class="name-value">
         <span><?php echo get_string('moduleStart', 'tool_epman'); ?></span>
@@ -218,7 +237,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <@ }); @>
       </ul>
     </div>
-  </div>
+  </td>
+  </tr></table>
 </div>
 <div id="vacation-template" style="display: none;">
   <div class="program-vacation">
