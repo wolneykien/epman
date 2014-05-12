@@ -472,14 +472,9 @@ var ProgramDialog = Dialog.extend({
         }, {
             wait : true,
             success : function (model) {
-                model.fetch({
-                    reset : true,
-                    success : function (model) {
-                        if (!model.collection && self.collection) {
-                            self.collection.add(model);
-                        }
-                    },
-                });
+                if (!model.collection && self.collection) {
+                    self.collection.add(model);
+                }
             },
         });
     },
@@ -512,7 +507,7 @@ var ModuleDialog = Dialog.extend({
         this.$el.html(getTemplate("#module-dialog-template", "[role='days']")({
             m : this.model.toJSON(),
         }));
-        this.$("[name='period']").spinner({ min : 1 }).spinner("value", this.model.get('period') || 1);
+        this.$("[name='period']").spinner({ min : 1 }).spinner("value", (this.model.get('period') + 1) || 1);
         this.$("[name='startdate']").datepicker({
             defaultDate: "+1w",
             changeMonth: true,
@@ -601,14 +596,9 @@ var ModuleDialog = Dialog.extend({
         }, {
             wait : true,
             success : function (model) {
-                model.fetch({
-                    reset : true,
-                    success : function (model) {
-                        if (!model.collection && self.collection) {
-                            self.collection.add(model);
-                        }
-                    },
-                });
+                if (!model.collection && self.collection) {
+                    self.collection.add(model);
+                }
             },
         });
     },

@@ -291,7 +291,7 @@ class epman_module_external extends crud_external_api {
         }
       }
 
-      return $module;
+      return self::get_module($programid, $module['id']);
     }
 
     /**
@@ -301,37 +301,7 @@ class epman_module_external extends crud_external_api {
      * @return external_description
      */
     public static function create_module_returns() {
-      return new external_single_structure(array(
-        'id' => new external_value(
-          PARAM_INT,
-          'Education program module ID'),
-        'programid' => new external_value(
-          PARAM_INT,
-          'Education program name ID'),
-        'startdate' => new external_value(
-          PARAM_INT,
-          'Module start date'),
-        'length' => new external_value(
-          PARAM_INT,
-          'Module length'),
-        'period' => new external_value(
-          PARAM_INT,
-          'Education period number'),
-        'courses' => new external_multiple_structure(
-            new external_single_structure(array(
-              'id' => new external_value(
-                PARAM_INT,
-                'ID of the education course'
-              ),
-              'type' => new external_value(
-                PARAM_INT,
-                'Type of the education course'
-              ),
-            )),
-            'Array of the course reference data: {id, type}',
-            VALUE_OPTIONAL
-        ),
-      ));
+      return self::get_module_returns();
     }
 
 
@@ -419,7 +389,7 @@ class epman_module_external extends crud_external_api {
         }
       }
 
-      return $module;
+      return self::get_module($programid, $module['id']);
     }
 
     /**
@@ -429,34 +399,7 @@ class epman_module_external extends crud_external_api {
      * @return external_description
      */
     public static function update_module_returns() {
-      return new external_single_structure(array(
-          'startdate' => new external_value(
-            PARAM_INT,
-            'Module start date',
-            VALUE_OPTIONAL),
-          'length' => new external_value(
-            PARAM_INT,
-            'Module length, days',
-            VALUE_OPTIONAL),
-          'period' => new external_value(
-            PARAM_INT,
-            'Education period number',
-            VALUE_OPTIONAL),
-          'courses' => new external_multiple_structure(
-            new external_single_structure(array(
-              'id' => new external_value(
-                PARAM_INT,
-                'ID of the education course'
-              ),
-              'type' => new external_value(
-                PARAM_INT,
-                'Type of the education course'
-              ),
-            )),
-            'Array of the course reference data: {id, type}',
-            VALUE_OPTIONAL
-          ),
-      ));
+      return self::get_module_returns();
     }
 
     

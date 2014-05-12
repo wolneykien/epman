@@ -457,8 +457,7 @@ class epman_program_external extends crud_external_api {
         }
       }
 
-      unset($program['responsibleid']);
-      return $program;
+      return self::get_program($program['id']);
     }
 
     /**
@@ -468,32 +467,7 @@ class epman_program_external extends crud_external_api {
      * @return external_description
      */
     public static function create_program_returns() {
-      return new external_single_structure(array(
-        'id' => new external_value(
-          PARAM_INT,
-          'Education program ID'),
-        'name' => new external_value(
-          PARAM_TEXT,
-          'Education program name'),
-        'description' => new external_value(
-          PARAM_TEXT,
-          'Short description of the program',
-          VALUE_OPTIONAL),
-        'year' => new external_value(
-          PARAM_INT,
-          'Formal learning year'),
-        'responsible' => new external_value(
-          PARAM_INT,
-          'ID of the responsible user'),
-        'assistants' => new external_multiple_structure(
-          new external_value(
-            PARAM_INT,
-            'ID of an assistant user'
-          ),
-          'Array of the assistant user IDs',
-          VALUE_OPTIONAL
-        ),
-      ));
+      return self::get_program_returns();
     }
 
 
@@ -594,8 +568,7 @@ class epman_program_external extends crud_external_api {
         }
       }
 
-      unset($program['responsibleid']);
-      return $program;
+      return self::get_program($program['id']);
     }
 
     /**
@@ -605,32 +578,7 @@ class epman_program_external extends crud_external_api {
      * @return external_description
      */
     public static function update_program_returns() {
-      return new external_single_structure(array(
-        'name' => new external_value(
-          PARAM_TEXT,
-          'Education program name',
-          VALUE_OPTIONAL),
-        'description' => new external_value(
-          PARAM_TEXT,
-          'Short description of the program',
-          VALUE_OPTIONAL),
-        'year' => new external_value(
-          PARAM_INT,
-          'Formal learning year',
-          VALUE_OPTIONAL),
-        'responsible' => new external_value(
-          PARAM_INT,
-          'ID of the responsible user',
-          VALUE_OPTIONAL),
-        'assistants' => new external_multiple_structure(
-          new external_value(
-            PARAM_INT,
-            'ID of an assistant user'
-          ),
-          'Array of the assistant user IDs',
-          VALUE_OPTIONAL
-        ),
-      ));
+      return self::get_program_returns();
     }
 
     
