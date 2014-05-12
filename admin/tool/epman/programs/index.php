@@ -158,7 +158,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <?php echo get_string('Add_module', 'tool_epman'); ?>
       </a>
     </div>
-    <div class="link-button light nolink delete">
+    <div role="delete-modules-button" class="link-button light nolink delete">
       <a href="javascript:void(0)">
         <?php echo get_string('Delete_modules', 'tool_epman'); ?>
       </a>
@@ -411,8 +411,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 </div>
 
 <!-- Page -->
-<div class="tool-epman">
-  <div id="filter" class="panel vspace">
+<div id="tool-epman" class="tool-epman">
+  <div role="page-header" id="filter" class="panel vspace">
     <div class="link-button nolink add">
       <a id="add-program-button" href="javascript:void(0)">
         <?php echo get_string('Add_program', 'tool_epman'); ?>
@@ -424,7 +424,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
   <div id="program-list" class="record-list">
   </div>
-  <div id="footer" class="page-footer" style="display: none;">
+  <div role="page-footer" class="page-footer" style="display: none;">
     <a class="link-button right gotop" onclick="document.getElementById('filter').scrollIntoView();">
       <?php echo get_string('gotop', 'tool_epman'); ?>
     </a>

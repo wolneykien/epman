@@ -183,6 +183,35 @@ function logXHR (xhr) {
     }
 }
 
+
+function checkFooter () {
+    var $main = $("#tool-epman");
+    var $filterPanel = $main.find("[role='page-header']");
+    var $footerPanel = $main.find("[role='page-footer']");
+    if ($(window).scrollTop () > ($filterPanel.offset().top + $filterPanel.height())) {
+        $footerPanel.css(
+            { left : $filterPanel.offset().left,
+              width : $filterPanel.width(),
+            });
+        $footerPanel.show();
+    } else {
+        $footerPanel.hide();
+    }
+}
+
+function enableCheckFooter () {
+    $(window).scroll(checkFooter);
+    checkFooter();
+}
+
+function disableCheckFooter () {
+    var $footerPanel = $("#tool-epman [role='page-footer']");
+    $(window).scroll(function () {
+        $footerPanel.hide();
+    });
+    $footerPanel.hide();
+}
+
 var Model = Backbone.Model.extend({
 
     urlBase : "/",

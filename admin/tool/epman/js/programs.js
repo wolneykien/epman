@@ -251,6 +251,12 @@ var EducationProgramView = View.extend({
                 el : "#module-dialog-template",
             })).open();
         });
+        this.$body.find("[role='delete-modules-button']").click(function (e) {
+            $(e.target).parent()[0].scrollIntoView();
+            $("body").css({ "overflow-y" : "hidden" });
+            $modules.css({ height : "100vh", "overflow-y" : "scroll" });
+            disableCheckFooter();
+        });
         $modules.find("[role='edit-button']").click(function (e) {
             var modules = self.model.get('modules');
             var module = modules.get($(e.target).data("id"));
@@ -616,6 +622,7 @@ var ModuleDialog = Dialog.extend({
 
 });
 
+
 /* Init */
 
 var initPage = function () {
@@ -662,21 +669,6 @@ var initPage = function () {
     
     Backbone.history.start ({ pushState: false });
 
-    
-    var filterPanel = $('#filter');
-    var footerPanel = $('#footer');
-    var checkFooter = function () {
-        if ($(window).scrollTop () > (filterPanel.offset().top + filterPanel.height())) {
-            footerPanel.css(
-                { left : filterPanel.offset().left,
-                  width : filterPanel.width(),
-                });
-            footerPanel.show();
-        } else {
-            footerPanel.hide();
-        }
-    }
-
     $("#add-program-button").click(function () {
         (new ProgramDialog({
             model : new EducationProgram({}, {}),
@@ -685,8 +677,7 @@ var initPage = function () {
         })).open();
     });
 
-    $(window).scroll (checkFooter);
-    checkFooter();
+    enableCheckFooter();
 };
 
 $(initPage);
