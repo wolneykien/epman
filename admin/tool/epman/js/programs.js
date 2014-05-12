@@ -58,6 +58,10 @@ var EducationProgram = Model.extend({
                 this.trigger("change", this, options);
                 this.trigger("change:modules", this, this.get('modules').toJSON(), options);
             });
+            this.listenTo(modules, "sort", function (collection, options) {
+                this.trigger("change", this, options);
+                this.trigger("change:modules", this, this.get('modules').toJSON(), options);
+            });
         }
         return resp;
     },
@@ -117,8 +121,12 @@ var EducationProgramModules = Collection.extend({
         _.extend(this.urlParams, { programid : this.programid });
     },
 
-    comparator : function(module) {
-        return module.get("startdate");
+    comparator : function(module1, module2) {
+        if (module1.get("period") != module2.get("period")) {
+            return Math.sign(module1.get("period") - module2.get("period"));
+        } else {
+            return Math.sign(module1.get("startdate") - module2.get("startdate"));
+        }
     },
 
     shiftAbove : function (idOrModule) {
@@ -162,6 +170,7 @@ var EducationProgramModules = Collection.extend({
                     current.save({ startdate : current.get("startdate") + delta }, { silent : true });
                     idx = idx + step;
                 }
+                this.sort();
                 if (!options.silent) {
                     this.trigger("reset", this);
                 }
@@ -598,6 +607,8 @@ var ModuleDialog = Dialog.extend({
             success : function (model) {
                 if (!model.collection && self.collection) {
                     self.collection.add(model);
+                } else {
+                    self.collection.sort();
                 }
             },
         });
