@@ -128,6 +128,13 @@
   color: #a0a0a0;
 }
 
+.tool-epman .link-button.disabled,
+.tool-epman .link-button.disabled > a {
+  color: #a0a0a0;
+  pointer-events: none;
+  cursor: default;
+}
+
 .tool-epman .record > .record-header:hover .link-button.light.nolink,
 .tool-epman .record .section-header:hover > .link-button.light.nolink,
 .tool-epman .program-module > .module-header:hover > .link-button.light.nolink,
@@ -572,7 +579,8 @@
 
 .tool-epman .record.expanded > .record-header .link-button.light.delete,
 .tool-epman .record .section-header .link-button.light.delete,
-.tool-epman .program-module > .module-header .link-button.light.delete
+.tool-epman .program-module > .module-header .link-button.light.delete,
+.tool-epman .link-button.disabled.delete
 {
   background-image: url([[pix:tool_epman|delete_light]]);
 }

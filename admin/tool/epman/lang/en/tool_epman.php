@@ -78,4 +78,6 @@ $string['Lift_below'] = 'Lift below';
 $string['Lift_above'] = 'Lift above';
 $string['Lower_below'] = 'Lower below';
 $string['Rollback'] = 'Rollback';
+$string['Select_all'] = 'Select all';
+$string['Select_none'] = 'Select none';
 ?>

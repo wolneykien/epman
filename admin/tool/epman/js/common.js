@@ -183,7 +183,6 @@ function logXHR (xhr) {
     }
 }
 
-
 function checkFooter () {
     var $main = $("#tool-epman");
     var $filterPanel = $main.find("[role='page-header']");
@@ -211,6 +210,35 @@ function disableCheckFooter () {
     });
     $footerPanel.hide();
 }
+
+function getMarkers (sel) {
+    return _.map($(sel).map(function (i, e) {
+        return e.checked;
+    }), function (val) {
+        return val;
+    });
+}
+
+function allMarked (markers) {
+    if (!markers) {
+        return false;
+    }
+    if (!_.isArray(markers)) {
+        markers = getMarkers(markers);
+    }
+    return _.every(markers, function (val) { return val });
+}
+
+function someMarked (markers) {
+    if (!markers) {
+        return false;
+    }
+    if (!_.isArray(markers)) {
+        markers = getMarkers(markers);
+    }
+    return _.some(markers, function (val) { return val });
+}
+
 
 var Model = Backbone.Model.extend({
 

@@ -206,6 +206,7 @@ var EducationProgramView = View.extend({
         this.$header.html(templates.recordHeader(data));
         this.$body.html(templates.recordBody(data));
         this.$body.show();
+        var $modulesHeader = this.$body.find(".program-modules > .section-header");
         var $modules = this.$body.find(".program-module-list");
         var period = null;
         var endDays = null;
@@ -249,19 +250,34 @@ var EducationProgramView = View.extend({
                 el : "#program-dialog-template",
             })).open();
         });
-        this.$body.find("[role='add-module-button']").click(function () {
-            (new ModuleDialog({
-                collection : self.model.get('modules'),
-                model : new EducationProgramModule({ programid : self.model.id, length : 30 }, {}),
-                el : "#module-dialog-template",
-            })).open();
-        });
-        this.$body.find("[role='delete-modules-button']").click(function (e) {
-            self.render({ action : { deleteModules : true } });
-        });
-        this.$body.find("[role='cancel-action-button']").click(function (e) {
-            self.render({ action : { cancel : true } });
-        });
+        var updateHeader = function () {
+            var $moduleMarkers = $modules.find("input[name='selectedModules']");
+            var moduleMarkers = getMarkers($moduleMarkers);
+            $modulesHeader.html(getTemplate(".program-modules", "> .section-header")(_.extend({}, data, {
+                action : _.extend({}, data.action, {
+                    markers : moduleMarkers,
+                }),
+            })));
+            $modulesHeader.find("[role='add-module-button']").click(function () {
+                (new ModuleDialog({
+                    collection : self.model.get('modules'),
+                    model : new EducationProgramModule({ programid : self.model.id, length : 30 }, {}),
+                    el : "#module-dialog-template",
+                })).open();
+            });
+            $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
+                self.render({ action : { deleteModules : true } });
+            });
+            $modulesHeader.find("[role='cancel-action-button']").click(function (e) {
+                self.render({ action : { cancel : true } });
+            });
+            $modulesHeader.find("[role='select-all-button']").click(function () {
+                $moduleMarkers.each(function (i, e) { e.checked = !allMarked(moduleMarkers) });
+                updateHeader();
+            });
+            $moduleMarkers.one("change", updateHeader);
+        }
+        updateHeader();
         $modules.find("[role='edit-button']").click(function (e) {
             var modules = self.model.get('modules');
             var module = modules.get($(e.target).data("id"));

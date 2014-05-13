@@ -155,7 +155,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <div class="section-header">
       <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
       <@ if (action.deleteModules) { @>
-      <div role="delete-modules-button" class="link-button nolink delete">
+      <div role="delete-modules-button" class="link-button nolink delete <@= someMarked(action.markers) ? '' : 'disabled' @>">
         <a href="javascript:void(0)">
           <?php echo get_string('Delete_selected_modules', 'tool_epman'); ?>
         </a>
@@ -163,6 +163,15 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
       <div role="cancel-action-button" class="link-button nolink cancel">
         <a href="javascript:void(0)">
           <?php echo get_string('Cancel', 'tool_epman'); ?>
+        </a>
+      </div>
+      <div role="select-all-button" class="link-button nolink right">
+        <a href="javascript:void(0)">
+          <@ if (!allMarked(action.markers)) { @>
+          <?php echo get_string('Select_all', 'tool_epman'); ?>
+          <@ } else { @>
+          <?php echo get_string('Select_none', 'tool_epman'); ?>
+          <@ } @>
         </a>
       </div>
       <@ } else { @>
@@ -197,7 +206,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div class="program-module-table"><div>
   <@ if (action.deleteModules) { @>
   <div class="selector">
-    <input type="checkbox"></input>
+    <input type="checkbox" name="selectedModules"></input>
   </div>
   <@ } @>
   <div id="module-<@= m.id @>" class="program-module">
