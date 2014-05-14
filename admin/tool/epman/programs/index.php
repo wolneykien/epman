@@ -184,12 +184,14 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <?php echo get_string('Add_module', 'tool_epman'); ?>
         </a>
       </div>
+      <@ if (!_.isEmpty(p.modules)) { @>
       <div role="delete-modules-button" class="link-button light nolink delete">
         <a href="javascript:void(0)">
           <?php echo get_string('Delete_modules', 'tool_epman'); ?>
         </a>
       </div>
-      <@ } @>
+      <@ }
+      } @>
     </div>
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>
     <span class="comment"><?php echo get_string('nomodules', 'tool_epman'); ?></span>
@@ -210,7 +212,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div class="program-module-table"><div>
   <@ if (action.deleteModules) { @>
   <div class="selector">
-    <input type="checkbox" name="selectedModules"></input>
+    <input role="marker" data-id="<@= m.id @>" type="checkbox" name="selectedModules"></input>
   </div>
   <@ } @>
   <div id="module-<@= m.id @>" class="program-module">

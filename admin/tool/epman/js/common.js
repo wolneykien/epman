@@ -213,7 +213,9 @@ function disableCheckFooter () {
 
 function getMarkers (sel) {
     return _.map($(sel).map(function (i, e) {
-        return e.checked;
+        var m = {};
+        m[$(e).data("id") || i] = e.checked;
+        return m;
     }), function (val) {
         return val;
     });
@@ -226,7 +228,7 @@ function allMarked (markers) {
     if (!_.isArray(markers)) {
         markers = getMarkers(markers);
     }
-    return _.every(markers, function (val) { return val });
+    return _.every(markers, function (m) { return _.first(_.values(m)) });
 }
 
 function someMarked (markers) {
@@ -236,7 +238,7 @@ function someMarked (markers) {
     if (!_.isArray(markers)) {
         markers = getMarkers(markers);
     }
-    return _.some(markers, function (val) { return val });
+    return _.some(markers, function (m) { return _.first(_.values(m)) });
 }
 
 
