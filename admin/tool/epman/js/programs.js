@@ -250,6 +250,13 @@ var EducationProgramView = View.extend({
                 el : "#program-dialog-template",
             })).open();
         });
+        this.$header.find("[role='delete-button']").click(function () {
+            (new YesNoDialog({
+                yes : function () {
+                    self.model.destroy({ wait : true });
+                },
+            })).open({ message : i18n["Delete_the_education_program_?"] });
+        });
         var updateHeader = function () {
             var $moduleMarkers = $modules.find("input[name='selectedModules']");
             var moduleMarkers = getMarkers($moduleMarkers);
@@ -286,8 +293,6 @@ var EducationProgramView = View.extend({
                                 }
                             };
                             delNext(moduleMarkers);
-                        },
-                        no : function () {
                         },
                     })).open({ message : i18n["Delete_selected_modules_?"] });
                 });
@@ -391,6 +396,10 @@ var EducationProgramsList = View.extend({
     },
 
     configure : function (options) {
+        this.listenTo(this.collection, "reset", this.render);
+        this.listenTo(this.collection, "add", this.render);
+        this.listenTo(this.collection, "remove", this.render);
+        this.listenTo(this.collection, "sort", this.render);
         this.listenTo(this.collection, "change:year", this.render);
     },
 

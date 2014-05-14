@@ -59,6 +59,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'N_day_overlap' => get_string('N_day_overlap', 'tool_epman'),
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
       'Delete_selected_modules_?' => get_string('Delete_selected_modules_Q', 'tool_epman'),
+      'Delete_the_education_program_?' => get_string('Delete_the_education_program_Q', 'tool_epman'),
     ),
 ), true);
 
@@ -107,7 +108,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </a>
       </div>
       <div class="link-button light nolink delete">
-        <a href="javascript:void(0)">
+        <a role="delete-button" href="javascript:void(0)">
           <?php echo get_string('Delete_program', 'tool_epman'); ?>
         </a>
       </div>
