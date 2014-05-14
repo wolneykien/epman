@@ -48,6 +48,9 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'OK' => get_string('OK', 'tool_epman'),
       'Cancel' => get_string('Cancel', 'tool_epman'),
       'Close' => get_string('Close', 'tool_epman'),
+      'Yes' => get_string('Yes', 'tool_epman'),
+      'No' => get_string('No', 'tool_epman'),
+      'Confirmation' => get_string('Confirmation', 'tool_epman'),
       'courseyear' => get_string('courseyear', 'tool_epman'),
       'N_days' => get_string('N_days', 'tool_epman'),
       'Ndays' => get_string('Ndays', 'tool_epman'),
@@ -55,6 +58,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'N_day_vacation' => get_string('N_day_vacation', 'tool_epman'),
       'N_day_overlap' => get_string('N_day_overlap', 'tool_epman'),
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
+      'Delete_selected_modules_?' => get_string('Delete_selected_modules_Q', 'tool_epman'),
     ),
 ), true);
 
@@ -397,10 +401,17 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </table>
   </div>
 </div>
+<div id="message-dialog-template" style="display: none;">
+  <div class="tool-epman dialog message" title="<@= (typeof title == 'undefined') ? '<?php echo get_string('Message', 'tool_epman'); ?>' : title @>">
+  <@ if (typeof message != 'undefined') { @>
+    <span><@= message @></span>
+  <@ } @>
+  </div>
+</div>
 <div id="error-dialog-template" style="display: none;">
-  <div class="tool-epman dialog error" title="<?php echo get_string('Error_message', 'tool_epman'); ?>">
+  <div class="tool-epman dialog error" title="<@= (typeof title == 'undefined') ? '<?php echo get_string('Error_message', 'tool_epman'); ?>' : title @>">
     <div class="name-value">
-      <span><?php echo get_string('Error', 'tool_epman'); ?></span>
+      <span><@= (typeof heading == 'undefined') ? "<?php echo get_string('Error', 'tool_epman'); ?>" : heading @></span>
       <span><@= (typeof message == 'undefined') ? "<?php echo get_string('unknown_error', 'tool_epman'); ?>" : message @></span>
     </div>
   </div>

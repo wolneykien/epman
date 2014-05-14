@@ -465,16 +465,18 @@ var Dialog = Backbone.View.extend({
                     name : "ok",
                     text : i18n["OK"],
                     click : _.partial(function (self) {
-                        self.ok();
-                        $(this).dialog ("close");
+                        if (self.ok() != false) {
+                            $(this).dialog ("close");
+                        }
                     }, this),
                 },
                 {
                     name : "cancel",
                     text : i18n["Cancel"],
                     click : _.partial(function (self) {
-                        self.cancel();
-                        $(this).dialog ("close");
+                        if (self.cancel() != false) {
+                            $(this).dialog ("close");
+                        }
                     }, this),
                 }
             ];
@@ -600,18 +602,19 @@ var Dialog = Backbone.View.extend({
 var MessageDialog = Dialog.extend({
 
     initialize : function (options) {
-        Dialog.prototype.initialize.apply(this, arguments);
-        if (!_.isUndefined(options) && !_.isUndefined(options.template)) {
-            this.template = options.template;
-        }
-        this.buttons = [
-            {
-                text : i18n["Close"],
-                click : function (self) {
-                    $(this).dialog ("close");
+        options = _.defaults(options || {}, {
+            buttons : [
+                {
+                    text : i18n["Close"],
+                    click : _.partial(function (self) {
+                        $(this).dialog ("close");
+                    }, this),
                 },
-            },
-        ];
+            ],
+            template : getTemplate("#message-dialog-template"),
+        });
+        Dialog.prototype.initialize.apply(this, arguments);
+        this.template = options.template;
     },
 
     render : function (options) {
@@ -627,6 +630,68 @@ var ErrorDialog = MessageDialog.extend({
             template : getTemplate("#error-dialog-template"),
         });
         MessageDialog.prototype.initialize.apply(this, [options]);
+    },
+    
+});
+
+var YesNoDialog = MessageDialog.extend({
+
+    initialize : function (options) {
+        var options = _.defaults(options || {}, {
+            buttons : [
+                {
+                    text : i18n["Yes"],
+                    click : _.partial(function (self) {
+                        if (self.yes() != false) {
+                            $(this).dialog ("close");
+                        }
+                    }, this),
+                },
+                {
+                    text : i18n["No"],
+                    click : _.partial(function (self) {
+                        if (self.no() != false) {
+                            $(this).dialog ("close");
+                        }
+                    }, this),
+                },
+            ],
+        });
+        if (options.yes) {
+            if (_.isFunction(options.yes)) {
+                this.yes = options.yes;
+            } else if (_.isObject(yes)) {
+                var keys = _.keys(yes);
+                if (keys.length > 0 && _.isFunction(yes[keys[0]])) {
+                    options.buttons[0].text = keys[0];
+                    this.yes = yes[keys[0]];
+                }
+            }
+        }
+        if (options.no) {
+            if (_.isFunction(options.no)) {
+                this.no = options.no;
+            } else if (_.isObject(no)) {
+                var keys = _.keys(no);
+                if (keys.length > 0 && _.isFunction(no[keys[0]])) {
+                    options.buttons[0].text = keys[0];
+                    this.no = no[keys[0]];
+                }
+            }
+        }
+        MessageDialog.prototype.initialize.apply(this, [options]);
+    },
+
+    render : function (options) {
+        MessageDialog.prototype.render.apply(this, [_.defaults(options, {
+            title : i18n["Confirmation"],
+        })]);
+    },
+
+    yes : function () {
+    },
+
+    no : function () {
     },
     
 });

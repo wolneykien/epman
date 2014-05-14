@@ -265,17 +265,23 @@ var EducationProgramView = View.extend({
                     el : "#module-dialog-template",
                 })).open();
             });
-            $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
-                self.render({ action : { deleteModules : true } });
-            });
-            $modulesHeader.find("[role='cancel-action-button']").click(function (e) {
-                self.render({ action : { cancel : true } });
-            });
-            $modulesHeader.find("[role='select-all-button']").click(function () {
-                $moduleMarkers.each(function (i, e) { e.checked = !allMarked(moduleMarkers) });
-                updateHeader();
-            });
-            $moduleMarkers.one("change", updateHeader);
+            if (options.action.deleteModules) {
+                $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
+                    (new YesNoDialog()).open({ message : i18n["Delete_selected_modules_?"] });
+                });
+                $modulesHeader.find("[role='cancel-action-button']").click(function (e) {
+                    self.render({ action : { cancel : true } });
+                });
+                $modulesHeader.find("[role='select-all-button']").click(function () {
+                    $moduleMarkers.each(function (i, e) { e.checked = !allMarked(moduleMarkers) });
+                    updateHeader();
+                });
+                $moduleMarkers.one("change", updateHeader);
+            } else {
+                $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
+                    self.render({ action : { deleteModules : true } });
+                });
+            }
         }
         updateHeader();
         $modules.find("[role='edit-button']").click(function (e) {
