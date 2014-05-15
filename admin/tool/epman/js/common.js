@@ -8,6 +8,7 @@ var restOptions = {
     restParams : {},
 };
 var templates = {};
+var storage = window.localStorage;
 
 function decline(key, arg) {
     var cases = i18n[key];

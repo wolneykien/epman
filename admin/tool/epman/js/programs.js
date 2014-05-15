@@ -203,7 +203,9 @@ var EducationProgramView = View.extend({
             year : this.model.get('year'),
             action : options.action,
         };
+        this.$header.find(".link-button").off("click");
         this.$header.html(templates.recordHeader(data));
+        this.$body.find(".link-button").off("click");
         this.$body.html(getTemplate("#record-body-template", ".program-modules > .section-header")(data));
         this.$body.show();
         var $modulesHeader = this.$body.find(".program-modules > .section-header");
@@ -272,41 +274,55 @@ var EducationProgramView = View.extend({
                     el : "#module-dialog-template",
                 })).open();
             });
-            if (options.action.deleteModules) {
-                $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
-                    (new YesNoDialog({
-                        yes : function () {
-                            var delNext = function (moduleMarkers) {
-                                if (!_.isEmpty(moduleMarkers)) {
-                                    if (_.first(_.values(_.first(moduleMarkers)))) {
-                                        self.model.get('modules').get(_.first(_.keys(_.first(moduleMarkers)))).destroy({
-                                            wait : true,
-                                            success : function () {
-                                                delNext(_.rest(moduleMarkers));
-                                            },
-                                        });
+            if (options.action.deleteModules || options.action.copyModules) {
+                if (options.action.deleteModules) {
+                    $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
+                        (new YesNoDialog({
+                            yes : function () {
+                                var delNext = function (moduleMarkers) {
+                                    if (!_.isEmpty(moduleMarkers)) {
+                                        if (_.first(_.values(_.first(moduleMarkers)))) {
+                                            self.model.get('modules').get(_.first(_.keys(_.first(moduleMarkers)))).destroy({
+                                                wait : true,
+                                                success : function () {
+                                                    delNext(_.rest(moduleMarkers));
+                                                },
+                                            });
+                                        } else {
+                                            delNext(_.rest(moduleMarkers));
+                                        }
                                     } else {
-                                        delNext(_.rest(moduleMarkers));
+                                        self.render({ action : { "return" : true } });
                                     }
-                                } else {
-                                    self.render({ action : { "return" : true } });
-                                }
-                            };
-                            delNext(moduleMarkers);
-                        },
-                    })).open({ message : i18n["Delete_selected_modules_?"] });
-                });
-                $modulesHeader.find("[role='cancel-action-button']").click(function (e) {
+                                };
+                                delNext(moduleMarkers);
+                            },
+                        })).open({ message : i18n["Delete_selected_modules_?"] });
+                    });
+                } else if (options.action.copyModules) {
+                    $modulesHeader.find("[role='copy-modules-button']").click(function (e) {
+                        storage["modules"] = _.map(_.filter(moduleMarkers, function (m) {
+                            return _.first(_.values(m));
+                        }), function (m) {
+                            return _.first(_.keys(m))
+                        });
+                        self.render({ action : { "return" : true } });
+                    });
+                }
+                $modulesHeader.find("[role='cancel-action-button']").one("click", function (e) {
                     self.render({ action : { "return" : true } });
                 });
-                $modulesHeader.find("[role='select-all-button']").click(function () {
+                $modulesHeader.find("[role='select-all-button']").one("click", function () {
                     $moduleMarkers.each(function (i, e) { e.checked = !allMarked(moduleMarkers) });
                     updateHeader();
                 });
                 $moduleMarkers.one("change", updateHeader);
             } else {
-                $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
+                $modulesHeader.find("[role='delete-modules-button']").one("click", function (e) {
                     self.render({ action : { deleteModules : true } });
+                });
+                $modulesHeader.find("[role='copy-modules-button']").one("click", function (e) {
+                    self.render({ action : { copyModules : true } });
                 });
             }
         }
@@ -330,7 +346,7 @@ var EducationProgramView = View.extend({
             self.model.get('modules').get($(e.target).data("id")).rollback();
         });
 
-        if (options.action.deleteModules) {
+        if (options.action.deleteModules || options.action.copyModules) {
             $("#program-" + self.model.id + "-modules")[0].scrollIntoView();
             $("body").css({ "overflow-y" : "hidden" });
             $modules.css({ height : "100vh", "overflow-y" : "scroll" });

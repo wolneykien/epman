@@ -159,12 +159,20 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div id="program-<@= p.id @>-modules" class="program-modules">
     <div class="section-header">
       <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
-      <@ if (action.deleteModules) { @>
+      <@ if (action.deleteModules || action.copyModules) {
+           if (action.deleteModules) { @>
       <div role="delete-modules-button" class="link-button nolink delete <@= someMarked(action.markers) ? '' : 'disabled' @>">
         <a href="javascript:void(0)">
           <?php echo get_string('Delete_selected_modules', 'tool_epman'); ?>
         </a>
       </div>
+      <@ } else if (action.copyModules) { @>
+      <div role="copy-modules-button" class="link-button nolink copy <@= someMarked(action.markers) ? '' : 'disabled' @>">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Copy_selected_modules', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ } @>
       <div role="cancel-action-button" class="link-button nolink cancel">
         <a href="javascript:void(0)">
           <?php echo get_string('Cancel', 'tool_epman'); ?>
@@ -191,8 +199,18 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <?php echo get_string('Delete_modules', 'tool_epman'); ?>
         </a>
       </div>
-      <@ }
-      } @>
+      <div role="copy-modules-button" class="link-button light nolink copy">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Copy_modules', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ if (!_.isEmpty(storage["modules"])) { @>
+      <div role="paste-modules-button" class="link-button light nolink paste">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Paste_modules', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ } } } @>
     </div>
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>
     <span class="comment"><?php echo get_string('nomodules', 'tool_epman'); ?></span>
@@ -211,7 +229,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 </div>
 <div id="module-template" style="display: none;">
   <div class="program-module-table"><div>
-  <@ if (action.deleteModules) { @>
+  <@ if (action.deleteModules || action.copyModules) { @>
   <div class="selector">
     <input role="marker" data-id="<@= m.id @>" type="checkbox" name="selectedModules"></input>
   </div>

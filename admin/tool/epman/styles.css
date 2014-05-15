@@ -581,7 +581,10 @@
 .tool-epman .record.expanded > .record-header .link-button.light.delete,
 .tool-epman .record .section-header .link-button.light.delete,
 .tool-epman .program-module > .module-header .link-button.light.delete,
-.tool-epman .link-button.disabled.delete
+.tool-epman .link-button.disabled.delete,
+.tool-epman .record.expanded > .record-header:hover .link-button.light.disabled.delete,
+.tool-epman .record .section-header:hover .link-button.light.disabled.delete,
+.tool-epman .program-module > .module-header:hover .link-button.light.disabled.delete
 {
   background-image: url([[pix:tool_epman|delete_light]]);
 }
@@ -829,4 +832,50 @@
 .tool-epman .link-button.undo.color {
   background-image: url([[pix:tool_epman|undo_color]]);
   color: #bb0000;
+}
+
+.tool-epman .link-button.copy {
+  background-image: url([[pix:tool_epman|copy]]);
+  padding-left: 1.4em;
+ }
+
+.tool-epman .record.expanded > .record-header .link-button.light.copy,
+.tool-epman .record .section-header .link-button.light.copy,
+.tool-epman .program-module > .module-header .link-button.light.copy,
+.tool-epman .link-button.disabled.copy,
+.tool-epman .record.expanded > .record-header:hover .link-button.light.disabled.copy,
+.tool-epman .record .section-header:hover .link-button.light.disabled.copy,
+.tool-epman .program-module > .module-header:hover .link-button.disabled.light.copy
+{
+  background-image: url([[pix:tool_epman|copy_light]]);
+}
+
+.tool-epman .record.expanded > .record-header:hover .link-button.light.copy,
+.tool-epman .record .section-header:hover .link-button.light.copy,
+.tool-epman .program-module > .module-header:hover .link-button.light.copy
+{
+  background-image: url([[pix:tool_epman|copy]]);
+}
+
+.tool-epman .link-button.paste {
+  background-image: url([[pix:tool_epman|paste]]);
+  padding-left: 1.4em;
+ }
+
+.tool-epman .record.expanded > .record-header .link-button.light.paste,
+.tool-epman .record .section-header .link-button.light.paste,
+.tool-epman .program-module > .module-header .link-button.light.paste,
+.tool-epman .link-button.disabled.paste,
+.tool-epman .record.expanded > .record-header:hover .link-button.light.disabled.paste,
+.tool-epman .record .section-header:hover .link-button.light.disabled.paste,
+.tool-epman .program-module > .module-header:hover .link-button.light.disabled.paste
+{
+  background-image: url([[pix:tool_epman|paste_light]]);
+}
+
+.tool-epman .record.expanded > .record-header:hover .link-button.light.paste,
+.tool-epman .record .section-header:hover .link-button.light.paste,
+.tool-epman .program-module > .module-header:hover .link-button.light.paste
+{
+  background-image: url([[pix:tool_epman|paste]]);
 }
