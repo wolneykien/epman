@@ -344,6 +344,20 @@ var EducationProgramView = View.extend({
             enableCheckFooter();
         }
 
+        var modules = this.model.get("modules");
+        if (modules) {
+            this.stopListening(modules);
+            this.listenTo(modules, "request", function (model, xhr, options) {
+                $modules.toggleClass("loading", true);
+            });
+            this.listenTo(modules, "sync", function (model, resp, options) {
+                $modules.toggleClass("loading", false);
+            });
+            this.listenTo(modules, "error", function (model, xhr, options) {
+                $modules.toggleClass("loading", false);
+            });
+        }
+
         return this;
     },
 
