@@ -106,6 +106,13 @@ var EducationProgramModule = Model.extend({
         _.extend(this.urlParams, { programid : attrs.programid });
     },
 
+    acquire : function (another) {
+        this.save(_.extend({}, another, {
+            programid : this.get("programid") || null,
+            id : this.get("id") || null,
+        }));
+    },
+
 });
 
 /**
@@ -199,7 +206,7 @@ var EducationProgramView = View.extend({
         });
         var data = {
             f : this.model.collection.filter,
-            p : this.model.toJSON(),
+            p : this.model.toJSON({ withUndo : true }),
             year : this.model.get('year'),
             action : options.action,
         };
@@ -301,11 +308,11 @@ var EducationProgramView = View.extend({
                     });
                 } else if (options.action.copyModules) {
                     $modulesHeader.find("[role='copy-modules-button']").click(function (e) {
-                        storage["modules"] = _.map(_.filter(moduleMarkers, function (m) {
+                        storage["modules"] = JSON.stringify(_.map(_.filter(moduleMarkers, function (m) {
                             return _.first(_.values(m));
                         }), function (m) {
-                            return _.first(_.keys(m))
-                        });
+                            return self.model.get("modules").get(_.first(_.keys(m))).toJSON();
+                        }));
                         self.render({ action : { "return" : true } });
                     });
                 }
@@ -323,6 +330,19 @@ var EducationProgramView = View.extend({
                 });
                 $modulesHeader.find("[role='copy-modules-button']").one("click", function (e) {
                     self.render({ action : { copyModules : true } });
+                });
+                $modulesHeader.find("[role='paste-modules-button']").click(function (e) {
+                    if (!_.isEmpty(storage["modules"])) {
+                        _.each(JSON.parse(storage["modules"]), function (pm) {
+                            var nm = new EducationProgramModule({ programid : self.model.id }, {});
+                            nm.acquire(pm);
+                            nm.save({}, {
+                                success : function (model) {
+                                    self.collection.add(model);
+                                },
+                            });
+                        });
+                    }
                 });
             }
         }

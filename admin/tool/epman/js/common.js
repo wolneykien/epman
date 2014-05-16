@@ -325,7 +325,9 @@ var Model = Backbone.Model.extend({
                 json[key] = val.toJSON(options);
             }
         });
-        _.extend(json, { undo : this.undo || {} });
+        if  (options && options.withUndo) {
+            _.extend(json, { undo : this.undo || {} });
+        }
 
         return json;
     },
