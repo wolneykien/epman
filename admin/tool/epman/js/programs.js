@@ -107,7 +107,7 @@ var EducationProgramModule = Model.extend({
     },
 
     acquire : function (another) {
-        this.save(_.extend({}, another, {
+        this.set(_.extend({}, another, {
             programid : this.get("programid") || null,
             id : this.get("id") || null,
         }));
