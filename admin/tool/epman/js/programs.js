@@ -286,23 +286,20 @@ var EducationProgramView = View.extend({
                     $modulesHeader.find("[role='delete-modules-button']").click(function (e) {
                         (new YesNoDialog({
                             yes : function () {
-                                var delNext = function (moduleMarkers) {
-                                    if (!_.isEmpty(moduleMarkers)) {
-                                        if (_.first(_.values(_.first(moduleMarkers)))) {
-                                            self.model.get('modules').get(_.first(_.keys(_.first(moduleMarkers)))).destroy({
-                                                wait : true,
-                                                success : function () {
-                                                    delNext(_.rest(moduleMarkers));
-                                                },
-                                            });
-                                        } else {
-                                            delNext(_.rest(moduleMarkers));
-                                        }
-                                    } else {
-                                        self.render({ action : { "return" : true } });
+                                _.each(moduleMarkers, function (m) {
+                                    if (_.first(_.values(m))) {
+                                        $modules.toggleClass("loading", true);
+                                        self.model.get('modules').get(_.first(_.keys(m))).destroy({
+                                            success : function () {
+                                                $modules.toggleClass("loading", false);
+                                            },
+                                            error : function () {
+                                                $modules.toggleClass("loading", false);
+                                            },
+                                        });
                                     }
-                                };
-                                delNext(moduleMarkers);
+                                });
+                                self.render({ action : { "return" : true } });
                             },
                         })).open({ message : i18n["Delete_selected_modules_?"] });
                     });
