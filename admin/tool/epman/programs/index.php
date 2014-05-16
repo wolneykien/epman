@@ -204,7 +204,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <?php echo get_string('Copy_modules', 'tool_epman'); ?>
         </a>
       </div>
-      <@ if (!_.isEmpty(storage["modules"])) { @>
+      <@ if (!_.isEmpty(clipboard("modules"))) { @>
       <div role="paste-modules-button" class="link-button light nolink paste">
         <a href="javascript:void(0)">
           <?php echo get_string('Paste_modules', 'tool_epman'); ?>

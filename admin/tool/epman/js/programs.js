@@ -308,7 +308,7 @@ var EducationProgramView = View.extend({
                     });
                 } else if (options.action.copyModules) {
                     $modulesHeader.find("[role='copy-modules-button']").click(function (e) {
-                        storage["modules"] = JSON.stringify(_.map(_.filter(moduleMarkers, function (m) {
+                        clipboard("modules", _.map(_.filter(moduleMarkers, function (m) {
                             return _.first(_.values(m));
                         }), function (m) {
                             return self.model.get("modules").get(_.first(_.keys(m))).toJSON();
@@ -332,22 +332,20 @@ var EducationProgramView = View.extend({
                     self.render({ action : { copyModules : true } });
                 });
                 $modulesHeader.find("[role='paste-modules-button']").click(function (e) {
-                    if (!_.isEmpty(storage["modules"])) {
-                        _.each(JSON.parse(storage["modules"]), function (pm) {
-                            var nm = new EducationProgramModule({ programid : self.model.id }, {});
-                            nm.acquire(pm);
-                            $modules.toggleClass("loading", true);
-                            nm.save({}, {
-                                success : function (model) {
-                                    self.model.get("modules").add(model);
-                                    $modules.toggleClass("loading", false);
-                                },
-                                error : function () {
-                                    $modules.toggleClass("loading", false);
-                                },
-                            });
+                    _.each(clipboard("modules"), function (pm) {
+                        var nm = new EducationProgramModule({ programid : self.model.id }, {});
+                        nm.acquire(pm);
+                        $modules.toggleClass("loading", true);
+                        nm.save({}, {
+                            success : function (model) {
+                                self.model.get("modules").add(model);
+                                $modules.toggleClass("loading", false);
+                            },
+                            error : function () {
+                                $modules.toggleClass("loading", false);
+                            },
                         });
-                    }
+                    });
                 });
             }
         }

@@ -242,6 +242,27 @@ function someMarked (markers) {
     return _.some(markers, function (m) { return _.first(_.values(m)) });
 }
 
+function clipboard (name, val) {
+    if (_.isUndefined(val)) {
+        if (!storage[name + ".timestamp"] ||
+            (((new Date()).getTime() - new Number(storage[name + ".timestamp"])) / (24 * 3600 * 1000)) < 1.0)
+        {
+            return JSON.parse(storage[name]);
+        } else {
+            return undefined;
+        }
+    } else {
+        if (!_.isNull(val)) {
+            storage[name] = JSON.stringify(val);
+            storage[name + ".timestamp"] = (new Date()).getTime();
+        } else {
+            storage.removeItem(name);
+            storage.removeItem(name + ".timestamp");
+        }
+        return val;
+    }
+}
+
 
 var Model = Backbone.Model.extend({
 
