@@ -336,9 +336,14 @@ var EducationProgramView = View.extend({
                         _.each(JSON.parse(storage["modules"]), function (pm) {
                             var nm = new EducationProgramModule({ programid : self.model.id }, {});
                             nm.acquire(pm);
+                            $modules.toggleClass("loading", true);
                             nm.save({}, {
                                 success : function (model) {
-                                    self.collection.add(model);
+                                    self.model.get("modules").add(model);
+                                    $modules.toggleClass("loading", false);
+                                },
+                                error : function () {
+                                    $modules.toggleClass("loading", false);
                                 },
                             });
                         });
