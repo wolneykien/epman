@@ -332,7 +332,7 @@ var EducationProgramView = View.extend({
                     self.render({ action : { copyModules : true } });
                 });
                 $modulesHeader.find("[role='paste-modules-button']").click(function (e) {
-                    _.each(clipboard("modules"), function (pm) {
+                    _.each(clipboard.getany("modules"), function (pm) {
                         var nm = new EducationProgramModule({ programid : self.model.id }, {});
                         nm.acquire(pm);
                         $modules.toggleClass("loading", true);
@@ -348,6 +348,8 @@ var EducationProgramView = View.extend({
                     });
                 });
             }
+            clipboard.once("add:modules", updateHeader);
+            clipboard.once("remove:modules", updateHeader);
         }
         updateHeader();
         $modules.find("[role='edit-button']").click(function (e) {

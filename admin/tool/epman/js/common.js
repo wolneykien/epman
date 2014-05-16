@@ -242,26 +242,62 @@ function someMarked (markers) {
     return _.some(markers, function (m) { return _.first(_.values(m)) });
 }
 
-function clipboard (name, val) {
+var clipboard = function (name, val) {
     if (_.isUndefined(val)) {
-        if (!storage[name + ".timestamp"] ||
-            (((new Date()).getTime() - new Number(storage[name + ".timestamp"])) / (24 * 3600 * 1000)) < 1.0)
-        {
-            return JSON.parse(storage[name]);
+        if (!clipboard.expired(name)) {
+            return clipboard.getany(name);
         } else {
+            storage.removeItem(name);
+            storage.removeItem(name + ".timestamp");
             return undefined;
         }
     } else {
         if (!_.isNull(val)) {
-            storage[name] = JSON.stringify(val);
+            var old = clipboard(name);
             storage[name + ".timestamp"] = (new Date()).getTime();
+            storage[name] = JSON.stringify(val);
+            if (_.isUndefined(old)) {
+                clipboard.trigger("add:" + name, val, name);
+            } else {
+                clipboard.trigger("change:" + name, val, old, name);
+            }
         } else {
-            storage.removeItem(name);
-            storage.removeItem(name + ".timestamp");
+            var old = clipboard(name);
+            if (!_.isUndefined(old)) {
+                storage.removeItem(name);
+                storage.removeItem(name + ".timestamp");
+                clipboard.trigger("remove:" + name, old, name);
+            }
         }
         return val;
     }
-}
+};
+_.extend(clipboard, {
+    expired : function (name) {
+        return (_.isUndefined(storage[name]) ||
+                storage[name + ".timestamp"] &&
+                (((new Date()).getTime() - new Number(storage[name + ".timestamp"])) / (24 * 3600 * 1000)) >= 1.0);
+    },
+    getany : function (name) {
+        var val = storage[name];
+        if (_.isString(val)) {
+            return JSON.parse(val);
+        } else {
+            return val;
+        }
+    },
+}, Backbone.Events);
+$(window).on("storage", function (e) {
+    var oldVal = _.isString(e.originalEvent.oldValue) ? JSON.parse(e.originalEvent.oldValue) : e.originalEvent.oldValue;
+    var newVal = _.isString(e.originalEvent.newValue) ? JSON.parse(e.originalEvent.newValue) : e.originalEvent.newValue;
+    if (!oldVal && newVal) {
+        clipboard.trigger("add:" + e.originalEvent.key, newVal, e.originalEvent.key);
+    } else if (oldVal && newVal) {
+        clipboard.trigger("change:" + e.originalEvent.key, newVal, oldVal, e.originalEvent.key);
+    } else if (oldVal && !newVal) {
+        clipboard.trigger("remove:" + e.originalEvent.key, oldVal, e.originalEvent.key);
+    }
+});
 
 
 var Model = Backbone.Model.extend({

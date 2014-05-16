@@ -159,8 +159,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div id="program-<@= p.id @>-modules" class="program-modules">
     <div class="section-header">
       <span><?php echo get_string('Modules', 'tool_epman'); ?></span>
-      <@ if (action.deleteModules || action.copyModules) {
-           if (action.deleteModules) { @>
+    <@ if (action.deleteModules || action.copyModules) { @>
+      <@ if (action.deleteModules) { @>
       <div role="delete-modules-button" class="link-button nolink delete <@= someMarked(action.markers) ? '' : 'disabled' @>">
         <a href="javascript:void(0)">
           <?php echo get_string('Delete_selected_modules', 'tool_epman'); ?>
@@ -187,7 +187,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <@ } @>
         </a>
       </div>
-      <@ } else { @>
+    <@ } else { @>
       <div role="add-module-button" class="link-button light nolink add">
         <a href="javascript:void(0)">
           <?php echo get_string('Add_module', 'tool_epman'); ?>
@@ -204,13 +204,15 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
           <?php echo get_string('Copy_modules', 'tool_epman'); ?>
         </a>
       </div>
+      <@ } @>
       <@ if (!_.isEmpty(clipboard("modules"))) { @>
       <div role="paste-modules-button" class="link-button light nolink paste">
         <a href="javascript:void(0)">
           <?php echo get_string('Paste_modules', 'tool_epman'); ?>
         </a>
       </div>
-      <@ } } } @>
+      <@ } @>
+    <@ } @>
     </div>
     <@ if (!p.modules || _.isEmpty(p.modules)) { @>
     <span class="comment"><?php echo get_string('nomodules', 'tool_epman'); ?></span>
