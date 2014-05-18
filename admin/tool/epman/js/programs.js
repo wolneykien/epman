@@ -211,7 +211,7 @@ var EducationProgramView = View.extend({
             action : options.action,
         };
         this.$header.find(".link-button").off("click");
-        this.$header.html(templates.recordHeader(data));
+        this.$header.html(getTemplate("#record-template .record-header")(data));
         this.$body.find(".link-button").off("click");
         this.$body.html(getTemplate("#record-body-template", ".program-modules > .section-header")(data));
         this.$body.show();
@@ -227,13 +227,13 @@ var EducationProgramView = View.extend({
                 if (endDays != null && startDays != (endDays + 1)) {
                     var length = startDays - endDays - 1;
                     if (length > 0) {
-                        $modules.append(templates.vacation({ length : length, aboveId : aboveId, belowId : m.id }));
+                        $modules.append(getTemplate("#vacation-template")({ length : length, aboveId : aboveId, belowId : m.id }));
                     } else {
                         $modules.append(getTemplate("#overlap-template")({ length : -length, aboveId : aboveId, belowId : m.id }));
                     }
                     endDays = startDays - 1;
                 }
-                $modules.append(templates.period(mdata));
+                $modules.append(getTemplate("#modules-period-template")(mdata));
                 period = {
                     $el : $modules.find("#module-" + m.id + "-period-" + (m.period + 1)),
                     num : m.period,
@@ -242,12 +242,12 @@ var EducationProgramView = View.extend({
             if (endDays != null && startDays != (endDays + 1)) {
                 var length = startDays - endDays - 1;
                 if (length > 0) {
-                    period.$el.append(templates.vacation({ length : length, aboveId : aboveId, belowId : m.id }));
+                    period.$el.append(getTemplate("#vacation-template")({ length : length, aboveId : aboveId, belowId : m.id }));
                 } else {
                     period.$el.append(getTemplate("#overlap-template")({ length : -length, aboveId : aboveId, belowId : m.id }));
                 }
             }
-            period.$el.append(templates.module(mdata));
+            period.$el.append(getTemplate("#module-template")(mdata));
             endDays = startDays + m.length - 1;
             aboveId = m.id;
         }, this);
@@ -469,7 +469,7 @@ var EducationProgramsList = View.extend({
                 };
                 if (section.year != data.year) {
                     for (var y = section.year + 1; y <= data.year; y++) {
-                        this.$el.append(templates.listSection({
+                        this.$el.append(getTemplate("#list-section-template")({
                             f : this.collection.filter,
                             p : null,
                             year : y,
@@ -480,14 +480,14 @@ var EducationProgramsList = View.extend({
                         year : data.year,
                     });
                 }
-                section.$el.append(templates.record(data));
+                section.$el.append(getTemplate("#record-template")(data));
             }, this);
         } else {
             console.log("Empty");
         }
 
         for (var y = section.year + 1; y < 7; y++) {
-            this.$el.append(templates.listSection({
+            this.$el.append(getTemplate("#list-section-template")({
                 f : this.collection.filter,
                 p : null,
                 year : y,
@@ -573,7 +573,7 @@ var ProgramDialog = Dialog.extend({
     },
 
     render : function () {
-        this.$el.html(templates.programDialog({
+        this.$el.html(getTemplate("#program-dialog-template")({
             p : this.model.toJSON(),
             minyear : this.minyear,
             maxyear : this.maxyear,
@@ -584,16 +584,16 @@ var ProgramDialog = Dialog.extend({
         }).spinner("value", this.model.get('year') || this.minyear);
         this.responsible = new UserSelect({
             $el : this.$("[role='select-responsible']"),
-            template : templates.userselect,
-            searchlistTemplate : templates.userSearchList,
+            template : getTemplate("#userselect-template"),
+            searchlistTemplate : getTemplate("#user-search-list-template"),
             selectedCollection : new Users(),
             defValue : user.id ? user.toJSON() : null,
             max : 1,
         });
         this.assistants = new UserSelect({
             $el : this.$("[role='select-assistants']"),
-            template : templates.userselect,
-                searchlistTemplate : templates.userSearchList,
+            template : getTemplate("#userselect-template"),
+                searchlistTemplate : getTemplate("#user-search-list-template"),
             selectedCollection : new Users(),
         });
         this.responsible.reset(this.model.get('responsible'));
@@ -762,18 +762,6 @@ var initPage = function () {
         user.fetch();
     }
     _.defaults(i18n, options.i18n);
-
-    templates = {
-        listSection : _.template($("#list-section-template").html()),
-        record : _.template($("#record-template").html()),
-        recordHeader : _.template($("#record-template").find(".record-header").html()),
-        module : _.template($("#module-template").html()),
-        period : _.template($("#modules-period-template").html()),
-        vacation : _.template($("#vacation-template").html()),
-        programDialog : _.template($("#program-dialog-template").html()),
-        userselect : _.template($("#userselect-template").html()),
-        userSearchList : _.template($("#user-search-list-template").html()),
-    };
 
     var programs = new EducationPrograms([], {});
     var programList = new EducationProgramsList({
