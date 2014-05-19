@@ -15,16 +15,13 @@ var EducationProgramsRouter = Backbone.Router.extend({
     },
 
     routes : {
-        "" : function () {
-            this.navigate("#!", {trigger : true});
-        },
-        "!(years/:year)" : function (year) {
+        "(years/:year)" : function (year) {
             this.handleRoute({ my : false }, { year : year });
         },
-        "!my(/years/:year)" : function (year) {
+        "my(/years/:year)" : function (year) {
             this.handleRoute({ my : true }, { year : year });
         },
-        "!(:programid)" : function (programid) {
+        "(:programid)" : function (programid) {
             this.handleRoute({ my : false }, { programid : programid });
         },
     },
@@ -39,22 +36,19 @@ var EducationProgramsRouter = Backbone.Router.extend({
     handleRoute : function (filter, position) {
         var params = $.params();
         if (!_.isEmpty(params)) {
-            var uri = window.location.pathname;
-            var prefix = "#!";
+            var fragment = "";
             if (params.programid) {
-                uri = uri + prefix + params.programid;
+                fragment = fragment + "/" + params.programid;
             }
             if (!params.programid) {
                 if (filter.my) {
-                    uri = uri + prefix + "my";
-                    prefix = "/";
+                    fragment = fragment + "/" + "my";
                 }
                 if (position.year) {
-                    uri = uri + prefix + "years/" + position.year;
-                    prefix = "/";
+                    fragment = fragment + "/" + "years/" + position.year;
                 }
             }
-            window.location.assign(uri);
+            window.location.assign(window.location.pathname + "#" + fragment.substr(1));
         } else {
             this.position = position;
             this.filter.apply(filter, { navigate : false });
@@ -589,7 +583,7 @@ var EducationProgramsFilter = Backbone.View.extend({
     },
 
     events : {
-        "click #my" : function (e) {
+        "click #filter-my" : function (e) {
             this.apply({ my : !this.filter.my });
         },
     },
@@ -597,13 +591,13 @@ var EducationProgramsFilter = Backbone.View.extend({
     initialize : function (options) {
         this.programs = options.programs;
         if (_.isUndefined(user.id) || _.isNull(user.id)) {
-            this.$el.find('#my').hide();
+            this.$el.find('#filter-my').hide();
             console.warn("No current user Id specified. Hide the 'My' filter");
         }
     },
 
     render : function () {
-        this.$el.find('#my').toggleClass("on", this.filter.my);
+        this.$el.find('#filter-my').toggleClass("on", this.filter.my);
         return this;
     },
 
@@ -635,7 +629,7 @@ var EducationProgramsFilter = Backbone.View.extend({
             },
             this
         ).join("/");
-        Backbone.history.navigate("#!" + route);
+        Backbone.history.navigate(route);
     },
 
 });

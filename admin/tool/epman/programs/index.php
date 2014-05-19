@@ -481,7 +481,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <?php echo get_string('Add_program', 'tool_epman'); ?>
       </a>
     </div>
-    <span id="my" class="link-button switch right responsible">
+    <span id="filter-my" class="link-button switch right responsible">
       <?php echo get_string('myprograms', 'tool_epman'); ?>
     </span>
   </div>
