@@ -587,7 +587,7 @@ var EducationProgramsFilter = Backbone.View.extend({
 
     events : {
         "click #filter-my" : function (e) {
-            this.apply({ my : !this.filter.my });
+            this.navigate({ my : !this.filter.my });
         },
     },
 
@@ -624,15 +624,16 @@ var EducationProgramsFilter = Backbone.View.extend({
         }
     },
 
-    navigate : function () {
+    navigate : function (filter) {
+        filter = filter || this.filter;
         var route = _.filter(
             [ "my" ],
             function (opt) {
-                return this.filter[opt];
+                return filter[opt];
             },
             this
         ).join("/");
-        Backbone.history.navigate(route);
+        Backbone.history.navigate(route, { trigger : true });
     },
 
 });
