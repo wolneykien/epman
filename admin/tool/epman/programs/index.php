@@ -89,7 +89,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
 </div>
 <div id="record-template" style="display: none;">
   <div id="program-<@= p.id @>" class="record collapsed">
-    <div class="record-header show-more">
+    <div data-id="<@= p.id @>" class="record-header show-more">
       <@= p.name @>
       <@ if (!f.my || !p.responsible || p.responsible.id != <?php echo $USER->id; ?>) { @>
         <div class="link-button right responsible">

@@ -19,12 +19,13 @@ var EducationProgramsRouter = Backbone.Router.extend({
             this.navigate("#!", {trigger : true});
         },
         "!(years/:year)" : function (year) {
-            this.position.year = year;
-            this.filter.apply({ my : false }, { navigate : false });
+            this.handleRoute({ my : false }, { year : year });
         },
         "!my(/years/:year)" : function (year) {
-            this.position.year = year;
-            this.filter.apply({ my : true }, { navigate : false });
+            this.handleRoute({ my : true }, { year : year });
+        },
+        "!(:programid)" : function (programid) {
+            this.handleRoute({ my : false }, { programid : programid });
         },
     },
 
@@ -35,15 +36,21 @@ var EducationProgramsRouter = Backbone.Router.extend({
         this.listenTo(this.filter, "norender", this.jump);
     },
 
+    handleRoute : function (filter, position) {
+        this.position = position;
+        this.filter.apply(filter, { navigate : false });
+    },
+
     jump : function () {
         var $el = null;
         if (this.position.programid) {
-            $el = $("#program-" + this.position.programid);
+            this.programList.expand(this.position.programid, { jump : true });
         } else if (this.position.year) {
             $el = $("#year-" + this.position.year);
         }
         if ($el && $el.size() > 0) {
             $el[0].scrollIntoView();
+            
         }
     },
         
@@ -444,29 +451,60 @@ var EducationProgramsList = View.extend({
             if (!$(e.target).hasClass("record-header")) {
                 return true;
             }
-            var rh = $(e.target);
-            var r = rh.parent();
-            var rb = r.find(".record-body");
-            var rid = r.attr("id").replace(/^program-/, "");
-            if (!r.hasClass("expanded")) {
-                r.toggleClass("collapsed", false);
-                r.toggleClass("expanded", true);
-                var program = this.collection.get(rid);
-                var programView = new EducationProgramView({
-                    el : ("#" + rid),
-                    $el : r,                    
-                    $header : rh,
-                    $body : rb,
-                    model : program,
-                });
-                this.expandedPrograms[rid] = programView;
-                program.fetch();
-            } else {
-                rb.hide();
-                r.toggleClass("collapsed", true);
-                r.toggleClass("expanded", false);
-            }
+            this.toggle($(e.target).data("id"));
         },
+    },
+
+    toggle : function (id, options) {
+        var program = this.collection.get(id);
+        if (!program) {
+            return false;
+        }
+        var $r = $("#program-" + id);
+        if ($r.size() == 0) {
+            return false;
+        }
+        var $rh = $r.find(".record-header");
+        var $rb = $r.find(".record-body");
+        if (!_.isObject(options)) {
+            options = { status : options };
+        }
+        if (_.isUndefined(options.status)) {
+            options.status = !$r.hasClass("expanded");
+        }
+        if (options.jump) {
+            $r[0].scrollIntoView();
+        }
+        if (options.status) {
+            $r.toggleClass("collapsed", false);
+            $r.toggleClass("expanded", true);
+            var programView = new EducationProgramView({
+                el : ("#" + id),
+                $el : $r,
+                $header : $rh,
+                $body : $rb,
+                model : program,
+            });
+            this.expandedPrograms[id] = programView;
+            program.fetch();
+        } else {
+            $rb.hide();
+            $r.toggleClass("collapsed", true);
+            $r.toggleClass("expanded", false);
+            this.expandedPrograms[id] = null;
+        }
+    },
+
+    expand : function (id, options) {
+        this.toggle(id, _.extend({}, options, {
+            status : true,
+        }));
+    },
+
+    collapse : function (id, options) {
+        this.toggle(id, _.extend({}, options, {
+            status : false,
+        }));
     },
 
     configure : function (options) {
