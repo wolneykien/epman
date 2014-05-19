@@ -9,20 +9,42 @@
  */
 var EducationProgramsRouter = Backbone.Router.extend({
 
+    position : {
+        year : null,
+        programid : null,
+    },
+
     routes : {
         "" : function () {
             this.navigate("#!", {trigger : true});
         },
         "!(years/:year)" : function (year) {
-            this.filter.apply({ my : false });
+            this.position.year = year;
+            this.filter.apply({ my : false }, { navigate : false });
         },
-        "!my(years/:year)" : function (year) {
-            this.filter.apply({ my : true });
+        "!my(/years/:year)" : function (year) {
+            this.position.year = year;
+            this.filter.apply({ my : true }, { navigate : false });
         },
     },
 
     initialize : function (options) {
         this.filter = options.filter;
+        this.programList = options.programList;
+        this.listenTo(this.programList, "render", this.jump);
+        this.listenTo(this.filter, "norender", this.jump);
+    },
+
+    jump : function () {
+        var $el = null;
+        if (this.position.programid) {
+            $el = $("#program-" + this.position.programid);
+        } else if (this.position.year) {
+            $el = $("#year-" + this.position.year);
+        }
+        if ($el && $el.size() > 0) {
+            $el[0].scrollIntoView();
+        }
     },
         
 });
@@ -494,6 +516,7 @@ var EducationProgramsList = View.extend({
             }));
         }
 
+        this.trigger("render");
         return this;
     },
 
@@ -526,7 +549,10 @@ var EducationProgramsFilter = Backbone.View.extend({
         return this;
     },
 
-    apply : function (filter) {
+    apply : function (filter, options) {
+        options = _.defaults(options || {}, {
+            navigate : true,
+        });
         if (!_.isEqual(this.filter, filter)) {
             console.log("Filter: " + JSON.stringify(filter));
             if (_.isUndefined(user.id) || _.isNull(user.id)) {
@@ -534,8 +560,12 @@ var EducationProgramsFilter = Backbone.View.extend({
             }
             this.filter = filter;
             this.render();
-            this.navigate();
+            if (options.navigate) {
+                this.navigate();
+            }
             this.programs.load(this.filter);
+        } else {
+            this.trigger("norender");
         }
     },
 
@@ -776,8 +806,9 @@ var initPage = function () {
 
     var router = new EducationProgramsRouter({
         filter : filter,
+        programList : programList,
     });
-    
+
     Backbone.history.start ({ pushState: false });
 
     $("#add-program-button").click(function () {
