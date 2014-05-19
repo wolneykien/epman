@@ -37,8 +37,28 @@ var EducationProgramsRouter = Backbone.Router.extend({
     },
 
     handleRoute : function (filter, position) {
-        this.position = position;
-        this.filter.apply(filter, { navigate : false });
+        var params = $.params();
+        if (!_.isEmpty(params)) {
+            var uri = window.location.pathname;
+            var prefix = "#!";
+            if (params.programid) {
+                uri = uri + prefix + params.programid;
+            }
+            if (!params.programid) {
+                if (filter.my) {
+                    uri = uri + prefix + "my";
+                    prefix = "/";
+                }
+                if (position.year) {
+                    uri = uri + prefix + "years/" + position.year;
+                    prefix = "/";
+                }
+            }
+            window.location.assign(uri);
+        } else {
+            this.position = position;
+            this.filter.apply(filter, { navigate : false });
+        }
     },
 
     jump : function () {
@@ -827,7 +847,6 @@ var initPage = function () {
 
     if (options.user && options.user.id) {
         user = new User(options.user);
-        user.fetch();
     }
     _.defaults(i18n, options.i18n);
 
@@ -847,7 +866,7 @@ var initPage = function () {
         programList : programList,
     });
 
-    Backbone.history.start ({ pushState: false });
+    Backbone.history.start({ pushState: false });
 
     $("#add-program-button").click(function () {
         (new ProgramDialog({
