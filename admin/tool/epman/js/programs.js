@@ -21,6 +21,9 @@ var EducationProgramsRouter = Backbone.Router.extend({
         "my(/years/:year)" : function (year) {
             this.handleRoute({ my : true }, { year : year });
         },
+        "all(/years/:year)" : function (year) {
+            this.handleRoute({ my : false }, { year : year });
+        },
         "(:programid)" : function (programid) {
             this.handleRoute({ my : false }, { programid : programid });
         },
@@ -44,6 +47,8 @@ var EducationProgramsRouter = Backbone.Router.extend({
             if (!params.programid) {
                 if (filter.my) {
                     fragment = fragment + "/" + "my";
+                } else {
+                    fragment = fragment + "/" + "all";
                 }
                 if (position.year) {
                     fragment = fragment + "/" + "years/" + position.year;
@@ -53,7 +58,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
         } else {
             this.position = position;
             this.filter.apply(filter, { navigate : false });
-            this.navbar.render("" + (filter.my ? "my" : ""));
+            this.navbar.render("" + (filter.my ? "my" : "all"));
         }
     },
 
@@ -626,14 +631,7 @@ var EducationProgramsFilter = Backbone.View.extend({
 
     navigate : function (filter) {
         filter = filter || this.filter;
-        var route = _.filter(
-            [ "my" ],
-            function (opt) {
-                return filter[opt];
-            },
-            this
-        ).join("/");
-        Backbone.history.navigate(route, { trigger : true });
+        Backbone.history.navigate(filter.my ? "my" : "all", { trigger : true });
     },
 
 });
