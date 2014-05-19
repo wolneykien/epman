@@ -29,6 +29,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
     initialize : function (options) {
         this.filter = options.filter;
         this.programList = options.programList;
+        this.navbar = options.navbar;
         this.listenTo(this.programList, "render", this.jump);
         this.listenTo(this.filter, "norender", this.jump);
     },
@@ -52,6 +53,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
         } else {
             this.position = position;
             this.filter.apply(filter, { navigate : false });
+            this.navbar.render("" + (filter.my ? "my" : ""));
         }
     },
 
@@ -560,7 +562,8 @@ var EducationProgramsList = View.extend({
             console.log("Empty");
         }
 
-        for (var y = section.year + 1; y < 7; y++) {
+        var maxyear = toolEpmanPageOptions.maxyear || 6;
+        for (var y = section.year + 1; y <= maxyear; y++) {
             this.$el.append(getTemplate("#list-section-template")({
                 f : this.collection.filter,
                 p : null,
@@ -640,7 +643,7 @@ var ProgramDialog = Dialog.extend({
     assistants : null,
 
     minyear : 1,
-    maxyear : 6,
+    maxyear : toolEpmanPageOptions.maxyear || 6,
 
     validations : {
         "[name='name']" : function (val) {
@@ -828,6 +831,28 @@ var ModuleDialog = Dialog.extend({
 
 });
 
+var NavigationPanel = View.extend({
+
+    configure : function (options) {
+        this.$header = $(options.header);
+        this.$footer = $(options.footer);
+    },
+    
+    render : function (prefix) {
+        if (prefix.length > 0) {
+            prefix = prefix + "/";
+        }
+        prefix = "#" + prefix;
+        var data = {
+            yearLinks : _.map(_.range(1, (toolEpmanPageOptions.maxyear || 6) + 1), function (y) {
+                return { year : y, href : prefix + "years/" + y };
+            }),
+        };
+        this.$header.html(getTemplate("#year-links-template")(data));
+        this.$footer.html(getTemplate("#year-links-template")(data));
+    },
+
+});
 
 /* Init */
 
@@ -855,9 +880,15 @@ var initPage = function () {
         programs : programs,
     });
 
+    var navbar = new NavigationPanel({
+        header : "#tool-epman .year-links",
+        footer : "#tool-epman [role='page-footer'] .year-links",
+    });
+
     var router = new EducationProgramsRouter({
         filter : filter,
         programList : programList,
+        navbar : navbar,
     });
 
     Backbone.history.start({ pushState: false });

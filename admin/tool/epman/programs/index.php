@@ -472,10 +472,19 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </table>
   </div>
 </div>
+<div id="year-links-template" style="display: none;">
+  <@ _.each(yearLinks, function (link) { @>
+  <a class="link-button" href="<@= link.href @>">
+    <@= decline('courseyear', link.year) @>
+  </a>
+  <@ }); @>
+</div>
 
 <!-- Page -->
 <div id="tool-epman" class="tool-epman">
   <div role="page-header" id="filter" class="panel vspace">
+    <div class="year-links">
+    </div>
     <div class="link-button nolink add">
       <a id="add-program-button" href="javascript:void(0)">
         <?php echo get_string('Add_program', 'tool_epman'); ?>
@@ -488,6 +497,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   <div id="program-list" class="record-list">
   </div>
   <div role="page-footer" class="page-footer" style="display: none;">
+    <span class="year-links">
+    </span>
     <a class="link-button right gotop" onclick="document.getElementById('filter').scrollIntoView();">
       <?php echo get_string('gotop', 'tool_epman'); ?>
     </a>
