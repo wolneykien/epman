@@ -318,83 +318,9 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     <@ } @>
   </div>
 </div>
-<div id="userselect-template" style="display: none;">
-  <div role="multiselect-box" class="multiselect-box">
-  <@ if (_.isEmpty(collection) && defValue) { @>
-    <span data-id="<@= defValue.id @>" class="link-button light responsible">
-      <a href="<@= '/user/profile.php?id=' + defValue.id @>" target="_blank">
-        <@= defValue.firstname + " " + defValue.lastname @>
-      </a>
-    </span>
-  <@ } @>
-  <@ _.each(collection, function (user) {
-        if (user.id) { @>
-        <span data-id="<@= user.id @>" class="link-button responsible deletable">
-          <a href="<@= '/user/profile.php?id=' + user.id @>" target="_blank">
-            <@= user.firstname + " " + user.lastname @>
-          </a>
-          <span role="delete-button" class="delete-button"></span>
-        </span>
-        <@ }
-     }); @>
-    <span role="search" class="search">
-      <span class="prompt"><@= defValue && max == 1 ? "←" : "+" @></span>
-      <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
-      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_user', 'tool_epman'); ?></span>
-    </span>
-  </div>
-</div>
-<div id="user-search-list-template" style="display: none;">
-  <div role="search-list" class="search-list-overlay" style="display: none;">
-  <@ _.each(collection, function (user) { @>
-    <span class="search-list-item" role="search-list-item" data-id="<@= user.id @>">
-      <@= user.firstname.format() + " " + user.lastname.format() @>
-      <@ if (user.firstname.noMatches() && user.lastname.noMatches()) {
-        if (user.email.hasMatches()) { @>
-          <@= " (" + user.email.format() + ")" @>
-        <@ } else if (user.username.hasMatches()) { @>
-          <@= " (" + user.username.format() + ")" @>
-        <@ }
-      } @>
-    </span>
-  <@ }); @>
-  </div>
-</div>
-<div id="courseselect-template" style="display: none;">
-  <div role="multiselect-box" class="multiselect-box">
-  <@ if (_.isEmpty(collection) && defValue) { @>
-    <span data-id="<@= defValue.id @>" class="link-button light course">
-      <a href="<@= '/course/view.php?id=' + defValue.id @>" target="_blank">
-        <@= defValue.name @>
-      </a>
-    </span>
-  <@ } @>
-  <@ _.each(collection, function (course) {
-        if (course.id) { @>
-        <span data-id="<@= course.id @>" class="link-button course deletable">
-          <a href="<@= '/course/view.php?id=' + course.id @>" target="_blank">
-            <@= course.name @>
-          </a>
-          <span role="delete-button" class="delete-button"></span>
-        </span>
-        <@ }
-     }); @>
-    <span role="search" class="search">
-      <span class="prompt"><@= defValue && max == 1 ? "←" : "+" @></span>
-      <span role="keyword-input" class="keyword-input" contenteditable="true" style="outline: none;"></span>
-      <span role="placeholder" class="placeholder"><?php echo get_string('starttyping_course', 'tool_epman'); ?></span>
-    </span>
-  </div>
-</div>
-<div id="course-searchlist-template" style="display: none;">
-  <div role="search-list" class="search-list-overlay" style="display: none;">
-  <@ _.each(collection, function (course) { @>
-    <span class="search-list-item" role="search-list-item" data-id="<@= course.id @>">
-      <@= course.name.format() @>
-    </span>
-  <@ }); @>
-  </div>
-</div>
+
+<?php include "../include/userselect.php"; ?>
+<?php include "../include/courseselect.php"; ?>
 
 <!-- Dialog templates -->
 <div id="program-dialog-template" style="display: none;">
@@ -424,21 +350,9 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </table>
   </div>
 </div>
-<div id="message-dialog-template" style="display: none;">
-  <div class="tool-epman dialog message" title="<@= (typeof title == 'undefined') ? '<?php echo get_string('Message', 'tool_epman'); ?>' : title @>">
-  <@ if (typeof message != 'undefined') { @>
-    <span><@= message @></span>
-  <@ } @>
-  </div>
-</div>
-<div id="error-dialog-template" style="display: none;">
-  <div class="tool-epman dialog error" title="<@= (typeof title == 'undefined') ? '<?php echo get_string('Error_message', 'tool_epman'); ?>' : title @>">
-    <div class="name-value">
-      <span><@= (typeof heading == 'undefined') ? "<?php echo get_string('Error', 'tool_epman'); ?>" : heading @></span>
-      <span><@= (typeof message == 'undefined') ? "<?php echo get_string('unknown_error', 'tool_epman'); ?>" : message @></span>
-    </div>
-  </div>
-</div>
+
+<?php include "../include/dialogs.php"; ?>
+
 <div id="module-dialog-template" style="display: none;">
   <div class="tool-epman dialog" title="<@= m.id ? '<?php echo get_string('Education_program_module_edit', 'tool_epman'); ?>' : '<?php echo get_string('New_education_program_module', 'tool_epman'); ?>' @>">
     <table class="name-value-table">
@@ -472,13 +386,8 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
     </table>
   </div>
 </div>
-<div id="year-links-template" style="display: none;">
-  <@ _.each(yearLinks, function (link) { @>
-  <a class="link-button" href="<@= link.href @>">
-    <@= decline('courseyear', link.year) @>
-  </a>
-  <@ }); @>
-</div>
+
+<?php include "../include/misc.php"; ?>
 
 <!-- Page -->
 <div id="tool-epman" class="tool-epman">
