@@ -48,8 +48,20 @@ class epman_group_external extends crud_external_api {
       'programid' => new external_value(
         PARAM_INT,
         'Output only the groups studying the given education program (id)',
+        VALUE_OPTIONAL),
+      'like' => new external_value(
+        PARAM_TEXT,
+        'Matching pattern',
+        VALUE_OPTIONAL),
+      'skip' => new external_value(
+        PARAM_INT,
+        'Skip that number of records',
         VALUE_DEFAULT,
         0),
+      'limit' => new external_value(
+        PARAM_INT,
+        'Limit the number of selected records',
+        VALUE_OPTIONAL),
     ));
   }
 
@@ -58,14 +70,18 @@ class epman_group_external extends crud_external_api {
    *
    * @return array of education groups
    */
-  public static function list_groups($userid, $programid) {
+  public static function list_groups($userid, $programid, $like, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
         self::list_groups_parameters(),
-        array('userid' => $userid)
+        array('userid' => $userid, 'programid' => $programid, 'like' => $like, 'skip' => $skip, 'limit' => $limit)
       );
       $userid = $params['userid'];
+      $programid = $params['programid'];
+      $like = $params['like'];
+      $skip = $params['skip'];
+      $limit = $params['limit'];
 
       if ($userid) {
         $groups = $DB->get_records_sql(
@@ -89,9 +105,14 @@ class epman_group_external extends crud_external_api {
             'on u.id = g.responsibleid '.
             'where g.responsibleid = ? or ga.userid = ? '.
             ($programid ? ' and g.programid = ? ' : '').
+            ($like ? 'and p.name like ?' : '').
             'group by p.id '.
             'order by year, name',
-            array($userid, $userid, $programid));
+            array_merge(array($userid, $userid),
+                        ($programid ? array($programid) : array()),
+                        ($like ? array($like) : array())),
+            $skip,
+            $limit);
       } else {
         $groups = $DB->get_records_sql(
             'select g.id, '.
@@ -104,9 +125,13 @@ class epman_group_external extends crud_external_api {
             'on p.id = g.programid '.
             'left join {user} u '.
             'on u.id = g.responsibleid '.
-            ($programid ? 'where g.programid = ? ' : '').
+            ($programid ? ' and g.programid = ? ' : '').
+            ($like ? 'and p.name like ?' : '').
             'order by year, name',
-            array($programid));
+            array_merge(($programid ? array($programid) : array()),
+                        ($like ? array($like) : array())),
+            $skip,
+            $limit);
       }
 
       return array_map(
@@ -116,7 +141,7 @@ class epman_group_external extends crud_external_api {
             $group['program'] = array(
               'id' => $group['programid'],
               'name' => $group['programname'],
-              'year' => $group['programyear'],
+              //              'year' => $group['programyear'],
             );
           } else {
             $group['program'] = null;
@@ -222,14 +247,26 @@ class epman_group_external extends crud_external_api {
         $group = (array) $group;
       }
 
-      $responsible = $DB->get_record('user', array('id' => $group['responsible']['id']));
-      if ($responsible) {
-        $group['responsible'] = array(
-          'id' => $responsible->id,
-          'username' => $responsible->username,
-          'firstname' => $responsible->firstname,
-          'lastname' => $responsible->lastname,
-          'email' => $responsible->email);
+      if ($group['programid']) {
+        $program = $DB->get_record('tool_epman_program', array('id' => $group['programid']));
+        if ($program) {
+          $group['program'] = array(
+            'id' => $program->id,
+            'name' => $program->fullname,
+          );
+        }
+      }
+
+      if ($group['responsibleid']) {
+        $responsible = $DB->get_record('user', array('id' => $group['responsibleid']));
+        if ($responsible) {
+          $group['responsible'] = array(
+            'id' => $responsible->id,
+            'username' => $responsible->username,
+            'firstname' => $responsible->firstname,
+            'lastname' => $responsible->lastname,
+            'email' => $responsible->email);
+        }
       }
 
       $students = $DB->get_records_sql(
@@ -398,11 +435,19 @@ class epman_group_external extends crud_external_api {
             'Actual learning year',
             VALUE_DEFAULT,
             0),
-          'responsibleid' => new external_value(
+          'responsible' => new external_value(
             PARAM_INT,
             'ID of the responsible user',
             VALUE_DEFAULT,
             $USER->id),
+          'assistants' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of an assistant user'
+            ),
+            'Array of the assistant user IDs',
+            VALUE_OPTIONAL
+          ),
         )),
       ));
     }
@@ -420,13 +465,21 @@ class epman_group_external extends crud_external_api {
         array('model' => $model)
       );
       $group = $params['model'];
+      $group['responsibleid'] = $group['responsible'];
 
       program_exists($group['programid']);
       user_exists($group['responsibleid']);
 
       $group['id'] = $DB->insert_record('tool_epman_group', $group);
 
-      return $group;
+      if (array_key_exists('assistants', $group)) {
+        clear_group_assistants($group['id']);
+        foreach ($group['assistants'] as $userid) {
+          $DB->insert_record('tool_epman_group_assistant', array('userid' => $userid, 'groupid' => $group['id']), false);
+        }
+      }
+
+      return self::get_group($group['id']);
     }
 
     /**
@@ -436,21 +489,7 @@ class epman_group_external extends crud_external_api {
      * @return external_description
      */
     public static function create_group_returns() {
-      return new external_single_structure(array(
-        'id' => new external_value(
-          PARAM_INT,
-          'Academic group ID'),
-        'name' => new external_value(
-          PARAM_TEXT,
-          'Academic group name'),
-        'programid' => new external_value(
-          PARAM_INT,
-          'Education program ID',
-          VALUE_OPTIONAL),
-        'responsibleid' => new external_value(
-          PARAM_INT,
-          'ID of the responsible user'),
-      ));
+      return self::get_group_returns();
     }
 
 
@@ -463,6 +502,8 @@ class epman_group_external extends crud_external_api {
      * @return external_function_parameters
      */
     public static function update_group_parameters() {
+      global $USER;
+
       return new external_function_parameters(array(
         'id' => new external_value(
           PARAM_INT,
@@ -480,10 +521,19 @@ class epman_group_external extends crud_external_api {
             PARAM_INT,
             'Actual learning year',
             VALUE_OPTIONAL),
-          'responsibleid' => new external_value(
+          'responsible' => new external_value(
             PARAM_INT,
             'ID of the responsible user',
-            VALUE_OPTIONAL),
+            VALUE_DEFAULT,
+            $USER->id),
+          'assistants' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of an assistant user'
+            ),
+            'Array of the assistant user IDs',
+            VALUE_OPTIONAL
+          ),
         )),
       ));
     }
@@ -503,6 +553,7 @@ class epman_group_external extends crud_external_api {
       $id = $params['id'];
       $group = $params['model'];
       $group['id'] = $id;
+      $group['responsibleid'] = $group['responsible'];
 
       group_exists($id);
       $group0 = $DB->get_record('tool_epman_group', array('id' => $id));
@@ -516,6 +567,9 @@ class epman_group_external extends crud_external_api {
           value_unchanged($group0, $group, 'name', 'name of this academic group');
           value_unchanged($group0, $group, 'programid', 'education program of this academic group');
           value_unchanged($group0, $group, 'year', 'year of this academic group');
+          if (array_key_exists('assistants', $group)) {
+            throw new permission_exception("You don't have the right to change the set of assistant users of this academic group");
+          }
           if (!group_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this academic group");
           }
@@ -528,7 +582,14 @@ class epman_group_external extends crud_external_api {
 
       $DB->update_record('tool_epman_group', $group);
 
-      return $group;
+      if (array_key_exists('assistants', $group)) {
+        clear_group_assistants($group['id']);
+        foreach ($group['assistants'] as $userid) {
+          $DB->insert_record('tool_epman_group_assistant', array('userid' => $userid, 'groupid' => $group['id']), false);
+        }
+      }
+
+      return self::get_group($group['id']);
     }
 
     /**
@@ -538,24 +599,7 @@ class epman_group_external extends crud_external_api {
      * @return external_description
      */
     public static function update_group_returns() {
-      return new external_single_structure(array(
-        'name' => new external_value(
-          PARAM_TEXT,
-          'Academic group name',
-          VALUE_OPTIONAL),
-        'programid' => new external_value(
-          PARAM_INT,
-          'Education program ID',
-          VALUE_OPTIONAL),
-        'year' => new external_value(
-          PARAM_INT,
-          'Acutual learning year',
-          VALUE_OPTIONAL),
-        'responsibleid' => new external_value(
-          PARAM_INT,
-          'ID of the responsible user',
-          VALUE_OPTIONAL),
-      ));
+      return self::get_group_returns();
     }
 
     
