@@ -879,7 +879,6 @@ var MultiSelect = Backbone.View.extend({
         this.listenTo(this.searchCollection, "reset", this.update);
         this.listenTo(this.searchCollection, "add", this.update);
         this.listenTo(this.searchCollection, "remove", this.update);
-        this.render();
     },
 
     configure : function (options) {
@@ -939,7 +938,6 @@ var MultiSelect = Backbone.View.extend({
         if (!this.searchCollection.isEmpty()) {
             var selected = id ? this.searchCollection.get(id) : this.searchCollection.first();
             if (selected) {
-                this.trigger("select", selected);
                 this.selectedCollection.add([selected]);
             }
         }
