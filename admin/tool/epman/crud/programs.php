@@ -541,7 +541,7 @@ class epman_program_external extends crud_external_api {
       }
 
       if (!has_sys_capability('tool/epman:editprogram', $USER->id)) {
-        value_unchanged($program0, $program, 'responsible', 'responsible user of this education program');
+        value_unchanged($program0, $program, 'responsibleid', 'responsible user of this education program');
         if (!program_responsible($id, $USER->id)) {
           value_unchanged($program0, $program, 'name', 'name of this education program');
           value_unchanged($program0, $program, 'year', 'year of this education program');
