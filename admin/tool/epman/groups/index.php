@@ -58,6 +58,8 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'N_day_vacation' => get_string('N_day_vacation', 'tool_epman'),
       'N_day_overlap' => get_string('N_day_overlap', 'tool_epman'),
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
+      'Delete_selected_students_?' => get_string('Delete_selected_students_Q', 'tool_epman'),
+      'Delete_the_academic_group_?' => get_string('Delete_the_academic_group_Q', 'tool_epman'),
     ),
 ), true);
 
@@ -180,7 +182,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
         </a>
       </div>
     <@ } else { @>
-      <div role="add-student-button" class="link-button light nolink add">
+      <div role="add-students-button" class="link-button light nolink add">
         <a href="javascript:void(0)">
           <?php echo get_string('Add_students', 'tool_epman'); ?>
         </a>
@@ -220,7 +222,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   </div>
 </div>
 <div id="student-list-template" style="display: none;">
-  <div class="group-student-table">
+  <div class="students-column">
   <@ _.each(students, function (s) { @>
     <@ if (s.lastname[0] != letter) {
       letter = s.lastname[0]; @>
@@ -270,27 +272,27 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
     </table>
   </div>
 </div>
-<div id="student-dialog-template" style="display: none;">
+<div id="add-students-dialog-template" style="display: none;">
   <div class="tool-epman dialog" title="<?php echo get_string('Add_students', 'tool_epman'); ?>">
     <table class="name-value-table">
       <tr class="name-value">
-        <td><?php echo get_string('Assistants', 'tool_epman'); ?></td>
-        <td role="select-assistants"></td>
+        <td><?php echo get_string('Students', 'tool_epman'); ?></td>
+        <td role="select-students"></td>
       </tr>
     </table>
     <hr />
-    <table class="name-value-table">
-      <tr class="name-value">
-        <td style="white-space: nowrap;"><?php echo get_string('Username', 'tool_epman'); ?></td>
-        <td><input type="text" name="username"></input></td>
-        <td style="white-space: nowrap;"><?php echo get_string('Email', 'tool_epman'); ?></td>
-        <td><input type="text" name="email"></input></td>
-      </tr>
+    <table role="userdata" class="name-value-table">
       <tr class="name-value">
         <td style="white-space: nowrap;"><?php echo get_string('Last_name', 'tool_epman'); ?></td>
         <td><input type="text" name="lastname"></input></td>
         <td style="white-space: nowrap;"><?php echo get_string('Fist_name', 'tool_epman'); ?></td>
         <td><input type="text" name="firstname"></input></td>
+      </tr>
+      <tr class="name-value">
+        <td style="white-space: nowrap;"><?php echo get_string('Username', 'tool_epman'); ?></td>
+        <td><input type="text" name="username"></input></td>
+        <td style="white-space: nowrap;"><?php echo get_string('Email', 'tool_epman'); ?></td>
+        <td><input type="text" name="email"></input></td>
       </tr>
     </table>
     <div class="buttons">

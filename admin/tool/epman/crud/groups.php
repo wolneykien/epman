@@ -49,6 +49,14 @@ class epman_group_external extends crud_external_api {
         PARAM_INT,
         'Output only the groups studying the given education program (id)',
         VALUE_OPTIONAL),
+      'year' => new external_value(
+        PARAM_INT,
+        'Output only the groups studying within the given academic year',
+        VALUE_OPTIONAL),
+      'yeargroupid' => new external_value(
+        PARAM_INT,
+        'Output only the same-year groups, corresponding to the year value of the given group (id)',
+        VALUE_OPTIONAL),
       'like' => new external_value(
         PARAM_TEXT,
         'Matching pattern',
@@ -70,18 +78,29 @@ class epman_group_external extends crud_external_api {
    *
    * @return array of education groups
    */
-  public static function list_groups($userid, $programid, $like, $skip = 0, $limit = null) {
+  public static function list_groups($userid, $programid, $year, $yeargroupid, $like, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
         self::list_groups_parameters(),
-        array('userid' => $userid, 'programid' => $programid, 'like' => $like, 'skip' => $skip, 'limit' => $limit)
+        array('userid' => $userid, 'programid' => $programid, 'year' => $year, 'yeargroupid' => $yeargroupid, 'like' => $like, 'skip' => $skip, 'limit' => $limit)
       );
       $userid = $params['userid'];
       $programid = $params['programid'];
+      $year = $params['year'];
+      $yeargroupid = $params['yeargroupid'];
       $like = $params['like'];
       $skip = $params['skip'];
       $limit = $params['limit'];
+
+      if ($yeargroupid) {
+        $yeargroup = $DB->get_record('tool_epman_group', array('id' => $yeargroupid));
+        if ($yeargroup && $yeargroup->year) {
+          $year = $yeargroup->year;
+        } else {
+          return array();
+        }
+      }
 
       if ($userid) {
         $groups = $DB->get_records_sql(
@@ -105,11 +124,13 @@ class epman_group_external extends crud_external_api {
             'on u.id = g.responsibleid '.
             'where g.responsibleid = ? or ga.userid = ? '.
             ($programid ? ' and g.programid = ? ' : '').
+            ($year ? ' and g.year = ? ' : '').
             ($like ? 'and p.name like ?' : '').
             'group by p.id '.
             'order by year, name',
             array_merge(array($userid, $userid),
                         ($programid ? array($programid) : array()),
+                        ($year ? array($year) : array()),
                         ($like ? array($like) : array())),
             $skip,
             $limit);
@@ -126,9 +147,11 @@ class epman_group_external extends crud_external_api {
             'left join {user} u '.
             'on u.id = g.responsibleid '.
             ($programid ? ' and g.programid = ? ' : '').
+            ($year ? ' and g.year = ? ' : '').
             ($like ? 'and p.name like ?' : '').
             'order by year, name',
             array_merge(($programid ? array($programid) : array()),
+                        ($year ? array($year) : array()),
                         ($like ? array($like) : array())),
             $skip,
             $limit);
