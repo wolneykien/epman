@@ -2,10 +2,6 @@
 /**
  * Education program list router.
  *
- * @param options {
- *     programs : EducationPrograms,
- * }
- *
  */
 var EducationProgramsRouter = Backbone.Router.extend({
 
@@ -46,26 +42,12 @@ var EducationProgramsRouter = Backbone.Router.extend({
 
     handleRoute : function (filter, position) {
         var params = $.params();
-        if (!_.isEmpty(params)) {
-            var fragment = "";
-            if (params.programid) {
-                fragment = fragment + "/" + params.programid;
-            }
-            if (!params.programid) {
-                if (filter.my) {
-                    fragment = fragment + "/" + "my";
-                } else {
-                    fragment = fragment + "/" + "all";
-                }
-                if (position.year) {
-                    fragment = fragment + "/" + "years/" + position.year;
-                }
-            }
-            window.location.assign(window.location.pathname + "#" + fragment.substr(1));
+        if (!_.isEmpty(params) && params.programid) {
+            window.location.assign(window.location.pathname + "#" + params.programid);
         } else {
             this.position = position;
             this.filter.apply(filter, { navigate : false });
-            this.navbar.render("" + (filter.my ? "my" : "all"));
+            this.navbar.render(filter.my ? "/my" : "/all");
         }
     },
 
@@ -545,7 +527,7 @@ var EducationProgramsList = View.extend({
     },
 
     render : function () {
-        console.log("Render out the eduction program list");
+        console.log("Render out the education program list");
         this.$el.empty();
         this.$el.show();
         var section = { year : 0 };
@@ -664,16 +646,7 @@ var ProgramDialog = Dialog.extend({
         },
     },
 
-    render : function () {
-        this.$el.html(getTemplate("#program-dialog-template")({
-            p : this.model.toJSON(),
-            minyear : this.minyear,
-            maxyear : this.maxyear,
-        }));
-        this.$("[name='year']").spinner({
-            min : this.minyear,
-            max : this.maxyear,
-        }).spinner("value", this.model.get('year') || this.minyear);
+    configure : function (options) {
         this.responsible = new UserSelect({
             $el : this.$("[role='select-responsible']"),
             template : getTemplate("#userselect-template"),
@@ -685,9 +658,21 @@ var ProgramDialog = Dialog.extend({
         this.assistants = new UserSelect({
             $el : this.$("[role='select-assistants']"),
             template : getTemplate("#userselect-template"),
-                searchlistTemplate : getTemplate("#user-search-list-template"),
+            searchlistTemplate : getTemplate("#user-search-list-template"),
             selectedCollection : new Users(),
         });
+    },
+
+    render : function () {
+        this.$el.html(getTemplate("#program-dialog-template")({
+            p : this.model.toJSON(),
+            minyear : this.minyear,
+            maxyear : this.maxyear,
+        }));
+        this.$("[name='year']").spinner({
+            min : this.minyear,
+            max : this.maxyear,
+        }).spinner("value", this.model.get('year') || this.minyear);
         this.responsible.reset(this.model.get('responsible'));
         this.assistants.reset(this.model.get('assistants'));
     },
@@ -733,6 +718,15 @@ var ModuleDialog = Dialog.extend({
         },
     },
 
+    configure :  function (options) {
+        this.courses = new CourseSelect({
+            $el : this.$("[role='select-courses']"),
+            template : getTemplate("#courseselect-template"),
+            searchlistTemplate : getTemplate("#course-searchlist-template"),
+            selectedCollection : new Courses(),
+        });
+    },
+
     render : function () {
         var self = this;
         this.$el.html(getTemplate("#module-dialog-template", "[role='days']")({
@@ -760,12 +754,6 @@ var ModuleDialog = Dialog.extend({
         this.$("[name='length']").spinner({
             min : 1,
         }).spinner("value", this.model.get('length') || 30);
-        this.courses = new CourseSelect({
-            $el : this.$("[role='select-courses']"),
-            template : getTemplate("#courseselect-template"),
-            searchlistTemplate : getTemplate("#course-searchlist-template"),
-            selectedCollection : new Courses(),
-        });
         this.courses.reset(this.model.get('courses'));
     },
 
