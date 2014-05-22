@@ -236,7 +236,9 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
     </div>
     <@ } @>
     <div class="group-student">
-      <@= s.lastname + " " + s.firstname @>
+      <a href="<@= '/user/profile.php?id=' + s.id @>">
+        <@= s.lastname + " " + s.firstname @>
+      </a>
     </div>
   <@ }); @>
   </div>

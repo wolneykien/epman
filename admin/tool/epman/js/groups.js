@@ -45,10 +45,15 @@ var AcademicProgramsRouter = Backbone.Router.extend({
         if (!_.isEmpty(params) && params.groupid) {
             window.location.assign(window.location.pathname + "#" + params.groupid);
         } else {
+            var prefix = (filter.my ? "/my" : "/all") + 
+                (filter.programid ? ("/programs/" + filter.programid) : "");
+            if (!position.year && !position.groupid) {
+                position.year = 1;
+                this.navigate(prefix + "/years/" + position.year, { trigger: false });
+            }
             this.position = position;
             this.filter.apply(filter, position, { navigate : false });
-            this.navbar.render((filter.programid ? ("/programs/" + filter.programid) : "") +
-                               (filter.my ? "/my" : "/all"));
+            this.navbar.render(prefix);
         }
     },
 
@@ -56,6 +61,12 @@ var AcademicProgramsRouter = Backbone.Router.extend({
         var $el = null;
         if (this.position.groupid) {
             this.groupList.expand(this.position.groupid, { jump : true });
+            this.navigate(window.location.hash + "#", { trigger : false });
+        } else if (this.position.year) {
+            $el = $("#year-" + this.position.year);
+        }
+        if ($el && $el.size() > 0) {
+            $el[0].scrollIntoView();
             this.navigate(window.location.hash + "#", { trigger : false });
         }
     },
@@ -88,6 +99,9 @@ var AcademicGroups = Collection.extend({
     position : {},
 
     load : function (filter, position) {
+        if (position.year) {
+            position.year = position.year - 1;
+        }
         this.filter = filter;
         this.position = position;
         if (_.isUndefined(position.groupid) && _.isUndefined(position.year)) {
@@ -349,7 +363,6 @@ var AcademicGroupsList = View.extend({
         console.log("Render out the academic group list");
         this.$el.empty();
         this.$el.show();
-        var section = { year : 0 };
         if (!this.collection.isEmpty()) {
             this.$el.append(getTemplate("#list-section-template")({
                 f : this.collection.filter,
@@ -357,7 +370,7 @@ var AcademicGroupsList = View.extend({
                 year : this.collection.first().get("year"),
             }));
             this.collection.forEach(function (group) {
-                section.$el.append(getTemplate("#record-template")({
+                this.$el.append(getTemplate("#record-template")({
                     f : this.collection.filter,
                     g : group.toJSON(),
                     year : group.get('year'),
@@ -386,7 +399,7 @@ var AcademicGroupsFilter = View.extend({
 
     events : {
         "click #filter-my" : function (e) {
-            this.navigate({ my : !this.filter.my });
+            this.navigate(_.extend({}, this.filter, { my : !this.filter.my }));
         },
     },
 
@@ -404,7 +417,7 @@ var AcademicGroupsFilter = View.extend({
             max : 1,
         });
         this.listenTo(this.program.selectedCollection, "add", function (selected) {
-            this.navigate(_.extend(this.filter, { programid : selected.first().id });
+            this.navigate(_.extend({}, this.filter, { programid : selected.first().id });
         });
         this.listenTo(this.program.selectedCollection, "remove", function (selected) {
             this.navigate(_.omit(this.filter, "programid"));
@@ -439,11 +452,13 @@ var AcademicGroupsFilter = View.extend({
         }
     },
 
-    navigate : function (filter) {
+    navigate : function (filter, position) {
         filter = filter || this.filter;
+        position = position || this.position;
         Backbone.history.navigate(
             (filter.my ? "/my" : "/all") +
-                (filter.programid ? ("/programs/" + filter.programid) : ""),
+                (filter.programid ? ("/programs/" + filter.programid) : "") +
+                (position.year ? ("/years/" + position.year) : ""),
             { trigger : true });
     },
 
@@ -505,11 +520,10 @@ var GroupDialog = Dialog.extend({
         this.model.save({
             name : this.$("[name='name']").val(),
             year : Number(this.$("[name='year']").val()),
-            description : this.$("[name='description']").val(),
             responsible : _.first(this.responsible.selectedCollection.pluck('id')),
             assistants : this.assistants.selectedCollection.pluck('id'),
+            students : undefined,
         }, {
-            patch : true,
             wait : true,
             success : function (model) {
                 if (!model.collection && self.collection) {
@@ -561,7 +575,7 @@ var AddStudentsDialog = Dialog.extend({
         var self = this;
         this.model.save({
             students : this.students.selectedCollection.pluck("id"),
-        });
+        }, { patch :  true });
     },
 
 });

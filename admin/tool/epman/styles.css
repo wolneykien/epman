@@ -400,11 +400,13 @@
   resize: none;
 }
 
-.tool-epman .program-modules {
+.tool-epman .program-modules,
+.tool-epman .group-students {
   font-size: small;
 }
 
-.tool-epman .program-module-list {
+.tool-epman .program-module-list,
+.tool-epman .group-student-list {
 }
 
 .tool-epman .program-module-table {
@@ -424,7 +426,7 @@
   display: table-cell;
 }
 
-.tool-epman .program-module-table .selector {
+.tool-epman .selector {
   vertical-align: middle;
 }
 
@@ -761,7 +763,8 @@
   vertical-align: middle;
 }
 
-.tool-epman .link-button.course {
+.tool-epman .link-button.course,
+.tool-epman .link-button.program {
   background-image: url([[pix:tool_epman|book]]);
   padding-left: 2.0em; 
 }
@@ -878,4 +881,27 @@
 .tool-epman .program-module > .module-header:hover .link-button.light.paste
 {
   background-image: url([[pix:tool_epman|paste]]);
+}
+
+.tool-epman .students-column {
+  float: left;
+  width: 30%;
+  margin: 0px;
+  padding: 0.25em;
+}
+
+.tool-epman .letter {
+  font-size: 2em;
+  text-transform: uppercase;
+  border-style: none;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #e8e8e8;
+}
+
+.tool-epman .group-student {  
+}
+
+.tool-epman .buttons {
+  text-align: left;
 }
