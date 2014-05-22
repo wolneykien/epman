@@ -168,7 +168,7 @@ class epman_rest_server extends webservice_rest_server {
         }
       } elseif ($method == 'POST') {
         $wsfunctions = array("create".$wsfunctionsuf, "add".$wsfunctionsuf);
-      } elseif ($method == 'PUT') {
+      } elseif ($method == 'PUT' || $method == 'PATCH') {
         $wsfunctions = array("update".$wsfunctionsuf);
       } elseif ($method == 'DELETE') {
         $wsfunctions = array("delete".$wsfunctionsuf);
@@ -187,7 +187,7 @@ class epman_rest_server extends webservice_rest_server {
           throw new invalid_parameter_exception("No suitable READ function found for ".implode("/", $crud_path));
         } elseif ($method == 'POST') {
           throw new invalid_parameter_exception("No suitable CREATE function found for ".implode("/", $crud_path));
-        } elseif ($method == 'PUT') {
+        } elseif ($method == 'PUT' || $method == 'PATCH') {
           throw new invalid_parameter_exception("No suitable UPDATE function found for ".implode("/", $crud_path));
         } elseif ($method == 'DELETE') {
           throw new invalid_parameter_exception("No suitable DELETE function found for ".implode("/", $crud_path));
