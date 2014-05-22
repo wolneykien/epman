@@ -76,9 +76,10 @@ $services = array(
             'tool_epman_update_group_student',
             'tool_epman_delete_group_student',
 
-            /* Users (read-only) */
+            /* Users */
             'tool_epman_get_users',
             'tool_epman_get_user',
+            'tool_epman_create_user',
 
             /* Courses (read-only) */
             'tool_epman_get_courses',
@@ -355,7 +356,7 @@ $functions = array(
     ),
 
 
-    /* Users (read-only) */
+    /* Users */
     
     'tool_epman_get_users' => array(
         'classname'   => 'epman_user_external',
@@ -370,6 +371,14 @@ $functions = array(
         'classpath'   => 'admin/tool/epman/crud/users.php',
         'description' => 'Returns the definition of the specified user (by id)',
         'type'        => 'read',
+    ),
+    'tool_epman_create_user' => array(
+        'classname'   => 'epman_user_external',
+        'methodname'  => 'create_user',
+        'classpath'   => 'admin/tool/epman/crud/users.php',
+        'description' => 'Add to the system a new user account with the specified parameters',
+        'capabilities' => 'moodle/user:create',
+        'type'        => 'write',
     ),
 
 

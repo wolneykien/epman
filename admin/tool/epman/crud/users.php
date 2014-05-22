@@ -190,5 +190,64 @@ class epman_user_external extends crud_external_api {
       ));
     }
 
+
+    /* Define the `create_user` implementation functions. */
+
+    /**
+     * Returns the description of the `create_user` method's
+     * parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function create_user_parameters() {
+      return new external_function_parameters(array(
+        'model' => new external_single_structure(array(
+          'username' => new external_value(
+            PARAM_TEXT,
+            'User account name'),
+          'firstname' => new external_value(
+            PARAM_TEXT,
+            'User first (given) name'),
+          'lastname' => new external_value(
+            PARAM_TEXT,
+            'User last (family) name'),
+          'email' => new external_value(
+            PARAM_TEXT,
+            'User E-Mail address'),
+        )),
+      ));
+    }
+
+    /**
+     * Creates a new Moodle user.
+     *
+     * @return array: new user's account data
+     */
+    public static function create_user(array $model) {
+      global $DB;
+
+      $params = self::validate_parameters(
+        self::create_user_parameters(),
+        array('model' => $model)
+      );
+      $user = $params['model'];
+
+      user_not_exists($user['username']);
+
+      $user['id'] = $DB->insert_record('user', $user);
+
+      return self::get_user($user['id']);
+    }
+
+    /**
+     * Returns the description of the `create_user` method's
+     * return value.
+     *
+     * @return external_description
+     */
+    public static function create_user_returns() {
+      return self::get_user_returns();
+    }
+
 }
 ?>

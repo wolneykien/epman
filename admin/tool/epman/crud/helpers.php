@@ -61,6 +61,15 @@ class object_not_found_exception extends invalid_parameter_exception {
 
 }
 
+class object_already_exists_exception extends invalid_parameter_exception {
+
+  public function __construct($msg) {
+    parent::__construct($msg);
+    $this->http_response_code = 409;
+  }
+
+}
+
 /**
  * Checks if the course with the given ID exists.
  *
@@ -119,7 +128,20 @@ function user_exists($userid) {
   global $DB;
   
   if (!$DB->record_exists('user', array('id' => $userid))) {
-    throw new object_not_found_exception("Responsible user doesn't exist: $userid");
+    throw new object_not_found_exception("The user doesn't exist: $userid");
+  }
+}
+
+/**
+ * Checks if the user with the given ID doesn't exist.
+ *
+ * @throw object_not_found_exception
+ */
+function user_not_exists($username) {
+  global $DB;
+  
+  if ($DB->record_exists('user', array('username' => $userid))) {
+    throw new object_already_exists_exception("The user already exists: $username");
   }
 }
 
