@@ -276,7 +276,7 @@ class epman_program_external extends crud_external_api {
         'on pa.programid = p.id '.
         'left join {user} u on u.id = pa.userid '.
         'where p.id = ? and pa.userid is not null '.
-        'order by u.username',
+        'order by u.lastname',
         array('id' => $id));
 
       $program['assistants'] = array();

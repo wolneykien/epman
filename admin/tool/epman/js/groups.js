@@ -162,13 +162,16 @@ var AcademicGroupView = View.extend({
             $students.append(getTemplate("#student-list-template")({
                 students : slice,
                 letter : letter,
+                action : options.action,
             }));
             if (students.length > slice.length) {
                 addColumn(_.rest(students, size), size, _.last(slice).lastname[0]);
             }
         };
         $students.empty();
-        addColumn(data.g.students, data.g.students / 3);
+        if (!_.isEmpty(data.g.students)) {
+            addColumn(data.g.students, Math.ceil(data.g.students.length / 3));
+        }
         
         var self = this;
         this.$header.find("[role='edit-button']").click(function () {
@@ -195,7 +198,7 @@ var AcademicGroupView = View.extend({
             $studentsHeader.find("[role='add-students-button']").click(function () {
                 (new AddStudentsDialog({
                     model : self.model,
-                    el : "#student-dialog-template",
+                    el : "#add-students-dialog-template",
                 })).open();
             });
             if (options.action.deleteStudents || options.action.copyStudents) {
@@ -563,11 +566,17 @@ var AddStudentsDialog = Dialog.extend({
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
         });
+        this.selectorValidations.push({
+            selector : this.students,
+            validator : function (students) {
+                return !_.isEmpty(students);
+            },
+        });
     },
 
     render : function () {
         var self = this;
-        this.$el.html(getTemplate("#add-students-dialog-template", "[role='days']")({
+        this.$el.html(getTemplate("#add-students-dialog-template")({
             m : this.model.toJSON(),
         }));
         this.students.reset(this.model.get('students'), { $el : this.$("[role='select-students']") });

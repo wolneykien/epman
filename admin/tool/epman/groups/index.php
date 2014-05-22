@@ -121,7 +121,11 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   <div class="name-value">
     <span><?php echo get_string('Education_program', 'tool_epman'); ?></span>
     <@ if (g.program && g.program.name && g.program.name.length > 0) { @>
-    <span><@= g.program.name @></span>
+    <span>
+      <a href="../programs/index.php#<@= g.program.id @>">
+        <@= g.program.name @>
+      </a>
+    </span>
     <@ } else { @>
     <span class="comment"><?php echo get_string('notspecified', 'tool_epman'); ?></span>
     <@ } @>
@@ -231,15 +235,17 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
       <@= letter @>
     </div>
     <@ } @>
+    <div class="selectable-box">
     <@ if (action.deleteStudents || action.copyStudents) { @>
     <div class="selector">
-      <input role="marker" data-id="<@= m.id @>" type="checkbox" name="selectedStudents"></input>
+      <input role="marker" data-id="<@= s.id @>" type="checkbox" name="selectedStudents"></input>
     </div>
     <@ } @>
     <div class="group-student">
       <a href="<@= '/user/profile.php?id=' + s.id @>">
         <@= s.lastname + " " + s.firstname @>
       </a>
+    </div>
     </div>
   <@ }); @>
   </div>
@@ -291,7 +297,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
       <tr class="name-value">
         <td style="white-space: nowrap;"><?php echo get_string('Last_name', 'tool_epman'); ?></td>
         <td><input type="text" name="lastname"></input></td>
-        <td style="white-space: nowrap;"><?php echo get_string('Fist_name', 'tool_epman'); ?></td>
+        <td style="white-space: nowrap;"><?php echo get_string('First_name', 'tool_epman'); ?></td>
         <td><input type="text" name="firstname"></input></td>
       </tr>
       <tr class="name-value">
@@ -302,7 +308,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
       </tr>
     </table>
     <div class="buttons">
-      <input type="button" name="add-to-list" value="<?php get_string('Add_to_list', 'tool_epman'); ?>"></input>
+      <input type="button" name="add-to-list" value="&uarr;&nbsp;<?php echo get_string('Add_to_list', 'tool_epman'); ?>"></input>
     </div>
   </div>
 </div>

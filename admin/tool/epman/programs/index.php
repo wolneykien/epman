@@ -230,7 +230,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
   </div>
 </div>
 <div id="module-template" style="display: none;">
-  <div class="program-module-table"><div>
+  <div class="program-module-table"><div class="selectable-box">
   <@ if (action.deleteModules || action.copyModules) { @>
   <div class="selector">
     <input role="marker" data-id="<@= m.id @>" type="checkbox" name="selectedModules"></input>

@@ -405,8 +405,7 @@
   font-size: small;
 }
 
-.tool-epman .program-module-list,
-.tool-epman .group-student-list {
+.tool-epman .program-module-list {
 }
 
 .tool-epman .program-module-table {
@@ -424,6 +423,15 @@
 
 .tool-epman .program-module-table > * > * {
   display: table-cell;
+}
+
+.tool-epman .selectable-box {
+  display: block;
+}
+
+.tool-epman .selectable-box > * {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .tool-epman .selector {
@@ -884,23 +892,34 @@
   background-image: url([[pix:tool_epman|paste]]);
 }
 
+.tool-epman .group-student-list {
+  display: table-row;
+}
+
 .tool-epman .students-column {
-  float: left;
-  width: 30%;
+  display: table-cell;
   margin: 0px;
   padding: 0.25em;
+  padding-left: 1.0em;
+  vertical-align: top;
+}
+
+.tool-epman .students-column:first-child {
+  padding-left: 0.25em;
 }
 
 .tool-epman .letter {
-  font-size: 2em;
+  font-size: 1.5em;
   text-transform: uppercase;
   border-style: none;
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: #e8e8e8;
+  margin-bottom: 0.25em;
+  padding-top: 0.5em;
 }
 
-.tool-epman .group-student {  
+.tool-epman .group-student {
 }
 
 .tool-epman .buttons {

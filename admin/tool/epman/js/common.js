@@ -522,10 +522,9 @@ var Dialog = Backbone.View.extend({
         },
     },
 
-    validations : {},
-    selectorValidations : [],
-
     initialize : function (options) {
+        this.validations = {};
+        this.selectorValidations = [];
         _.extend(this, _.pick(options || {},
                   "modal",
                   "dialogClass",
