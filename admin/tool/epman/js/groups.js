@@ -3,7 +3,7 @@
  * Academic group list router.
  *
  */
-var AcademicProgramsRouter = Backbone.Router.extend({
+var AcademicGroupsRouter = Backbone.Router.extend({
 
     position : {
         year : null,
@@ -138,7 +138,6 @@ var AcademicGroupView = View.extend({
         this.$header = options.$header;
         this.$body = options.$body;
         this.render();
-        this.listenTo(this.model, "change", this.render);
     },
 
     render : function (options) {
@@ -352,9 +351,6 @@ var AcademicGroupsList = View.extend({
     },
 
     configure : function (options) {
-        this.listenTo(this.collection, "reset", this.render);
-        this.listenTo(this.collection, "add", this.render);
-        this.listenTo(this.collection, "remove", this.render);
         this.listenTo(this.collection, "sort", this.render);
         this.listenTo(this.collection, "change:year", this.render);
     },
@@ -363,12 +359,12 @@ var AcademicGroupsList = View.extend({
         console.log("Render out the academic group list");
         this.$el.empty();
         this.$el.show();
+        this.$el.append(getTemplate("#list-section-template")({
+            f : this.collection.filter,
+            g : null,
+            year : !this.collection.isEmpty() ? this.collection.first().get("year") : (this.collection.position.year + 1),
+        }));
         if (!this.collection.isEmpty()) {
-            this.$el.append(getTemplate("#list-section-template")({
-                f : this.collection.filter,
-                g : null,
-                year : this.collection.first().get("year"),
-            }));
             this.collection.forEach(function (group) {
                 this.$el.append(getTemplate("#record-template")({
                     f : this.collection.filter,
@@ -413,11 +409,10 @@ var AcademicGroupsFilter = View.extend({
             $el : this.$("#filter-program"),
             template : getTemplate("#programselect-template"),
             searchlistTemplate : getTemplate("#program-searchlist-template"),
-            selectedCollection : new EducationPrograms(),
             max : 1,
         });
         this.listenTo(this.program.selectedCollection, "add", function (selected) {
-            this.navigate(_.extend({}, this.filter, { programid : selected.first().id });
+            this.navigate(_.extend({}, this.filter, { programid : selected.first().id }));
         });
         this.listenTo(this.program.selectedCollection, "remove", function (selected) {
             this.navigate(_.omit(this.filter, "programid"));
@@ -486,24 +481,31 @@ var GroupDialog = Dialog.extend({
 
     configure : function (options) {
         this.responsible = new UserSelect({
-            $el : this.$("[role='select-responsible']"),
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
-            selectedCollection : new Users(),
             defValue : user.id ? user.toJSON() : null,
             max : 1,
         });
         this.assistants = new UserSelect({
-            $el : this.$("[role='select-assistants']"),
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
-            selectedCollection : new Users(),
+        });
+        this.program = new EducationProgramSelect({
+            template : getTemplate("#programselect-template"),
+            searchlistTemplate : getTemplate("#program-searchlist-template"),
+            max : 1,
+        });
+        this.selectorValidations.push({
+            selector : this.program,
+            validator : function (programs) {
+                return !_.isEmpty(programs);
+            },
         });
     },
 
     render : function () {
         this.$el.html(getTemplate("#group-dialog-template")({
-            p : this.model.toJSON(),
+            g : this.model.toJSON(),
             minyear : this.minyear,
             maxyear : this.maxyear,
         }));
@@ -511,8 +513,9 @@ var GroupDialog = Dialog.extend({
             min : this.minyear,
             max : this.maxyear,
         }).spinner("value", this.model.get('year') || this.minyear);
-        this.responsible.reset(this.model.get('responsible'));
-        this.assistants.reset(this.model.get('assistants'));
+        this.responsible.reset(this.model.get('responsible'), { $el : this.$("[role='select-responsible']") });
+        this.assistants.reset(this.model.get('assistants'), { $el : this.$("[role='select-assistants']") });
+        this.program.reset(this.model.get("program"), { $el : this.$("[role='select-program']") });
     },
 
     ok : function () {
@@ -520,6 +523,7 @@ var GroupDialog = Dialog.extend({
         this.model.save({
             name : this.$("[name='name']").val(),
             year : Number(this.$("[name='year']").val()),
+            program : _.first(this.program.selectedCollection.pluck('id')),
             responsible : _.first(this.responsible.selectedCollection.pluck('id')),
             assistants : this.assistants.selectedCollection.pluck('id'),
             students : undefined,
@@ -556,10 +560,8 @@ var AddStudentsDialog = Dialog.extend({
 
     configure : function (options) {
         this.students = new UserSelect({
-            $el : this.$("[role='select-students']"),
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
-            selectedCollection : new Users(),
         });
     },
 
@@ -568,7 +570,7 @@ var AddStudentsDialog = Dialog.extend({
         this.$el.html(getTemplate("#add-students-dialog-template", "[role='days']")({
             m : this.model.toJSON(),
         }));
-        this.students.reset(this.model.get('students'));
+        this.students.reset(this.model.get('students'), { $el : this.$("[role='select-students']") });
     },
 
     ok : function () {

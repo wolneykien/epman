@@ -721,8 +721,9 @@
   content: "";
 }
 
-.tool-epman .invalid,
-.tool-epman.dialog .invalid {
+.tool-epman input.invalid,
+.tool-epman textarea.invalid,
+.tool-epman .invalid > .multiselect-box {
   border-color: #ff8800;
 }
 
@@ -904,4 +905,9 @@
 
 .tool-epman .buttons {
   text-align: left;
+}
+
+.tool-epman .filter-input > div {
+  display: inline-block;
+  width: 22em;
 }

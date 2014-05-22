@@ -136,10 +136,11 @@ class epman_group_external extends crud_external_api {
             $limit);
       } else {
         $groups = $DB->get_records_sql(
-            'select g.id, '.
+            'select g.id, g.name, g.year, '.
             'g.programid as programid, '.
             'p.name as programname, '.
             'p.year as programyear, '.
+            'g.responsibleid as responsibleid, '.
             'u.username, u.firstname, u.lastname, u.email '.
             'from {tool_epman_group} g '.
             'left join {tool_epman_program} p '.
@@ -275,7 +276,7 @@ class epman_group_external extends crud_external_api {
         if ($program) {
           $group['program'] = array(
             'id' => $program->id,
-            'name' => $program->fullname,
+            'name' => $program->name,
           );
         }
       }
@@ -299,7 +300,7 @@ class epman_group_external extends crud_external_api {
         '{tool_epman_group_student} gs '.
         'on gs.groupid = g.id '.
         'left join {user} u on u.id = gs.userid '.
-        'where g.id = ? and ga.userid is not null '.
+        'where g.id = ? and gs.userid is not null '.
         'order by u.username',
         array('id' => $id));
 
@@ -449,10 +450,9 @@ class epman_group_external extends crud_external_api {
           'name' => new external_value(
             PARAM_TEXT,
             'Academic group name'),
-          'programid' => new external_value(
+          'program' => new external_value(
             PARAM_INT,
-            'Education program ID',
-            VALUE_OPTIONAL),
+            'Education program ID'),
           'year' => new external_value(
             PARAM_INT,
             'Actual learning year',
@@ -469,6 +469,14 @@ class epman_group_external extends crud_external_api {
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
+            VALUE_OPTIONAL
+          ),
+          'students' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of a student user'
+            ),
+            'Array of the student user IDs',
             VALUE_OPTIONAL
           ),
         )),
@@ -488,6 +496,7 @@ class epman_group_external extends crud_external_api {
         array('model' => $model)
       );
       $group = $params['model'];
+      $group['programid'] = $group['program'];
       $group['responsibleid'] = $group['responsible'];
 
       program_exists($group['programid']);
@@ -499,6 +508,13 @@ class epman_group_external extends crud_external_api {
         clear_group_assistants($group['id']);
         foreach ($group['assistants'] as $userid) {
           $DB->insert_record('tool_epman_group_assistant', array('userid' => $userid, 'groupid' => $group['id']), false);
+        }
+      }
+
+      if (array_key_exists('students', $group)) {
+        clear_group_students($group['id']);
+        foreach ($group['students'] as $userid) {
+          $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
       }
 
@@ -536,7 +552,7 @@ class epman_group_external extends crud_external_api {
             PARAM_TEXT,
             'Academic group name',
             VALUE_OPTIONAL),
-          'programid' => new external_value(
+          'program' => new external_value(
             PARAM_INT,
             'Education program ID',
             VALUE_OPTIONAL),
@@ -555,6 +571,14 @@ class epman_group_external extends crud_external_api {
               'ID of an assistant user'
             ),
             'Array of the assistant user IDs',
+            VALUE_OPTIONAL
+          ),
+          'students' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of a student user'
+            ),
+            'Array of the student user IDs',
             VALUE_OPTIONAL
           ),
         )),
@@ -576,6 +600,7 @@ class epman_group_external extends crud_external_api {
       $id = $params['id'];
       $group = $params['model'];
       $group['id'] = $id;
+      $group['programid'] = $group['program'];
       $group['responsibleid'] = $group['responsible'];
 
       group_exists($id);
@@ -609,6 +634,13 @@ class epman_group_external extends crud_external_api {
         clear_group_assistants($group['id']);
         foreach ($group['assistants'] as $userid) {
           $DB->insert_record('tool_epman_group_assistant', array('userid' => $userid, 'groupid' => $group['id']), false);
+        }
+      }
+
+      if (array_key_exists('students', $group)) {
+        clear_group_students($group['id']);
+        foreach ($group['students'] as $userid) {
+          $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
       }
 

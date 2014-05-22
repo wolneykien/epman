@@ -65,6 +65,7 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
 
 $PAGE->requires->js('/admin/tool/epman/js/common.js');
 $PAGE->requires->js('/admin/tool/epman/js/userselect.js');
+$PAGE->requires->js('/admin/tool/epman/js/programselect.js');
 $PAGE->requires->js('/admin/tool/epman/js/groups.js');
 
 admin_externalpage_setup('toolepman');
@@ -89,7 +90,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
 <div id="record-template" style="display: none;">
   <div id="group-<@= g.id @>" class="record collapsed">
     <div data-id="<@= g.id @>" class="record-header show-more">
-      <@= p.name @>
+      <@= g.name @>
       <@ if (!f.my || !g.responsible || g.responsible.id != <?php echo $USER->id; ?>) { @>
         <div class="link-button right responsible">
           <@ if (g.responsible && g.responsible.id) { @>
@@ -128,7 +129,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   <div class="name-value">
     <span><?php echo get_string('Responsible', 'tool_epman'); ?></span>
     <@ if (g.responsible && g.responsible.id) { @>
-    <a href="<@= '/user/profile.php?id=' + p.responsible.id @>">
+    <a href="<@= '/user/profile.php?id=' + g.responsible.id @>">
       <@= g.responsible.firstname + " " + g.responsible.lastname @>
     </a>
     <@ } else { @>
@@ -187,7 +188,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
           <?php echo get_string('Add_students', 'tool_epman'); ?>
         </a>
       </div>
-      <@ if (!_.isEmpty(p.students)) { @>
+      <@ if (!_.isEmpty(g.students)) { @>
       <div role="delete-students-button" class="link-button light nolink delete">
         <a href="javascript:void(0)">
           <?php echo get_string('Delete_students', 'tool_epman'); ?>
@@ -248,12 +249,15 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
 <?php include "../include/programselect.php"; ?>
 
 <!-- Dialog templates -->
+
+<?php include "../include/dialogs.php"; ?>
+
 <div id="group-dialog-template" style="display: none;">
   <div class="tool-epman dialog" title="<@= g.id ? '<?php echo get_string('Academic_group_edit', 'tool_epman'); ?>' : '<?php echo get_string('New_academic_group', 'tool_epman'); ?>' @>">
     <table class="name-value-table">
       <tr class="name-value">
         <td><?php echo get_string('groupName', 'tool_epman'); ?></td>
-        <td class="fill"><input type="text" name="name" value="<@= g.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_program', 'tool_epman'); ?>"></input></td>
+        <td class="fill"><input type="text" name="name" value="<@= g.name @>" placeholder="<?php echo get_string('Enter_the_name_of_the_group', 'tool_epman'); ?>"></input></td>
         <td><?php echo get_string('Year', 'tool_epman'); ?></td>
         <td><input type="text" class="year-spinner" name="year" value="<@= g.year @>" placeholder="<@= '' + minyear + ' - ' + maxyear @>"></input></td>
       </tr>
@@ -310,12 +314,12 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   <div role="page-header" id="filter" class="panel vspace">
     <div class="year-links">
     </div>
-    <span id="filter-program">
+    <span id="filter-program" class="filter-input">
     </span>
     <span id="filter-my" class="link-button switch right responsible">
       <?php echo get_string('mygroups', 'tool_epman'); ?>
     </span>
-    <div class="link-button nolink add">
+    <div class="link-button nolink add" style="display: block;">
       <a id="add-group-button" href="javascript:void(0)">
         <?php echo get_string('Add_group', 'tool_epman'); ?>
       </a>

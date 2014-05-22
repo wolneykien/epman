@@ -237,7 +237,6 @@ var EducationProgramView = View.extend({
         this.$header = options.$header;
         this.$body = options.$body;
         this.render();
-        this.listenTo(this.model, "change", this.render);
     },
 
     render : function (options) {
@@ -519,9 +518,6 @@ var EducationProgramsList = View.extend({
     },
 
     configure : function (options) {
-        this.listenTo(this.collection, "reset", this.render);
-        this.listenTo(this.collection, "add", this.render);
-        this.listenTo(this.collection, "remove", this.render);
         this.listenTo(this.collection, "sort", this.render);
         this.listenTo(this.collection, "change:year", this.render);
     },
@@ -648,18 +644,14 @@ var ProgramDialog = Dialog.extend({
 
     configure : function (options) {
         this.responsible = new UserSelect({
-            $el : this.$("[role='select-responsible']"),
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
-            selectedCollection : new Users(),
             defValue : user.id ? user.toJSON() : null,
             max : 1,
         });
         this.assistants = new UserSelect({
-            $el : this.$("[role='select-assistants']"),
             template : getTemplate("#userselect-template"),
             searchlistTemplate : getTemplate("#user-search-list-template"),
-            selectedCollection : new Users(),
         });
     },
 
@@ -673,8 +665,8 @@ var ProgramDialog = Dialog.extend({
             min : this.minyear,
             max : this.maxyear,
         }).spinner("value", this.model.get('year') || this.minyear);
-        this.responsible.reset(this.model.get('responsible'));
-        this.assistants.reset(this.model.get('assistants'));
+        this.responsible.reset(this.model.get('responsible'), { $el : this.$("[role='select-responsible']") });
+        this.assistants.reset(this.model.get('assistants'), { $el : this.$("[role='select-assistants']") });
     },
 
     ok : function () {
@@ -720,10 +712,8 @@ var ModuleDialog = Dialog.extend({
 
     configure :  function (options) {
         this.courses = new CourseSelect({
-            $el : this.$("[role='select-courses']"),
             template : getTemplate("#courseselect-template"),
             searchlistTemplate : getTemplate("#course-searchlist-template"),
-            selectedCollection : new Courses(),
         });
     },
 
@@ -754,7 +744,7 @@ var ModuleDialog = Dialog.extend({
         this.$("[name='length']").spinner({
             min : 1,
         }).spinner("value", this.model.get('length') || 30);
-        this.courses.reset(this.model.get('courses'));
+        this.courses.reset(this.model.get('courses'), { $el : this.$("[role='select-courses']") });
     },
 
     fix : function ($input) {

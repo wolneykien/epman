@@ -92,7 +92,7 @@ $string['Select_none'] = 'Select none';
 
 $string['grouplistheading'] = 'Academic groups';
 $string['Edit_group'] = 'Edit group';
-$string['Delete_group'] = 'Delete program';
+$string['Delete_group'] = 'Delete group';
 $string['Delete_the_academic_group_Q'] = 'Delete the academic group?';
 $string['Students'] = 'Students';
 $string['Add_students'] = 'Add students';
@@ -115,4 +115,6 @@ $string['Last_name'] = 'Last name';
 $string['First_name'] = 'First name';
 $string['Email'] = 'E-Mail';
 $string['Add_to_list'] = 'Add to list';
+$string['Education_program'] = 'Education program';
+$string['Enter_the_name_of_the_group'] = "Enter the name of the group";
 ?>

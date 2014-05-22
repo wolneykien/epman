@@ -25,7 +25,7 @@
 ?>
 
 <!-- Program-select templates -->
-<div id="programseselect-template" style="display: none;">
+<div id="programselect-template" style="display: none;">
   <div role="multiselect-box" class="multiselect-box">
   <@ _.each(collection, function (program) {
         if (program.id) { @>

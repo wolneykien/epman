@@ -24,30 +24,6 @@ var Courses = Collection.extend({
 
 var CourseSelect = MultiSelect.extend({
 
-    configure : function (options) {
-        if (!this.searchCollection) {
-            this.searchCollection = new Courses();
-        }
-    },
-
-    reset : function (arg) {
-        var courses = [];
-        if (arg) {
-            if (!_.isArray(arg)) {
-                arg = [arg];
-            }
-            courses = _.map(arg, function (course) {
-                if (_.isObject(course)) {
-                    return new Course(course);
-                } else if (_.isNumber(course)) {
-                    return new Course({ id : course }, { fetch : true });
-                }
-                return null;
-            });
-        }
-        this.selectedCollection.reset(_.filter(courses, function (course) {
-            return course != null;
-        }));
-    },
+    collectionType : Courses,
 
 });

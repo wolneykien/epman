@@ -327,7 +327,6 @@ var Model = Backbone.Model.extend({
     },
 
     sync : function (method, model, options) {
-        options = _.defaults(options || {}, { wait : true });
         var onerror = options.error;
         var onsuccess = options.success;
         _.extend(options, {
@@ -415,7 +414,6 @@ var Collection = Backbone.Collection.extend({
         var onerror = options.error;
         options.error = undefined;
         options = _.defaults(options, {
-            wait : true,
             error : function (xhr) {
                 logXHR(xhr);
                 (new RestErrorDialog()).open({ xhr : xhr });
@@ -499,20 +497,33 @@ var Dialog = Backbone.View.extend({
 
     events : {
         "input *" : function (e) {
-            this.onInput(e, $(e.target));
+            if (!this.filterEvent(e)) {
+                return false;
+            } else {
+                this.onInput($(e.target), $(e.target).val());
+            }
         },
         "change *" : function (e) {
-            this.onChange(e, $(e.target));
+            if (!this.filterEvent(e)) {
+                return false;
+            } else {
+                this.onChange($(e.target), $(e.target).val());
+            }
         },
         "spin *" : function (e, spinner) {
             var $spinner = $(e.target);
             $spinner.spinner("value", spinner.value);
-            this.onChange(e, $spinner);
+            if (!this.filterEvent(e, spinner.value)) {
+                return false;
+            } else {
+                this.onChange($spinner, spinner.value);
+            }
             return false;
         },
     },
 
     validations : {},
+    selectorValidations : [],
 
     initialize : function (options) {
         _.extend(this, _.pick(options || {},
@@ -597,9 +608,9 @@ var Dialog = Backbone.View.extend({
         }
     },
 
-    validate : function ($input) {
+    validate : function (input, val) {
         this.undelegateEvents();
-        _.each(this.fix($input), function ($el) {
+        _.each(this.fix(input, val), function ($el) {
             if ($el.size() > 0) {
                 this.updateValue($el[0], $el.val());
             }
@@ -607,7 +618,7 @@ var Dialog = Backbone.View.extend({
         var valid = _.reduce(this.validations, function (valid, validator, selector) {
             var $element = this.$(selector);
             validator = _.bind(validator, this);
-            var passed = validator($element.val(), $element, $input);
+            var passed = validator(val || $element.val(), $element, input);
             this.toggleValid($element, passed);
             if (!passed) {
                 return false;
@@ -615,11 +626,20 @@ var Dialog = Backbone.View.extend({
                 return valid;
             }
         }, true, this);
+        valid = _.reduce(this.selectorValidations, function (valid, validation) {
+            var passed = validation.validator(validation.selector.selectedCollection.toJSON(), validation.selector.$el, input);
+            this.toggleValid(validation.selector.$el, passed);
+            if (!passed) {
+                return false;
+            } else {
+                return valid;
+            }
+        }, valid, this);
         this.delegateEvents();
         return valid;
     },
 
-    fix : function ($input) {
+    fix : function (input, val) {
         return [];
     },
 
@@ -627,26 +647,28 @@ var Dialog = Backbone.View.extend({
         $element.toggleClass("invalid", !flag);
     },
 
-    onInput : function (e, $input) {
-        if (!this.filterEvent(e)) {
-            return false;
-        }
-        this.toggleButton("ok", this.validate($input));
+    onInput : function (input, val) {
+        this.toggleButton("ok", this.validate(input, val));
     },
 
-    onChange : function (e, $input) {
-        if (!this.filterEvent(e)) {
-            return false;
-        }
-        this.toggleButton("ok", this.validate($input));
+    onChange : function (input, val) {
+        this.toggleButton("ok", this.validate(input, val));
     },
 
     onOpen : function () {
+        _.each(this.selectorValidations, function (validation) {
+            this.listenTo(validation.selector.selectedCollection, "add", function () {
+                this.onChange(validation.selector);
+            });
+            this.listenTo(validation.selector.selectedCollection, "remove", function () {
+                this.onChange(validation.selector);
+            });
+        }, this);
         this.toggleButton("ok", this.validate());
     },
 
-    filterEvent : function (e) {
-        var val = $(e.target).val();
+    filterEvent : function (e, val) {
+        val = val || $(e.target).val();
         if ($.data(e.target, "prevVal") == val) {
             return false;
         } else {
@@ -861,8 +883,10 @@ var MultiSelect = Backbone.View.extend({
     },
 
     initialize : function (options) {
-        _.extend(this, _.pick(options || {},
-            'selectedCollection',
+        _.extend(this, _.pick(_.defaults(options || {}, {
+            searchCollection : (this.collectionType ? new this.collectionType() : undefined),
+            selectedCollection : (this.collectionType ? new this.collectionType() : undefined),
+        }), 'selectedCollection',
             'searchCollection',
             'defValue',
             'max',
@@ -951,6 +975,35 @@ var MultiSelect = Backbone.View.extend({
 
     formatResults : function (keyword, collection) {
         return findAllMatches(keyword, collection.toJSON());
+    },
+
+    reset : function (arg, options) {
+        var models = [];
+        if (arg) {
+            if (!_.isArray(arg)) {
+                arg = [arg];
+            }
+            models = _.map(arg, function (arg) {
+                if (_.isObject(arg)) {
+                    if (_.isFunction(arg.toJSON)) {
+                        arg = arg.toJSON();
+                    }
+                    return new this.selectedCollection.model(arg);
+                } else if (_.isNumber(arg)) {
+                    return new this.selectedCollection.model({ id : arg }, { fetch : true });
+                }
+                return null;
+            }, this);
+        }
+        if (options) {
+            if (options.el && !options.$el) {
+                options.$el = $(options.el);
+            }
+            _.extend(this, _.pick(options, "el", "$el"));
+        }
+        this.selectedCollection.reset(_.filter(models, function (model) {
+            return model != null;
+        }));
     },
 
 });
