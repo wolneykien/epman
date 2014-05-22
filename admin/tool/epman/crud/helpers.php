@@ -343,8 +343,7 @@ class permission_exception extends moodle_exception {
  * Checks that the given field is not being modified.
  */
 function value_unchanged($currentmodel, $newmodel, $key, $title) {
-  if (isset($newmodel[$key]) &&
-      $currentmodel[$key] != $newmodel[$key]) {
+  if (array_key_exists($key, $newmodel) && $currentmodel[$key] != $newmodel[$key]) {
     throw new permission_exception("You don't have the right to change the ".($title ? $title : $key));
   }
 }

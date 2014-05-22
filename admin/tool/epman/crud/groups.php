@@ -117,7 +117,7 @@ class epman_group_external extends crud_external_api {
             'max(u.email) as email '.
             'from {tool_epman_group} g '.
             'left join {tool_epman_group_assistant} ga '.
-            'on ga.programid = g.id '.
+            'on ga.groupid = g.id '.
             'left join {tool_epman_program} p '.
             'on p.id = g.programid '.
             'left join {user} u '.
@@ -167,8 +167,6 @@ class epman_group_external extends crud_external_api {
               'name' => $group['programname'],
               //              'year' => $group['programyear'],
             );
-          } else {
-            $group['program'] = null;
           }
           unset($group['programid']);
           $group['responsible'] = array(
@@ -301,7 +299,7 @@ class epman_group_external extends crud_external_api {
         'on gs.groupid = g.id '.
         'left join {user} u on u.id = gs.userid '.
         'where g.id = ? and gs.userid is not null '.
-        'order by u.username',
+        'order by u.lastname',
         array('id' => $id));
 
       $group['students'] = array();
@@ -322,7 +320,7 @@ class epman_group_external extends crud_external_api {
         'on ga.groupid = g.id '.
         'left join {user} u on u.id = ga.userid '.
         'where g.id = ? and ga.userid is not null '.
-        'order by u.username',
+        'order by u.lastname',
         array('id' => $id));
 
       $group['assistants'] = array();
@@ -600,8 +598,13 @@ class epman_group_external extends crud_external_api {
       $id = $params['id'];
       $group = $params['model'];
       $group['id'] = $id;
-      $group['programid'] = $group['program'];
-      $group['responsibleid'] = $group['responsible'];
+
+      if (array_key_exists('program', $group)) {
+        $group['programid'] = $group['program'];
+      }
+      if (array_key_exists('responsible', $group)) {
+        $group['responsibleid'] = $group['responsible'];
+      }
 
       group_exists($id);
       $group0 = $DB->get_record('tool_epman_group', array('id' => $id));
