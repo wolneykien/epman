@@ -367,6 +367,10 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         <td><input type="text" name="startdate" placeholder="<?php echo get_string('dateFormatLabel', 'tool_epman'); ?>"></input></td>
         <td><?php echo get_string('moduleEnd', 'tool_epman'); ?></td>
         <td><input type="text" name="enddate" placeholder="<?php echo get_string('dateFormatLabel', 'tool_epman'); ?>"></input></td>
+      </tr>
+    </table>
+    <table class="name-value-table">
+      <tr class="name-value">
         <td><?php echo get_string('moduleLength', 'tool_epman'); ?></td>
         <td><table><tr>
           <td><input type="text" class="length-spinner" name="length" value="<@= m.length @>"></input></td>
