@@ -35,7 +35,8 @@ class crud_external_api extends external_api {
    */
   public static function validate_parameters(external_description $description, $params) {
     $newparams = self::cleanup_parameters($description, $params);
-    return parent::validate_parameters($description, $newparams);
+    $validated = parent::validate_parameters($description, $newparams);
+    return self::fillup_parameters($description, $validated);
   }
 
   protected static function cleanup_parameters(external_description $description, $params) {
@@ -59,6 +60,31 @@ class crud_external_api extends external_api {
         if (!is_null($newvalue)) {
           $newparams[] = $newvalue;
         }
+      }
+    } else {
+      $newparams = $params;
+    }
+
+    return $newparams;
+  }
+
+  protected static function fillup_parameters(external_description $description, $params) {
+    if (is_null($params)) {
+      return null;
+    }
+    if ($description instanceof external_single_structure) {
+      $newparams = array();
+      foreach ($description->keys as $key => $val_desc) {
+        if (!array_key_exists($key, $params)) {
+          $newparams[$key] = null;
+        } else {
+          $newparams[$key] = self::fillup_parameters($description->keys[$key], $params[$key]);
+        }
+      }
+    } elseif ($description instanceof external_multiple_structure) {
+      $newparams = array();
+      foreach ($params as $param) {
+        $newparams[] = self::fillup_parameters($description->content, $param);
       }
     } else {
       $newparams = $params;
