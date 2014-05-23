@@ -184,6 +184,10 @@ function logXHR (xhr) {
     }
 }
 
+function gotop() {
+    window.scrollTo(0, 0);
+}
+
 function checkFooter () {
     var $main = $("#tool-epman");
     var $filterPanel = $main.find("[role='page-header']");
@@ -193,6 +197,9 @@ function checkFooter () {
             { left : $filterPanel.offset().left,
               width : $filterPanel.width(),
             });
+        var $topbtn = $footerPanel.find("[role='gotop-button']");
+        $topbtn.off("click");
+        $topbtn.on("click", gotop);
         $footerPanel.show();
     } else {
         $footerPanel.hide();

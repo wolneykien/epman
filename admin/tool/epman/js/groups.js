@@ -21,13 +21,6 @@ var AcademicGroupsRouter = Backbone.Router.extend({
             this.handleRoute({ my : false, programid : programid }, { year : year });
         },
         "(:groupid)" : function (groupid) {
-            if (window.location.hash != "") {
-                var fragment = window.location.hash.replace(/^#/, "");
-                if (fragment.length > 1 && fragment.substr(-1) == "#") {
-                    this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
-                    return;
-                }
-            }
             this.handleRoute({ my : false }, { groupid : groupid });
         },
     },
@@ -40,7 +33,21 @@ var AcademicGroupsRouter = Backbone.Router.extend({
         this.listenTo(this.filter, "norender", this.jump);
     },
 
+    fixRoute : function () {
+        if (window.location.hash != "") {
+            var fragment = window.location.hash.replace(/^#/, "");
+            if (fragment.length > 1 && fragment.substr(-1) == "#") {
+                this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
+                return true;
+            }
+        }
+        return false;
+    },
+
     handleRoute : function (filter, position) {
+        if (this.fixRoute()) {
+            return;
+        }
         var params = $.params();
         if (!_.isEmpty(params) && params.groupid) {
             window.location.assign(window.location.pathname + "#" + params.groupid);
@@ -58,15 +65,11 @@ var AcademicGroupsRouter = Backbone.Router.extend({
     },
 
     jump : function () {
-        var $el = null;
         if (this.position.groupid) {
             this.groupList.expand(this.position.groupid, { jump : true });
             this.navigate(window.location.hash + "#", { trigger : false });
         } else if (this.position.year) {
-            $el = $("#year-" + this.position.year);
-        }
-        if ($el && $el.size() > 0) {
-            $el[0].scrollIntoView();
+            gotop();
             this.navigate(window.location.hash + "#", { trigger : false });
         }
     },
@@ -99,29 +102,29 @@ var AcademicGroups = Collection.extend({
     position : {},
 
     load : function (filter, position) {
-        if (position.year) {
-            position.year = position.year - 1;
-        }
         this.filter = filter;
-        this.position = position;
-        if (_.isUndefined(position.groupid) && _.isUndefined(position.year)) {
+        this.position = _.clone(position);
+        if (this.position.year) {
+            this.position.year = this.position.year - 1;
+        }
+        if (_.isUndefined(this.position.groupid) && _.isUndefined(this.position.year)) {
             this.position.year = 0;
         }
-        if (filter.my) {
+        if (this.filter.my) {
             _.extend(this.urlParams, { userid : user.id });
         } else {
             this.urlParams = _.omit(this.urlParams, "userid");
         }
-        if (filter.programid) {
-            _.extend(this.urlParams, { programid : filter.programid });
+        if (this.filter.programid) {
+            _.extend(this.urlParams, { programid : this.filter.programid });
         } else {
             this.urlParams = _.omit(this.urlParams, "programid");
         }
         if (this.position.groupid) {
-            _.extend(this.urlParams, { yeargroupid : position.groupid });
+            _.extend(this.urlParams, { yeargroupid : this.position.groupid });
         } else {
             this.urlParams = _.omit(this.urlParams, "yeargroupid");
-            _.extend(this.urlParams, { year : position.year });
+            _.extend(this.urlParams, { year : this.position.year });
         }
         console.log("Fetching groups from " + this.url());
         this.fetch({ reset : true });
@@ -433,7 +436,7 @@ var AcademicGroupsFilter = View.extend({
         options = _.defaults(options || {}, {
             navigate : true,
         });
-        if (!_.isEqual(this.filter, filter) && !_.isEqual(this.position, position)) {
+        if (!_.isEqual(this.filter, filter) || !_.isEqual(this.position, position)) {
             console.log("Filter: " + JSON.stringify(filter) + ", Position: " + JSON.stringify(position));
             if (_.isUndefined(user.id) || _.isNull(user.id)) {
                 _.extend(filter, { my : false });

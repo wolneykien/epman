@@ -336,7 +336,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   <div role="page-footer" class="page-footer" style="display: none;">
     <span class="year-links">
     </span>
-    <a class="link-button right gotop" onclick="document.getElementById('filter').scrollIntoView();">
+    <a role="gotop-button" class="link-button right gotop" href="javascript:void(0)">
       <?php echo get_string('gotop', 'tool_epman'); ?>
     </a>
   </div>

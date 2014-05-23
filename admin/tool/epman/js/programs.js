@@ -21,13 +21,6 @@ var EducationProgramsRouter = Backbone.Router.extend({
             this.handleRoute({ my : false }, { year : year });
         },
         "(:programid)" : function (programid) {
-            if (window.location.hash != "") {
-                var fragment = window.location.hash.replace(/^#/, "");
-                if (fragment.length > 1 && fragment.substr(-1) == "#") {
-                    this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
-                    return;
-                }
-            }
             this.handleRoute({ my : false }, { programid : programid });
         },
     },
@@ -40,7 +33,21 @@ var EducationProgramsRouter = Backbone.Router.extend({
         this.listenTo(this.filter, "norender", this.jump);
     },
 
+    fixRoute : function () {
+        if (window.location.hash != "") {
+            var fragment = window.location.hash.replace(/^#/, "");
+            if (fragment.length > 1 && fragment.substr(-1) == "#") {
+                this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
+                return true;
+            }
+        }
+        return false;
+    },
+
     handleRoute : function (filter, position) {
+        if (this.fixRoute()) {
+            return;
+        }
         var params = $.params();
         if (!_.isEmpty(params) && params.programid) {
             window.location.assign(window.location.pathname + "#" + params.programid);
