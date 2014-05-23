@@ -66,7 +66,7 @@ class epman_program_external extends crud_external_api {
    *
    * @return array of education programs
    */
-    public static function list_programs($userid, $like, $skip = 0, $limit = null) {
+    public static function list_programs($userid = 0, $like = null, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
@@ -98,9 +98,9 @@ class epman_program_external extends crud_external_api {
             'on pa.programid = p.id '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.
-            'where (p.responsibleid = ? or pa.userid = ?) '.
+            'where (p.responsibleid = ? or pa.userid = ?)'.
             ($like ? 'and p.name like ?' : '').
-            'group by p.id '.
+            ' group by p.id '.
             'order by year, name',
             array_merge(array($userid, $userid), ($like ? array($like) : array())),
             $skip,
@@ -113,7 +113,7 @@ class epman_program_external extends crud_external_api {
             'left join {user} u '.
             'on u.id = p.responsibleid '.
             ($like ? 'where p.name like ?' : '').
-            'order by year, name',
+            ' order by year, name',
             ($like ? array($like) : null),
             $skip,
             $limit);

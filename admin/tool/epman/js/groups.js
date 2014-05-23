@@ -105,10 +105,10 @@ var AcademicGroups = Collection.extend({
         this.filter = filter;
         this.position = _.clone(position);
         if (this.position.year) {
-            this.position.year = this.position.year - 1;
+            this.position.year = this.position.year;
         }
         if (_.isUndefined(this.position.groupid) && _.isUndefined(this.position.year)) {
-            this.position.year = 0;
+            this.position.year = 1;
         }
         if (this.filter.my) {
             _.extend(this.urlParams, { userid : user.id });
@@ -368,7 +368,7 @@ var AcademicGroupsList = View.extend({
         this.$el.append(getTemplate("#list-section-template")({
             f : this.collection.filter,
             g : null,
-            year : !this.collection.isEmpty() ? this.collection.first().get("year") : (this.collection.position.year + 1),
+            year : !this.collection.isEmpty() ? this.collection.first().get("year") : this.collection.position.year,
         }));
         if (!this.collection.isEmpty()) {
             this.collection.forEach(function (group) {

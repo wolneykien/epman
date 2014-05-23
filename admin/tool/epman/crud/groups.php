@@ -78,7 +78,7 @@ class epman_group_external extends crud_external_api {
    *
    * @return array of education groups
    */
-  public static function list_groups($userid, $programid, $year, $yeargroupid, $like, $skip = 0, $limit = null) {
+  public static function list_groups($userid = null, $programid = null, $year = 0, $yeargroupid = null, $like = null, $skip = 0, $limit = null) {
       global $DB;
 
       $params = self::validate_parameters(
@@ -122,11 +122,11 @@ class epman_group_external extends crud_external_api {
             'on p.id = g.programid '.
             'left join {user} u '.
             'on u.id = g.responsibleid '.
-            'where g.responsibleid = ? or ga.userid = ? '.
-            ($programid ? ' and g.programid = ? ' : '').
-            ($year ? ' and g.year = ? ' : '').
-            ($like ? 'and p.name like ?' : '').
-            'group by p.id '.
+            'where g.responsibleid = ? or ga.userid = ?'.
+            ($programid ? ' and g.programid = ?' : '').
+            ($year ? ' and g.year = ?' : '').
+            ($like ? 'and g.name like ?' : '').
+            ' group by p.id '.
             'order by year, name',
             array_merge(array($userid, $userid),
                         ($programid ? array($programid) : array()),
@@ -135,6 +135,9 @@ class epman_group_external extends crud_external_api {
             $skip,
             $limit);
       } else {
+        $where = array_merge(($programid ? array('g.programid = ?') : array()),
+                             ($year ? array('g.year = ?') : array()),
+                             ($like ? array('g.name like ?') : array()));
         $groups = $DB->get_records_sql(
             'select g.id, g.name, g.year, '.
             'g.programid as programid, '.
@@ -147,10 +150,8 @@ class epman_group_external extends crud_external_api {
             'on p.id = g.programid '.
             'left join {user} u '.
             'on u.id = g.responsibleid '.
-            ($programid ? ' and g.programid = ? ' : '').
-            ($year ? ' and g.year = ? ' : '').
-            ($like ? 'and p.name like ?' : '').
-            'order by year, name',
+            (!empty($where) ? 'where '.implode(' and ', $where) : '').
+            ' order by year, name',
             array_merge(($programid ? array($programid) : array()),
                         ($year ? array($year) : array()),
                         ($like ? array($like) : array())),
