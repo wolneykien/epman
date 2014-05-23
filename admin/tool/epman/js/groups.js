@@ -219,11 +219,12 @@ var AcademicGroupView = View.extend({
                             yes : function () {
                                 self.model.save({
                                     students : _.map(_.filter(studentMarkers, function (m) {
-                                        return _.first(_.values(m));
+                                        return !_.first(_.values(m));
                                     }), function (m) {
                                         return _.first(_.keys(m));
                                     }),
                                 }, {
+                                    wait : true,
                                     patch : true,
                                 });
                                 self.render({ action : { "return" : true } });
