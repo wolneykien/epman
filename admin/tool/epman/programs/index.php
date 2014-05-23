@@ -113,7 +113,7 @@ echo $OUTPUT->heading(get_string('programlistheading', 'tool_epman'));
         </a>
       </div>
       <div class="link-button right groups">
-        <a href="../groups/index.php/#programs/<@= p.id @>">
+        <a href="../groups/index.php#programs/<@= p.id @>">
           <?php echo get_string('Groups', 'tool_epman'); ?>
         </a>
       </div>

@@ -328,6 +328,9 @@ var Model = Backbone.Model.extend({
         _.extend(this.urlParams, options.restParams);
         this.undo = {};
         this.configure(attrs, options);
+        if (options.fetch) {
+            this.fetch({ wait : options.wait });
+        }
     },
 
     configure : function (attrs, options) {
@@ -906,6 +909,7 @@ var MultiSelect = Backbone.View.extend({
         this.listenTo(this.selectedCollection, "reset", this.render);
         this.listenTo(this.selectedCollection, "add", this.render);
         this.listenTo(this.selectedCollection, "remove", this.render);
+        this.listenTo(this.selectedCollection, "change", this.render);
         this.listenTo(this.searchCollection, "reset", this.update);
         this.listenTo(this.searchCollection, "add", this.update);
         this.listenTo(this.searchCollection, "remove", this.update);
@@ -996,7 +1000,7 @@ var MultiSelect = Backbone.View.extend({
                     }
                     return new this.selectedCollection.model(arg);
                 } else if (_.isNumber(arg)) {
-                    return new this.selectedCollection.model({ id : arg }, { fetch : true });
+                    return new this.selectedCollection.model({ id : arg }, { fetch : true, wait : true });
                 }
                 return null;
             }, this);

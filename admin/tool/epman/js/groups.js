@@ -11,7 +11,7 @@ var AcademicGroupsRouter = Backbone.Router.extend({
     },
 
     routes : {
-        "(/programs/:programid)(/years/:year)" : function (programid, year) {
+        "programs/:programid(/years/:year)" : function (programid, year) {
             this.handleRoute({ my : false, programid : programid }, { year : year });
         },
         "my(/programs/:programid)(/years/:year)" : function (programid, year) {
@@ -52,6 +52,9 @@ var AcademicGroupsRouter = Backbone.Router.extend({
         if (!_.isEmpty(params) && params.groupid) {
             window.location.assign(window.location.pathname + "#" + params.groupid);
         } else {
+            if (filter.programid) {
+                filter.programid = Number(filter.programid) || undefined;
+            }
             var prefix = (filter.my ? "/my" : "/all") + 
                 (filter.programid ? ("/programs/" + filter.programid) : "");
             if (!position.year && !position.groupid) {
@@ -418,7 +421,7 @@ var AcademicGroupsFilter = View.extend({
             max : 1,
         });
         this.listenTo(this.program.selectedCollection, "add", function (selected) {
-            this.navigate(_.extend({}, this.filter, { programid : selected.first().id }));
+            this.navigate(_.extend({}, this.filter, { programid : selected.id }));
         });
         this.listenTo(this.program.selectedCollection, "remove", function (selected) {
             this.navigate(_.omit(this.filter, "programid"));
