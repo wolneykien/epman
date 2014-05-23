@@ -86,7 +86,7 @@ var EducationProgram = Model.extend({
     },
 
     parse : function (resp, options) {
-        if (!this.isNew() && _.isArray(resp.modules)) {
+        if (_.isArray(resp.modules)) {
             var modules = new EducationProgramModules(resp.modules, { programid : this.id });
             resp.modules = modules;
             this.listenTo(modules, "change", function (model, options) {
