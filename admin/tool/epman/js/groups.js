@@ -166,7 +166,12 @@ var AcademicGroupView = View.extend({
         var addColumn = function (students, size, letter) {
             var slice = _.head(students, size);
             $students.append(getTemplate("#student-list-template")({
-                students : slice,
+                students : _.map(slice, function (s) {
+                    return _.defaults(s, {
+                        lastname : "?",
+                        firstname : "?",
+                    });
+                }, this),
                 letter : letter,
                 action : options.action,
             }));
@@ -592,7 +597,10 @@ var AddStudentsDialog = Dialog.extend({
         var self = this;
         this.model.save({
             students : this.students.selectedCollection.pluck("id"),
-        }, { patch :  true });
+        }, {
+            wait : true,
+            patch :  true,
+        });
     },
 
 });
