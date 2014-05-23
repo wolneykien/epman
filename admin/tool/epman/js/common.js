@@ -532,8 +532,9 @@ var Dialog = Backbone.View.extend({
         },
     },
 
+    validations : {},
+
     initialize : function (options) {
-        this.validations = {};
         this.selectorValidations = [];
         _.extend(this, _.pick(options || {},
                   "modal",
@@ -627,7 +628,7 @@ var Dialog = Backbone.View.extend({
         var valid = _.reduce(this.validations, function (valid, validator, selector) {
             var $element = this.$(selector);
             validator = _.bind(validator, this);
-            var passed = validator(val || $element.val(), $element, input);
+            var passed = validator($element.val(), $element, input);
             this.toggleValid($element, passed);
             if (!passed) {
                 return false;
