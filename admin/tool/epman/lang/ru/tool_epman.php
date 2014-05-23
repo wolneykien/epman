@@ -24,6 +24,10 @@
  */
 
 $string['pluginname'] = 'Модуль управления учебным процессом';
+
+$string['Education_program_list'] = 'Обзор учебных программ';
+$string['Academic_groups_list'] = 'Обзор академических групп';
+
 $string['programlistheading'] = 'Учебные программы';
 $string['Responsible'] = 'Ответственный';
 $string['Groups'] = 'Группы';

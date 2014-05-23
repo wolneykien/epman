@@ -32,8 +32,10 @@ $PAGE->set_pagelayout('maintenance');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'tool_epman'));
 ?>
-<a href="programs/index.php">List programs</a>
-<a href="groups/index.php">List groups</a>
+<ul>
+<li><a href="programs/index.php"><?php echo get_string('Education_program_list', 'tool_epman'); ?></a></li>
+<li><a href="groups/index.php"><?php echo get_string('Academic_groups_list', 'tool_epman'); ?></a></li>
+</ul>
 <?php
 echo $OUTPUT->footer();
 ?>

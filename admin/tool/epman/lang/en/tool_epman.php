@@ -24,6 +24,10 @@
  */
 
 $string['pluginname'] = 'Education process management module';
+
+$string['Education_program_list'] = 'Education program list';
+$string['Academic_groups_list'] = 'Academic groups list';
+
 $string['programlistheading'] = 'Education programs';
 $string['Responsible'] = 'Responsible';
 $string['Groups'] = 'Groups';
