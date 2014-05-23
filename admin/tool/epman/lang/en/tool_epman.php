@@ -102,7 +102,6 @@ $string['Delete_selected_students_Q'] = 'Delete selected students?';
 $string['Copy_students'] = 'Copy students';
 $string['Copy_selected_students'] = 'Copy selected students';
 $string['Paste_students'] = 'Paste students';
-$string['Edit_student'] = 'Edit student';
 $string['Academic_group_edit'] = 'Academic group edit';
 $string['New_academic_group'] = 'New academic group';
 $string['nostudents'] = 'no students';
