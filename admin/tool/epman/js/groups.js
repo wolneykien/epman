@@ -530,7 +530,11 @@ var GroupDialog = Dialog.extend({
         }).spinner("value", this.model.get('year') || this.minyear);
         this.responsible.reset(this.model.get('responsible'), { $el : this.$("[role='select-responsible']") });
         this.assistants.reset(this.model.get('assistants'), { $el : this.$("[role='select-assistants']") });
-        this.program.reset(this.model.get("program"), { $el : this.$("[role='select-program']") });
+        var program = this.model.get("program");
+        if (!program) {
+            program = this.collection.filter.programid;
+        }
+        this.program.reset(program, { $el : this.$("[role='select-program']") });
     },
 
     ok : function () {
