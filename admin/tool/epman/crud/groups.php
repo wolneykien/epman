@@ -515,6 +515,7 @@ class epman_group_external extends crud_external_api {
         foreach ($group['students'] as $userid) {
           $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
+        sync_enrolments();
       }
 
       return self::get_group($group['id']);
@@ -646,6 +647,7 @@ class epman_group_external extends crud_external_api {
         foreach ($group['students'] as $userid) {
           $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
+        sync_enrolments();
       }
 
       return self::get_group($group['id']);
@@ -703,6 +705,7 @@ class epman_group_external extends crud_external_api {
       clear_group_students($id);
       clear_group_assistants($id);
       $DB->delete_records('tool_epman_group', array('id' => $id));
+      sync_enrolments();
       
       return true;
     }
