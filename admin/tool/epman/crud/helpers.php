@@ -383,16 +383,22 @@ function sync_new_enrolments() {
     'and ue.userid is null',
     array('name' => $enrol->get_name()));
 
+  $newinstances = array();
   foreach ($newenrols as $newenrol) {
     $userid = $newenrol->userid;
     $courseid = $newenrol->newcourseid;
     if (!isset($newenrol->id)) {
-      $course = new stdObject(array('id' => $courseid));
-      $enrolid = $enrol->add_instance($course);
-      $newenrol = $DB->get_record('enrol', array('id' => $enrolid));
-      $newenrol->newcourseid = $courseid;
-      $newenrol->userid = $userid;
+      if (!array_key_exists($courseid, $newinstances)) {
+        $course = new stdObject(array('id' => $courseid));
+        debugging("Add new epman enrol instance for the course $courseid");
+        $enrolid = $enrol->add_instance($course);
+        $newenrol = $DB->get_record('enrol', array('id' => $enrolid));
+        $newinstances[$courseid] = $newenrol;
+      } else {
+        $newenrol = $newinstances[$courseid];
+      }
     }
+    debugging("Enrol the user $userid to the course $courseid");
     $enrol->enrol_user($newenrol, $userid);
   }
   $newenrols->close();
@@ -422,7 +428,8 @@ function sync_old_enrolments() {
     array('name' => $enrol->get_name()));
 
   foreach ($oldenrols as $oldenrol) {
-    $enrol->enrol_user($oldenrol, $oldenrol->userid);
+    debugging("Un-enrol the user $userid from the course $courseid");
+    $enrol->unenrol_user($oldenrol, $oldenrol->userid);
   }
   $oldenrols->close();
 }
