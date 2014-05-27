@@ -93,6 +93,10 @@ class epman_group_external extends crud_external_api {
       $skip = $params['skip'];
       $limit = $params['limit'];
 
+      if ($like) {
+        $like = "%".preg_replace('/s+/', '%', $like)."%";
+      }
+
       if ($yeargroupid) {
         $yeargroup = $DB->get_record('tool_epman_group', array('id' => $yeargroupid));
         if ($yeargroup && $yeargroup->year) {
@@ -122,22 +126,22 @@ class epman_group_external extends crud_external_api {
             'on p.id = g.programid '.
             'left join {user} u '.
             'on u.id = g.responsibleid '.
-            'where g.responsibleid = ? or ga.userid = ?'.
-            ($programid ? ' and g.programid = ?' : '').
-            ($year ? ' and g.year = ?' : '').
-            ($like ? 'and g.name like ?' : '').
+            'where g.responsibleid = :userid1 or ga.userid = :userid2'.
+            ($programid ? ' and g.programid = :programid' : '').
+            ($year ? ' and g.year = :year' : '').
+            ($like ? ' and '.$DB->sql_like('g.name', ':like', false) : '').
             ' group by p.id '.
             'order by year, name',
-            array_merge(array($userid, $userid),
-                        ($programid ? array($programid) : array()),
-                        ($year ? array($year) : array()),
-                        ($like ? array($like) : array())),
+            array_merge(array('userid1' => $userid, 'userid2' => $userid),
+                        ($programid ? array('programid' => $programid) : array()),
+                        ($year ? array('year' => $year) : array()),
+                        ($like ? array('like' => $like) : array())),
             $skip,
             $limit);
       } else {
-        $where = array_merge(($programid ? array('g.programid = ?') : array()),
-                             ($year ? array('g.year = ?') : array()),
-                             ($like ? array('g.name like ?') : array()));
+        $where = array_merge(($programid ? array('g.programid = :programid') : array()),
+                             ($year ? array('g.year = :year') : array()),
+                             ($like ? array($DB->sql_like('g.name', ':like', false)) : array()));
         $groups = $DB->get_records_sql(
             'select g.id, g.name, g.year, '.
             'g.programid as programid, '.
@@ -152,9 +156,9 @@ class epman_group_external extends crud_external_api {
             'on u.id = g.responsibleid '.
             (!empty($where) ? 'where '.implode(' and ', $where) : '').
             ' order by year, name',
-            array_merge(($programid ? array($programid) : array()),
-                        ($year ? array($year) : array()),
-                        ($like ? array($like) : array())),
+            array_merge(($programid ? array('programid' => $programid) : array()),
+                        ($year ? array('year' => $year) : array()),
+                        ($like ? array('like' => $like) : array())),
             $skip,
             $limit);
       }
@@ -299,7 +303,7 @@ class epman_group_external extends crud_external_api {
         '{tool_epman_group_student} gs '.
         'on gs.groupid = g.id '.
         'left join {user} u on u.id = gs.userid '.
-        'where g.id = ? and gs.userid is not null '.
+        'where g.id = :id and gs.userid is not null '.
         'order by u.lastname',
         array('id' => $id));
 
@@ -320,7 +324,7 @@ class epman_group_external extends crud_external_api {
         '{tool_epman_group_assistant} ga '.
         'on ga.groupid = g.id '.
         'left join {user} u on u.id = ga.userid '.
-        'where g.id = ? and ga.userid is not null '.
+        'where g.id = :id and ga.userid is not null '.
         'order by u.lastname',
         array('id' => $id));
 

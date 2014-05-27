@@ -79,7 +79,7 @@ class epman_program_external extends crud_external_api {
       $limit = $params['limit'];
 
       if ($like) {
-        $like = "%${like}%";
+        $like = "%".preg_replace('/s+/', '%', $like)."%";
       }
 
       if ($userid) {
@@ -98,11 +98,12 @@ class epman_program_external extends crud_external_api {
             'on pa.programid = p.id '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.
-            'where (p.responsibleid = ? or pa.userid = ?)'.
-            ($like ? 'and p.name like ?' : '').
+            'where (p.responsibleid = :userid1 or pa.userid = :userid2)'.
+            ($like ? ' and '.$DB->sql_like('p.name', ':like', false) : '').
             ' group by p.id '.
             'order by year, name',
-            array_merge(array($userid, $userid), ($like ? array($like) : array())),
+            array_merge(array('userid1' => $userid, 'userid2' => $userid),
+                        ($like ? array('like' => $like) : array())),
             $skip,
             $limit);
       } else {
@@ -112,9 +113,9 @@ class epman_program_external extends crud_external_api {
             'from {tool_epman_program} p '.
             'left join {user} u '.
             'on u.id = p.responsibleid '.
-            ($like ? 'where p.name like ?' : '').
+            ($like ? 'where '.$DB->sql_like('p.name', ':like', false) : '').
             ' order by year, name',
-            ($like ? array($like) : null),
+            ($like ? array('like' => $like) : null),
             $skip,
             $limit);
       }
@@ -275,7 +276,7 @@ class epman_program_external extends crud_external_api {
         '{tool_epman_program_assistant} pa '.
         'on pa.programid = p.id '.
         'left join {user} u on u.id = pa.userid '.
-        'where p.id = ? and pa.userid is not null '.
+        'where p.id = :id and pa.userid is not null '.
         'order by u.lastname',
         array('id' => $id));
 

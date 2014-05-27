@@ -73,12 +73,14 @@ class epman_user_external extends crud_external_api {
       $limit = $params['limit'];
 
       if ($like) {
-        $like = "%${like}%";
+        $like = "%".preg_replace('/s+/', '%', $like)."%";
       }
 
       $users = $DB->get_records_select(
         'user',
-        ($like ? 'username like ? or firstname like ? or lastname like ? or email like ?' : null),
+        ($like ? implode(' or ', array_map(function($field) {
+              return $DB->sql_like($field, '?', false);
+            }, array('username', 'lastname', 'firstname', 'email'))) : null),
         ($like ? array($like, $like, $like, $like) : null),
         '',
         'id, username, firstname, lastname, email',

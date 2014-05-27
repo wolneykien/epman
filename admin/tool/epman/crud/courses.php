@@ -73,13 +73,15 @@ class epman_course_external extends crud_external_api {
       $limit = $params['limit'];
 
       if ($like) {
-        $like = "%${like}%";
+        $like = "%".preg_replace('/s+/', '%', $like)."%";
       }
 
       $courses = $DB->get_records_select(
         'course',
-        ($like ? 'shortname like ? or fullname like ?' : null),
-        ($like ? array($like, $like) : null),
+        ($like ? implode(' or ', array_map(function($field) {
+              return $DB->sql_like($field, '?', false);
+            }, array('shortname', 'fullname','id'))) : null),
+        ($like ? array($like, $like, $like) : null),
         'fullname',
         'id, fullname, shortname',
         $skip,
