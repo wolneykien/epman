@@ -20,6 +20,15 @@ var Courses = Collection.extend({
         }
     },
 
+    formatResults : function (keywords, collection) {
+        return findAllMatches(keywords, collection.map(function (course) {
+            course = course.toJSON();
+            course.catname = course.category + ": " + course.name;
+            course.catshortname = course.category + ": " + course.name + " (" + course.shortname + ")";
+            return course;
+        }));
+    },
+
 });
 
 var CourseSelect = MultiSelect.extend({

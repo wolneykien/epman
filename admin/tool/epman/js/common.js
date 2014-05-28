@@ -61,7 +61,7 @@ function findAllMatches (pat, value) {
         return [];
     }
     if (!(pat instanceof RegExp)) {
-        pat = new RegExp(pat, "gi");
+        pat = new RegExp(pat.replace(/s+/, ".*"), "gi");
     }
 
     if (_.isString(value)) {
@@ -984,8 +984,8 @@ var MultiSelect = Backbone.View.extend({
         }
     },
 
-    formatResults : function (keyword, collection) {
-        return findAllMatches(keyword, collection.toJSON());
+    formatResults : function (keywords, collection) {
+        return findAllMatches(keywords, collection.toJSON());
     },
 
     reset : function (arg, options) {

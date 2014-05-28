@@ -55,7 +55,20 @@
   <div role="search-list" class="search-list-overlay" style="display: none;">
   <@ _.each(collection, function (course) { @>
     <span class="search-list-item" role="search-list-item" data-id="<@= course.id @>">
+      <@ if (course.name.hasMatches() || course.shortname.hasMatches() || course.id.hasMatches()) { @>
       <@= course.name.format() @>
+      <@ if (course.name.noMatches()) {
+        if (course.id.hasMatches()) { @>
+          <@= " (id = " + course.id.format() + ")" @>
+        <@ } else if (course.shortname.hasMatches()) { @>
+          <@= " (" + course.shortname.format() + ")" @>
+        <@ }
+      } @>
+      <@ } else if (course.catname.hasMatches()) { @>
+      <@= course.catname.format() @>
+      <@ } else if (course.catshortname.hasMatches()) { @>
+      <@= course.catshortname.format() @>
+      <@ } @>
     </span>
   <@ }); @>
   </div>

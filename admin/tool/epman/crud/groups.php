@@ -153,8 +153,8 @@ class epman_group_external extends crud_external_api {
             'left join {tool_epman_program} p '.
             'on p.id = g.programid '.
             'left join {user} u '.
-            'on u.id = g.responsibleid '.
-            (!empty($where) ? 'where '.implode(' and ', $where) : '').
+            'on u.id = g.responsibleid'.
+            (!empty($where) ? ' where '.implode(' and ', $where) : '').
             ' order by year, name',
             array_merge(($programid ? array('programid' => $programid) : array()),
                         ($year ? array('year' => $year) : array()),
