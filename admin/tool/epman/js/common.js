@@ -61,7 +61,7 @@ function findAllMatches (pat, value) {
         return [];
     }
     if (!(pat instanceof RegExp)) {
-        pat = new RegExp(pat.replace(/s+/, ".*"), "gi");
+        pat = new RegExp(pat.replace(/\s+/, ".*"), "gi");
     }
 
     if (_.isString(value)) {

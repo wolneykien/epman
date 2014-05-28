@@ -73,16 +73,17 @@ class epman_course_external extends crud_external_api {
       $limit = $params['limit'];
 
       if ($like) {
-        $like = "%".preg_replace('/s+/', '%', $like)."%";
+        $like = "%".preg_replace('/\s+/', '%', $like)."%";
       }
 
       $where = ($like ? implode(' or ', array_map(function($field) {
+              global $DB;
               return $DB->sql_like($field, '?', false);
             }, array('c.id',
                      'c.shortname',
                      'c.fullname',
-                     $DB->sql_concat_join(' ', array('cc.name', 'c.shortname')),
-                     $DB->sql_concat_join(' ', array('cc.name', 'c.fullname'))))) : null);
+                     $DB->sql_concat_join("' '", array('cc.name', 'c.shortname')),
+                     $DB->sql_concat_join("' '", array('cc.name', 'c.fullname'))))) : null);
       $courses = $DB->get_records_sql(
         'select c.id, c.shortname, c.fullname, cc.name as category from {course} c left join {course_categories} cc on c.category = cc.id'.
         ($where ? " where $where" : "").
@@ -121,7 +122,10 @@ class epman_course_external extends crud_external_api {
             VALUE_OPTIONAL),
           'name' => new external_value(
             PARAM_TEXT,
-            'Full name of the course',
+            'Full name of the course'),
+          'category' => new external_value(
+            PARAM_TEXT,
+            'Category name of the course',
             VALUE_OPTIONAL),
         )));
     }

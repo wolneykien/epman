@@ -20,6 +20,12 @@ var Courses = Collection.extend({
         }
     },
 
+});
+
+var CourseSelect = MultiSelect.extend({
+
+    collectionType : Courses,
+
     formatResults : function (keywords, collection) {
         return findAllMatches(keywords, collection.map(function (course) {
             course = course.toJSON();
@@ -28,11 +34,5 @@ var Courses = Collection.extend({
             return course;
         }));
     },
-
-});
-
-var CourseSelect = MultiSelect.extend({
-
-    collectionType : Courses,
 
 });

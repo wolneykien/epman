@@ -94,7 +94,7 @@ class epman_group_external extends crud_external_api {
       $limit = $params['limit'];
 
       if ($like) {
-        $like = "%".preg_replace('/s+/', '%', $like)."%";
+        $like = "%".preg_replace('/\s+/', '%', $like)."%";
       }
 
       if ($yeargroupid) {
