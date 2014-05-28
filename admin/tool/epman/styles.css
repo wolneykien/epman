@@ -154,12 +154,14 @@
   color: #098aba;
 }
 
-.tool-epman .link-button.right {
+.tool-epman .link-button.right,
+.tool-epman .button-set.right {
   margin-right: 0.5em;
   float: right;
 }
 
-.tool-epman .link-button.left {
+.tool-epman .link-button.left,
+.tool-epman .button-set.left {
   margin-left: 0.5em;
   float: left;
 }
@@ -555,13 +557,19 @@
 
 .tool-epman .record .section-header,
 .tool-epman .record > .record-body .section-header {
-  text-align: left;
+  text-align: right;
   font-size: small;
   color: black;
-  font-weight: bold;
   padding: 0.25em;
   margin-top: 0.50em;
   background-color: #f5f0cc;
+  display: block;
+}
+
+.tool-epman .record .section-header > span:first-child,
+.tool-epman .record > .record-body .section-header > span:first-child {
+  float: left;
+  font-weight: bold;
 }
 
 .tool-epman .link-button.edit {
@@ -929,4 +937,11 @@
 .tool-epman .filter-input > div {
   display: inline-block;
   width: 22em;
+}
+
+.tool-epman .button-set {
+  display: inline;
+  font-size: small;
+  font-weight: normal;
+  color: black;
 }

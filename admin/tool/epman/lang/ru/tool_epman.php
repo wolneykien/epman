@@ -120,4 +120,12 @@ $string['Email'] = 'E-Mail';
 $string['Add_to_list'] = 'Добавить в список';
 $string['Education_program'] = 'Учебная программа';
 $string['Enter_the_name_of_the_group'] = "Введите название группы";
+$string['Advance_students'] = 'Перевести студентов';
+$string['select_'] = 'Отметить';
+$string['selectPassed'] = 'успевающих';
+$string['selectNotPassed'] = 'не успевающих';
+$string['selectAll'] = 'всех';
+$string['selectNone'] = 'никого';
+$string['Advance_selected_students'] = 'Перевести отмеченных студентов';
+$string['Advance_all_selected_students_Q'] = "Некоторые из отмеченных студентов ещё не сдали экзамены. Всё равно перевести?";
 ?>

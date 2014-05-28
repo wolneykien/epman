@@ -120,4 +120,12 @@ $string['Email'] = 'E-Mail';
 $string['Add_to_list'] = 'Add to list';
 $string['Education_program'] = 'Education program';
 $string['Enter_the_name_of_the_group'] = "Enter the name of the group";
+$string['Advance_students'] = 'Advance students';
+$string['select_'] = 'Select';
+$string['selectPassed'] = 'passed';
+$string['selectNotPassed'] = 'not passed';
+$string['selectAll'] = 'all';
+$string['selectNone'] = 'none';
+$string['Advance_selected_students'] = 'Advance selected students';
+$string['Advance_all_selected_students_Q'] = "Some of the selected students haven't passed the exams yet. Advance them anyway?";
 ?>

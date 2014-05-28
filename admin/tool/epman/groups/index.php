@@ -158,7 +158,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   <div id="group-<@= g.id @>-students" class="group-students">
     <div class="section-header">
       <span><?php echo get_string('Students', 'tool_epman'); ?></span>
-    <@ if (action.deleteStudents || action.copyStudents) { @>
+    <@ if (action.deleteStudents || action.copyStudents || action.advanceStudents) { @>
       <@ if (action.deleteStudents) { @>
       <div role="delete-students-button" class="link-button nolink delete <@= someMarked(action.markers) ? '' : 'disabled' @>">
         <a href="javascript:void(0)">
@@ -171,20 +171,40 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
           <?php echo get_string('Copy_selected_students', 'tool_epman'); ?>
         </a>
       </div>
+      <@ } else if (action.advanceStudents) { @>
+      <div role="advance-students-button" class="link-button nolink advance <@= someMarked(action.markers) ? '' : 'disabled' @>">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Advance_selected_students', 'tool_epman'); ?>
+        </a>
+      </div>
       <@ } @>
       <div role="cancel-action-button" class="link-button nolink cancel">
         <a href="javascript:void(0)">
           <?php echo get_string('Cancel', 'tool_epman'); ?>
         </a>
       </div>
-      <div role="select-all-button" class="link-button nolink right">
-        <a href="javascript:void(0)">
-          <@ if (!allMarked(action.markers)) { @>
-          <?php echo get_string('Select_all', 'tool_epman'); ?>
-          <@ } else { @>
-          <?php echo get_string('Select_none', 'tool_epman'); ?>
-          <@ } @>
-        </a>
+      <br />
+      <div class="button-set">
+        <?php echo get_string('select_', 'tool_epman'); ?>:
+        <span role="select-all-button" class="link-button nolink">
+          <a href="javascript:void(0)">
+            <@ if (!allMarked(action.markers)) { @>
+            <?php echo get_string('selectAll', 'tool_epman'); ?>
+            <@ } else { @>
+            <?php echo get_string('selectNone', 'tool_epman'); ?>
+            <@ } @>
+          </a>
+        </span>
+        <span role="select-passed-button" class="link-button nolink">
+          <a href="javascript:void(0)">
+            <?php echo get_string('selectPassed', 'tool_epman'); ?>
+          </a>
+        </span>
+        <span role="select-not-passed-button" class="link-button nolink">
+          <a href="javascript:void(0)">
+            <?php echo get_string('selectNotPassed', 'tool_epman'); ?>
+          </a>
+        </span>
       </div>
     <@ } else { @>
       <div role="add-students-button" class="link-button light nolink add">
@@ -208,6 +228,13 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
       <div role="paste-students-button" class="link-button light nolink paste">
         <a href="javascript:void(0)">
           <?php echo get_string('Paste_students', 'tool_epman'); ?>
+        </a>
+      </div>
+      <@ } @>
+      <@ if (!_.isEmpty(g.students)) { @>
+      <div role="advance-students-button" class="link-button light nolink advance">
+        <a href="javascript:void(0)">
+          <?php echo get_string('Advance_students', 'tool_epman'); ?>
         </a>
       </div>
       <@ } @>
