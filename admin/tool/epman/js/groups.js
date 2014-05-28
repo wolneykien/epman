@@ -37,7 +37,7 @@ var AcademicGroupsRouter = Backbone.Router.extend({
         if (window.location.hash != "") {
             var fragment = window.location.hash.replace(/^#/, "");
             if (fragment.length > 1 && fragment.substr(-1) == "#") {
-                this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
+                this.navigate(fragment.replace(/#+$/, ""), { trigger : true, replace : true });
                 return true;
             }
         }
@@ -50,7 +50,7 @@ var AcademicGroupsRouter = Backbone.Router.extend({
         }
         var params = $.params();
         if (!_.isEmpty(params) && params.groupid) {
-            window.location.assign(window.location.pathname + "#" + params.groupid);
+            window.location.replace(window.location.pathname + "#" + params.groupid);
         } else {
             if (filter.programid) {
                 filter.programid = Number(filter.programid) || undefined;
@@ -59,7 +59,7 @@ var AcademicGroupsRouter = Backbone.Router.extend({
                 (filter.programid ? ("/programs/" + filter.programid) : "");
             if (!position.year && !position.groupid) {
                 position.year = 1;
-                this.navigate(prefix + "/years/" + position.year, { trigger: false });
+                this.navigate(prefix + "/years/" + position.year, { trigger: false, replace : true });
             }
             this.position = position;
             this.filter.apply(filter, position, { navigate : false });
@@ -70,10 +70,10 @@ var AcademicGroupsRouter = Backbone.Router.extend({
     jump : function () {
         if (this.position.groupid) {
             this.groupList.expand(this.position.groupid, { jump : true });
-            this.navigate(window.location.hash + "#", { trigger : false });
+            this.navigate(window.location.hash + "#", { trigger : false, replace : true });
         } else if (this.position.year) {
             gotop();
-            this.navigate(window.location.hash + "#", { trigger : false });
+            this.navigate(window.location.hash + "#", { trigger : false, replace : true });
         }
     },
         
@@ -469,7 +469,7 @@ var AcademicGroupsFilter = View.extend({
             (filter.my ? "/my" : "/all") +
                 (filter.programid ? ("/programs/" + filter.programid) : "") +
                 (position.year ? ("/years/" + position.year) : ""),
-            { trigger : true });
+            { trigger : true, replace : true });
     },
 
 });

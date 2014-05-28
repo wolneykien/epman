@@ -37,7 +37,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
         if (window.location.hash != "") {
             var fragment = window.location.hash.replace(/^#/, "");
             if (fragment.length > 1 && fragment.substr(-1) == "#") {
-                this.navigate(fragment.replace(/#+$/, ""), { trigger : true });
+                this.navigate(fragment.replace(/#+$/, ""), { trigger : true, replace : true });
                 return true;
             }
         }
@@ -50,7 +50,7 @@ var EducationProgramsRouter = Backbone.Router.extend({
         }
         var params = $.params();
         if (!_.isEmpty(params) && params.programid) {
-            window.location.assign(window.location.pathname + "#" + params.programid);
+            window.location.replace(window.location.pathname + "#" + params.programid);
         } else {
             this.position = position;
             this.filter.apply(filter, { navigate : false });
@@ -62,13 +62,13 @@ var EducationProgramsRouter = Backbone.Router.extend({
         var $el = null;
         if (this.position.programid) {
             this.programList.expand(this.position.programid, { jump : true });
-            this.navigate(window.location.hash + "#", { trigger : false });
+            this.navigate(window.location.hash + "#", { trigger : false, replace : true });
         } else if (this.position.year) {
             $el = $("#year-" + this.position.year);
         }
         if ($el && $el.size() > 0) {
             $el[0].scrollIntoView();
-            this.navigate(window.location.hash + "#", { trigger : false });
+            this.navigate(window.location.hash + "#", { trigger : false, replace : true });
         }
     },
         
@@ -624,7 +624,7 @@ var EducationProgramsFilter = Backbone.View.extend({
 
     navigate : function (filter) {
         filter = filter || this.filter;
-        Backbone.history.navigate(filter.my ? "my" : "all", { trigger : true });
+        Backbone.history.navigate(filter.my ? "my" : "all", { trigger : true, replace : true });
     },
 
 });
