@@ -140,7 +140,8 @@
 .tool-epman .record .section-header:hover > .link-button.light.nolink,
 .tool-epman .program-module > .module-header:hover > .link-button.light.nolink,
 .tool-epman .program-vacation:hover > .link-button.light.nolink,
-.tool-epman .module-overlap:hover > .link-button.light.nolink
+.tool-epman .module-overlap:hover > .link-button.light.nolink,
+.tool-epman .students-period-header:hover > .link-button.light.nolink
 {
   color: black;
 }
@@ -149,7 +150,8 @@
 .tool-epman .record .section-header:hover .link-button.light,
 .tool-epman .program-module > .module-header:hover .link-button.light,
 .tool-epman .program-vacation:hover > .link-button.light,
-.tool-epman .module-overlap:hover > .link-button.light
+.tool-epman .module-overlap:hover > .link-button.light,
+.tool-epman .students-period-header:hover > .link-button.light
 {
   color: #098aba;
 }
@@ -557,7 +559,7 @@
 
 .tool-epman .record .section-header,
 .tool-epman .record > .record-body .section-header {
-  text-align: right;
+  text-align: left;
   font-size: small;
   color: black;
   padding: 0.25em;
@@ -568,7 +570,6 @@
 
 .tool-epman .record .section-header > span:first-child,
 .tool-epman .record > .record-body .section-header > span:first-child {
-  float: left;
   font-weight: bold;
 }
 
@@ -901,6 +902,10 @@
 }
 
 .tool-epman .group-student-list {
+  display: block;
+}
+
+.tool-epman .period-student-list {
   display: table-row;
 }
 
@@ -944,4 +949,16 @@
   font-size: small;
   font-weight: normal;
   color: black;
+}
+
+.tool-epman .students-period-header {
+  display: block;
+  background-color: #fedb67;
+  font-size: small;
+  text-align: left;
+  padding: 0.25em;
+  border-style: none;
+  border-top-style: solid;
+  border-top-color: #edca56;
+  border-top-width: 2px;
 }

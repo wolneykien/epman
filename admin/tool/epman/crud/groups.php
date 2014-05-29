@@ -280,6 +280,8 @@ class epman_group_external extends crud_external_api {
           $group['program'] = array(
             'id' => $program->id,
             'name' => $program->name,
+            'year' => $program->year,
+            'periods' => $DB->get_fieldset_sql('select distinct period from {tool_epman_module} where programid = ? and period is not null order by period', array($program->id)),
           );
         }
       }
@@ -304,7 +306,7 @@ class epman_group_external extends crud_external_api {
         'on gs.groupid = g.id '.
         'left join {user} u on u.id = gs.userid '.
         'where g.id = :id and gs.userid is not null '.
-        'order by u.lastname',
+        'order by gs.period, u.lastname',
         array('id' => $id));
 
       $group['students'] = array();
@@ -362,6 +364,14 @@ class epman_group_external extends crud_external_api {
           'name' => new external_value(
             PARAM_TEXT,
             'Education program name'),
+          'year' => new external_value(
+            PARAM_TEXT,
+            'Education program year'),
+          'periods' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'Education program period number'),
+            'Array of the education program period numbers'),
         ), VALUE_OPTIONAL),
         'year' => new external_value(
           PARAM_INT,

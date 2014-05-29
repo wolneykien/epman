@@ -163,9 +163,9 @@ var AcademicGroupView = View.extend({
         this.$body.show();
         var $studentsHeader = this.$body.find(".group-students > .section-header");
         var $students = this.$body.find(".group-student-list");
-        var addColumn = function (students, size, letter) {
+        var addColumn = function ($list, students, size, letter) {
             var slice = _.head(students, size);
-            $students.append(getTemplate("#student-list-template")({
+            $list.append(getTemplate("#student-list-template")({
                 students : _.map(slice, function (s) {
                     return _.defaults(s, {
                         lastname : "?",
@@ -176,13 +176,26 @@ var AcademicGroupView = View.extend({
                 action : options.action,
             }));
             if (students.length > slice.length) {
-                addColumn(_.rest(students, size), size, _.last(slice).lastname[0]);
+                addColumn($list, _.rest(students, size), size, _.last(slice).lastname[0]);
             }
         };
         $students.empty();
-        if (!_.isEmpty(data.g.students)) {
-            addColumn(data.g.students, Math.ceil(data.g.students.length / 3));
+        var entrants = _.filter(data.g.students, function (s) {
+            return s.period == null;
+        });
+        if (!_.isEmpty(entrants)) {
+            $students.append(getTemplate("#students-period-template")({ period : null, students : entrants }));
+            addColumn($students.find(".period-student-list").last(), entrants, Math.ceil(entrants.length / 3));
         }
+        _.each(data.g.program.periods, function (period) {
+            var students = _.filter(data.g.students, function (s) {
+                return s.period == period;
+            });
+            $students.append(getTemplate("#students-period-template")({ period : period, students : students }));
+            if (!_.isEmpty(students)) {
+                addColumn($students.find(".period-student-list").last(), students, Math.ceil(students.length / 3));
+            }
+        });
         
         var self = this;
         this.$header.find("[role='edit-button']").click(function () {

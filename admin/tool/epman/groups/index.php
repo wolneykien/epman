@@ -231,13 +231,6 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
         </a>
       </div>
       <@ } @>
-      <@ if (!_.isEmpty(g.students)) { @>
-      <div role="advance-students-button" class="link-button light nolink advance">
-        <a href="javascript:void(0)">
-          <?php echo get_string('Advance_students', 'tool_epman'); ?>
-        </a>
-      </div>
-      <@ } @>
     <@ } @>
     </div>
     <@ if (!g.students || _.isEmpty(g.students)) { @>
@@ -251,6 +244,33 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
 <div id="letter-template" style="display: none;">
   <div class="letter">
     <@= letter @>
+  </div>
+</div>
+<div id="students-period-template" style="display: none;">
+  <div>
+  <div class="students-period-header">
+  <@ if (period == null) { @>
+    <span><?php echo get_string('Entrants', 'tool_epman'); ?></span>
+    <@ if (!_.isEmpty(students)) { @>
+    <div role="enroll-students-button" class="link-button light nolink enroll">
+      <a href="javascript:void(0)">
+        <?php echo get_string('Enroll_students', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
+  <@ } else { @>
+    <span><@= decline('Nth_period', period + 1) @></span>
+    <@ if (!_.isEmpty(students)) { @>
+    <div role="advance-students-button" class="link-button light nolink advance">
+      <a href="javascript:void(0)">
+        <?php echo get_string('Advance_students', 'tool_epman'); ?>
+      </a>
+    </div>
+    <@ } @>
+  <@ } @>
+  </div>
+  <div class="period-student-list">
+  </div>
   </div>
 </div>
 <div id="student-list-template" style="display: none;">
