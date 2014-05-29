@@ -364,7 +364,7 @@ function get_enrol() {
  * enroled in accordance with the group membership data but not with
  * the former.
  */
-function sync_new_enrolments() {
+function sync_new_enrolments($groupid) {
   global $DB;
 
   $enrol = get_enrol();
@@ -379,9 +379,9 @@ function sync_new_enrolments() {
     'left join {enrol} e on e.courseid = mc.courseid '.
     'left join {user_enrolments} ue on ue.enrolid = e.id '.
     'and ue.userid = gs.userid '.
-    'where e.enrol = :name and gs.userid is not null '.
+    'where g.id = :groupid and e.enrol = :name and gs.userid is not null '.
     'and ue.userid is null',
-    array('name' => $enrol->get_name()));
+    array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
   $newinstances = array();
   foreach ($newenrols as $newenrol) {
@@ -409,7 +409,7 @@ function sync_new_enrolments() {
  * not enroled in accordance with the group membership data but
  * still are enroled with the former.
  */
-function sync_old_enrolments() {
+function sync_old_enrolments($groupid) {
   global $DB;
 
   $enrol = get_enrol();
@@ -423,9 +423,9 @@ function sync_old_enrolments() {
     'left join {tool_epman_group} g on g.programid = m.programid '.
     'left join {tool_epman_group_student} gs on gs.groupid = g.groupid '.
     'and gs.period = m.period '.
-    'where e.enrol = :name and ue.userid is not null '.
+    'where g.id = :groupid and e.enrol = :name and ue.userid is not null '.
     'and gs.userid is null',
-    array('name' => $enrol->get_name()));
+    array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
   foreach ($oldenrols as $oldenrol) {
     debugging("Un-enrol the user $userid from the course $courseid");

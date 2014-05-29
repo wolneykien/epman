@@ -525,11 +525,9 @@ class epman_group_external extends crud_external_api {
       }
 
       if (array_key_exists('students', $group)) {
-        clear_group_students($group['id']);
         foreach ($group['students'] as $userid) {
           $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
-        sync_enrolments();
       }
 
       return self::get_group($group['id']);
@@ -587,12 +585,35 @@ class epman_group_external extends crud_external_api {
             'Array of the assistant user IDs',
             VALUE_OPTIONAL
           ),
-          'students' => new external_multiple_structure(
+          'add-students' => new external_multiple_structure(
             new external_value(
               PARAM_INT,
               'ID of a student user'
             ),
-            'Array of the student user IDs',
+            'Array of the student user IDs to add',
+            VALUE_OPTIONAL
+          ),
+          'delete-students' => new external_multiple_structure(
+            new external_value(
+              PARAM_INT,
+              'ID of a student user'
+            ),
+            'Array of the student user IDs to delete',
+            VALUE_OPTIONAL
+          ),
+          'enroll-students' => new external_multiple_structure(
+            new external_single_structure(array(
+              'id' => new external_value(
+                PARAM_INT,
+                'ID of a student user'
+              ),
+              'period' => new external_value(
+                PARAM_INT,
+                'ID of a student user',
+                VALUE_OPTIONAL
+              ),
+            )),
+            'Array of the student user data (ID, period) to move',
             VALUE_OPTIONAL
           ),
         )),
@@ -637,6 +658,12 @@ class epman_group_external extends crud_external_api {
           if (array_key_exists('assistants', $group)) {
             throw new permission_exception("You don't have the right to change the set of assistant users of this academic group");
           }
+          if (array_key_exists('delete-students', $group)) {
+            throw new permission_exception("You don't have the right to delete students from this academic group");
+          }
+          if (array_key_exists('enroll-students', $group)) {
+            throw new permission_exception("You don't have the right to advance/enroll the students of this academic group");
+          }
           if (!group_assistant($id, $USER->id)) {
             throw new moodle_exception("You don't have right to modify this academic group");
           }
@@ -656,13 +683,29 @@ class epman_group_external extends crud_external_api {
         }
       }
 
-      if (array_key_exists('students', $group)) {
-        clear_group_students($group['id']);
-        foreach ($group['students'] as $userid) {
+      if (array_key_exists('add-students', $group)) {
+        foreach ($group['add-students'] as $userid) {
           $DB->insert_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']), false);
         }
-        sync_enrolments();
       }
+      if (array_key_exists('delete-students', $group)) {
+        foreach ($group['delete-students'] as $userid) {
+          $DB->delete_record('tool_epman_group_student', array('userid' => $userid, 'groupid' => $group['id']));
+        }
+      }
+      if (array_key_exists('enroll-students', $group)) {
+        foreach ($group['enroll-students'] as $student) {
+          $DB->update_record('tool_epman_group_student', array(
+              'userid' => $student['id'],
+              'groupid' => $group['id'],
+              'period' => $student['period'],
+          ));
+        }
+      }
+      if (array_key_exists('delete-students', $group) || array_key_exists('enroll-students', $group)) {
+        sync_enrolments($group['id']);
+      }
+
 
       return self::get_group($group['id']);
     }
@@ -719,7 +762,7 @@ class epman_group_external extends crud_external_api {
       clear_group_students($id);
       clear_group_assistants($id);
       $DB->delete_records('tool_epman_group', array('id' => $id));
-      sync_enrolments();
+      sync_enrolments($id);
       
       return true;
     }

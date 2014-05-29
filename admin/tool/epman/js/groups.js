@@ -219,7 +219,7 @@ var AcademicGroupView = View.extend({
         addPeriod($students, null, _.filter(data.g.students, function (s) {
             return s.period == null;
         }), options.action);
-        _.each(data.g.program.periods, function (period) {
+        _.each(options.action.advanceStudents ? _.initial(data.g.program.periods) : data.g.program.periods, function (period) {
             addPeriod($students, period, _.filter(data.g.students, function (s) {
                 return s.period == period;
             }), options.action);
@@ -259,8 +259,8 @@ var AcademicGroupView = View.extend({
                         (new YesNoDialog({
                             yes : function () {
                                 self.model.save({
-                                    students : _.map(_.filter(studentMarkers, function (m) {
-                                        return !_.first(_.values(m));
+                                    'delete-students' : _.map(_.filter(studentMarkers, function (m) {
+                                        return _.first(_.values(m));
                                     }), function (m) {
                                         return _.first(_.keys(m));
                                     }),
@@ -280,6 +280,25 @@ var AcademicGroupView = View.extend({
                             return _.first(_.keys(m));
                         }));
                         self.render({ action : { "return" : true } });
+                    });
+                } else if (options.action.deleteStudents) {
+                    $studentsHeader.find("[role='advance-students-button']").click(function (e) {
+                        (new YesNoDialog({
+                            yes : function () {
+                                self.model.save({
+                                    'enroll-students' : _.map(_.filter(data.g.students, function (s) {
+                                        return studentMarkers[s.id];
+                                    }), function (s) {
+                                        var periodIdx = (s.period != null ? _.indexOf(data.g.program.periods, s.period, true) : -1);
+                                        return { id : s.id, period : data.g.program.periods[periodIdx + 1] };
+                                    }),
+                                }, {
+                                    wait : true,
+                                    patch : true,
+                                });
+                                self.render({ action : { "return" : true } });
+                            },
+                        })).open({ message : i18n["Advance_selected_students_?"] });
                     });
                 }
                 $studentsHeader.find("[role='cancel-action-button']").one("click", function (e) {
@@ -647,7 +666,7 @@ var AddStudentsDialog = Dialog.extend({
     ok : function () {
         var self = this;
         this.model.save({
-            students : this.students.selectedCollection.pluck("id"),
+            'add-students' : this.students.selectedCollection.pluck("id"),
         }, {
             wait : true,
             patch :  true,
