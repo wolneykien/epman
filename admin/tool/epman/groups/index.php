@@ -60,6 +60,8 @@ $PAGE->requires->data_for_js('toolEpmanPageOptions', array(
       'dateFormat' => get_string('dateFormat', 'tool_epman'),
       'Delete_selected_students_?' => get_string('Delete_selected_students_Q', 'tool_epman'),
       'Delete_the_academic_group_?' => get_string('Delete_the_academic_group_Q', 'tool_epman'),
+      'Advance_selected_students_?' => get_string('Advance_selected_students_Q', 'tool_epman'),
+      'Advance_anyway_?' => get_string('Advance_anyway_Q', 'tool_epman'),
     ),
 ), true);
 
@@ -242,14 +244,26 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
   </div>
 </div>
 <div id="students-period-template" style="display: none;">
-  <div>
   <div class="students-period-header">
   <@ if (period == null) { @>
     <span><?php echo get_string('Entrants', 'tool_epman'); ?></span>
+    <@ if (!_.isEmpty(students) && (action.advanceStudents || action.deleteStudents || action.copyStudents)) { @>
+    <div class="button-set small-buttons right">
+      <?php echo get_string('select_', 'tool_epman'); ?>:
+      <span role="select-all-button" class="link-button nolink">
+        <a href="javascript:void(0)">
+          <@ if (!allMarked(action.markers)) { @>
+          <?php echo get_string('selectAll', 'tool_epman'); ?>
+          <@ } else { @>
+          <?php echo get_string('selectNone', 'tool_epman'); ?>
+          <@ } @>
+        </a>
+      </span>
+    </div>
+    <@ } @>
   <@ } else { @>
     <span><@= decline('Nth_period', period + 1) @></span>
-  <@ } @>
-  <@ if (action.advanceStudents || action.deleteStudents || action.copyStudents) { @>
+    <@ if (!_.isEmpty(students) && (action.advanceStudents || action.deleteStudents || action.copyStudents)) { @>
     <div class="button-set small-buttons right">
       <?php echo get_string('select_', 'tool_epman'); ?>:
       <span role="select-all-button" class="link-button nolink">
@@ -272,6 +286,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
         </a>
       </span>
     </div>
+    <@ } @>
   <@ } @>
   </div>
   <div class="period-student-list">
@@ -288,7 +303,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
     </div>
     <@ } @>
     <div class="selectable-box">
-    <@ if (action.deleteStudents || action.copyStudents) { @>
+    <@ if (action.deleteStudents || action.copyStudents || action.advanceStudents) { @>
     <div class="selector">
       <input role="marker" data-id="<@= s.id @>" type="checkbox" name="selectedStudents"></input>
     </div>

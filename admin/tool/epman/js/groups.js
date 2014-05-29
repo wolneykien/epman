@@ -180,29 +180,49 @@ var AcademicGroupView = View.extend({
             }
         };
         $students.empty();
-        var entrants = _.filter(data.g.students, function (s) {
-            return s.period == null;
-        });
-        if (!_.isEmpty(entrants)) {
-            $students.append(getTemplate("#students-period-template")({
+        var updateHeader = null;
+        var addPeriod = function ($list, period, students, action) {
+            var data = {
                 action: options.action,
-                period : null,
-                students : entrants,
-            }));
-            addColumn($students.find(".period-student-list").last(), entrants, Math.ceil(entrants.length / 3));
-        }
-        _.each(data.g.program.periods, function (period) {
-            var students = _.filter(data.g.students, function (s) {
-                return s.period == period;
-            });
-            $students.append(getTemplate("#students-period-template")({
-                action : options.action,
                 period : period,
                 students : students,
-            }));
+            };
+            $list.append(getTemplate("#students-period-template")(data));
             if (!_.isEmpty(students)) {
-                addColumn($students.find(".period-student-list").last(), students, Math.ceil(students.length / 3));
+                var $periodList = $list.find(".period-student-list").last();
+                addColumn($periodList, students, Math.ceil(students.length / 3));
+                var $periodHeader = $list.find(".students-period-header").last();
+                var $studentMarkers = $periodList.find("input[name='selectedStudents']");
+                var updatePeriodHeader = function () {
+                    var studentMarkers = getMarkers($studentMarkers);
+                    $periodHeader.html(getTemplate("#students-period-template .students-period-header")(
+                        _.extend({}, data, {
+                            action : _.extend({}, data.action, {
+                                markers : studentMarkers,
+                            }),
+                        })
+                    ));
+                    $periodHeader.find("[role='select-all-button']").one("click", function () {
+                        var checked = !allMarked(studentMarkers);
+                        $studentMarkers.each(function (i, e) { e.checked = checked });
+                        updatePeriodHeader();
+                    });
+                    $studentMarkers.off("change", updatePeriodHeader);
+                    $studentMarkers.one("change", updatePeriodHeader);
+                    if (updateHeader) {
+                        updateHeader();
+                    }
+                };
+                updatePeriodHeader();
             }
+        };
+        addPeriod($students, null, _.filter(data.g.students, function (s) {
+            return s.period == null;
+        }), options.action);
+        _.each(data.g.program.periods, function (period) {
+            addPeriod($students, period, _.filter(data.g.students, function (s) {
+                return s.period == period;
+            }), options.action);
         });
         
         var self = this;
@@ -219,7 +239,7 @@ var AcademicGroupView = View.extend({
                 },
             })).open({ message : i18n["Delete_the_academic_group_?"] });
         });
-        var updateHeader = function () {
+        updateHeader = function () {
             var $studentMarkers = $students.find("input[name='selectedStudents']");
             var studentMarkers = getMarkers($studentMarkers);
             $studentsHeader.html(getTemplate("#record-body-template .group-students > .section-header")(_.extend({}, data, {
@@ -233,7 +253,7 @@ var AcademicGroupView = View.extend({
                     el : "#add-students-dialog-template",
                 })).open();
             });
-            if (options.action.deleteStudents || options.action.copyStudents) {
+            if (options.action.deleteStudents || options.action.copyStudents || options.action.advanceStudents) {
                 if (options.action.deleteStudents) {
                     $studentsHeader.find("[role='delete-students-button']").click(function (e) {
                         (new YesNoDialog({
@@ -266,9 +286,11 @@ var AcademicGroupView = View.extend({
                     self.render({ action : { "return" : true } });
                 });
                 $studentsHeader.find("[role='select-all-button']").one("click", function () {
-                    $studentMarkers.each(function (i, e) { e.checked = !allMarked(studentMarkers) });
+                    var checked = !allMarked(studentMarkers);
+                    $studentMarkers.each(function (i, e) { e.checked = checked });
                     updateHeader();
                 });
+                $studentMarkers.off("change", updateHeader);
                 $studentMarkers.one("change", updateHeader);
             } else {
                 $studentsHeader.find("[role='delete-students-button']").one("click", function (e) {
@@ -284,13 +306,16 @@ var AcademicGroupView = View.extend({
                         patch : true,
                     });
                 });
+                $studentsHeader.find("[role='advance-students-button']").one("click", function (e) {
+                    self.render({ action : { advanceStudents : true } });
+                });
             }
             clipboard.once("add:students", updateHeader);
             clipboard.once("remove:students", updateHeader);
         }
         updateHeader();
 
-        if (options.action.deleteStudents || options.action.copyStudents) {
+        if (options.action.deleteStudents || options.action.copyStudents || options.action.advanceStudents) {
             $("#group-" + self.model.id + "-students")[0].scrollIntoView();
             $("body").css({ "overflow-y" : "hidden" });
             $students.css({ height : "100vh", "overflow-y" : "scroll" });

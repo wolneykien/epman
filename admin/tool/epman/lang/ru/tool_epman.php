@@ -130,7 +130,7 @@ $string['selectPassed'] = 'успевающих';
 $string['selectNotPassed'] = 'не успевающих';
 $string['selectAll'] = 'всех';
 $string['selectNone'] = 'никого';
-$string['Enroll_selected_students'] = 'Зачислить отмеченных студентов';
 $string['Advance_selected_students'] = 'Перевести отмеченных студентов';
-$string['Advance_all_selected_students_Q'] = "Некоторые из отмеченных студентов ещё не сдали экзамены. Всё равно перевести?";
+$string['Advance_all_selected_students_Q'] = "Перевести каждого из отмеченных студентов на следующий по порядку период?";
+$string['Advance_anyway_Q'] = "Некоторые из отмеченных студентов ещё не сдали экзамены. Всё равно перевести?";
 ?>
