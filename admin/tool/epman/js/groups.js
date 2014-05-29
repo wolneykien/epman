@@ -184,14 +184,22 @@ var AcademicGroupView = View.extend({
             return s.period == null;
         });
         if (!_.isEmpty(entrants)) {
-            $students.append(getTemplate("#students-period-template")({ period : null, students : entrants }));
+            $students.append(getTemplate("#students-period-template")({
+                action: options.action,
+                period : null,
+                students : entrants,
+            }));
             addColumn($students.find(".period-student-list").last(), entrants, Math.ceil(entrants.length / 3));
         }
         _.each(data.g.program.periods, function (period) {
             var students = _.filter(data.g.students, function (s) {
                 return s.period == period;
             });
-            $students.append(getTemplate("#students-period-template")({ period : period, students : students }));
+            $students.append(getTemplate("#students-period-template")({
+                action : options.action,
+                period : period,
+                students : students,
+            }));
             if (!_.isEmpty(students)) {
                 addColumn($students.find(".period-student-list").last(), students, Math.ceil(students.length / 3));
             }

@@ -93,6 +93,8 @@ $string['Lower_below'] = 'Опустить нижестоящие';
 $string['Rollback'] = 'Откатить';
 $string['Select_all'] = 'Выбрать всё';
 $string['Select_none'] = 'Не выбрать ничего';
+$string['users_Select_all'] = 'Выбрать всех';
+$string['users_Select_none'] = 'Не выбрать никого';
 
 $string['grouplistheading'] = 'Академические группы';
 $string['Edit_group'] = 'Редактировать группу';

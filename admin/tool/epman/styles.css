@@ -951,6 +951,13 @@
   color: black;
 }
 
+.tool-epman .button-set.small-buttons {
+  font-size: 0.85em;
+}
+.tool-epman .button-set.small-buttons > .link-button {
+  font-size: 1.0em;
+}
+
 .tool-epman .students-period-header {
   display: block;
   background-color: #fedb67;

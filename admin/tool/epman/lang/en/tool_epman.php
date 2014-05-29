@@ -93,6 +93,8 @@ $string['Lower_below'] = 'Lower below';
 $string['Rollback'] = 'Rollback';
 $string['Select_all'] = 'Select all';
 $string['Select_none'] = 'Select none';
+$string['users_Select_all'] = 'Select all';
+$string['users_Select_none'] = 'Select none';
 
 $string['grouplistheading'] = 'Academic groups';
 $string['Edit_group'] = 'Edit group';
