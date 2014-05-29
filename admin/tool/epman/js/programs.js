@@ -363,9 +363,11 @@ var EducationProgramView = View.extend({
                     self.render({ action : { "return" : true } });
                 });
                 $modulesHeader.find("[role='select-all-button']").one("click", function () {
-                    $moduleMarkers.each(function (i, e) { e.checked = !allMarked(moduleMarkers) });
+                    var checked = !allMarked(moduleMarkers);
+                    $moduleMarkers.each(function (i, e) { e.checked = checked });
                     updateHeader();
                 });
+                $moduleMarkers.off("change", updateHeader);
                 $moduleMarkers.one("change", updateHeader);
             } else {
                 $modulesHeader.find("[role='delete-modules-button']").one("click", function (e) {
