@@ -379,7 +379,7 @@ function sync_new_enrolments($groupid) {
     'left join {enrol} e on e.enrol = :name and e.courseid = mc.courseid '.
     'left join {user_enrolments} ue on ue.enrolid = e.id '.
     'and ue.userid = gs.userid '.
-    'where g.id = :groupid and mc.courseid is not null and gs.userid is not null '.
+    'where '.($groupid ? 'g.id = :groupid and ' : '').'mc.courseid is not null and gs.userid is not null '.
     'and ue.userid is null',
     array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
@@ -423,8 +423,8 @@ function sync_old_enrolments($groupid) {
     'left join {tool_epman_module} m on m.id = mc.moduleid '.
     'left join {tool_epman_group} g on g.programid = m.programid '.
     'left join {tool_epman_group_student} gs on gs.groupid = g.id and gs.period = m.period and gs.userid = ue.userid '.
-    'where g.id = :groupid and e.enrol = :name and ue.userid is not null '.
-    'and gs.userid is null',
+    'where '.($groupid ? 'g.id = :groupid and ' : 'g.id is not null and ').'e.enrol = :name and ue.userid is not null '.
+    'group by ue.id, e.id having max(gs.userid) is null',
     array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
   foreach ($oldenrols as $oldenrol) {
