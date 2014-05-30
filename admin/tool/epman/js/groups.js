@@ -284,9 +284,10 @@ var AcademicGroupView = View.extend({
                     $studentsHeader.find("[role='advance-students-button']").click(function (e) {
                         (new YesNoDialog({
                             yes : function () {
+                                var markers = _.object(_.map(studentMarkers, _.compose(_.flatten, _.pairs)));
                                 self.model.save({
                                     'enroll-students' : _.map(_.filter(data.g.students, function (s) {
-                                        return studentMarkers[s.id];
+                                        return markers[s.id];
                                     }), function (s) {
                                         var periodIdx = (s.period != null ? _.indexOf(data.g.program.periods, s.period, true) : -1);
                                         return { id : s.id, period : data.g.program.periods[periodIdx + 1] };

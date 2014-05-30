@@ -132,6 +132,6 @@ $string['selectAll'] = 'all';
 $string['selectNone'] = 'none';
 $string['Enroll_selected_students'] = 'Enroll selected students';
 $string['Advance_selected_students'] = 'Advance selected students';
-$string['Advance_all_selected_students_Q'] = "Advance each of the selected students to the next education period?";
+$string['Advance_selected_students_Q'] = "Advance each of the selected students to the next education period?";
 $string['Advance_anyway_Q'] = "Some of the selected students haven't passed the exams yet. Advance them anyway?";
 ?>

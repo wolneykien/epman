@@ -421,7 +421,7 @@ function sync_old_enrolments($groupid) {
     'left join {tool_epman_module_course} mc on mc.courseid = e.courseid '.
     'left join {tool_epman_module} m on m.id = mc.moduleid '.
     'left join {tool_epman_group} g on g.programid = m.programid '.
-    'left join {tool_epman_group_student} gs on gs.groupid = g.groupid '.
+    'left join {tool_epman_group_student} gs on gs.groupid = g.id '.
     'and gs.period = m.period '.
     'where g.id = :groupid and e.enrol = :name and ue.userid is not null '.
     'and gs.userid is null',
@@ -438,9 +438,9 @@ function sync_old_enrolments($groupid) {
  * Synchronize the enrolment data in accordance with the group
  * membership data.
  */
-function sync_enrolments() {
-  sync_old_enrolments();
-  sync_new_enrolments();
+function sync_enrolments($groupid) {
+  sync_old_enrolments($groupid);
+  sync_new_enrolments($groupid);
 }
 
 /**

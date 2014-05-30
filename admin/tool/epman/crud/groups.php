@@ -695,7 +695,8 @@ class epman_group_external extends crud_external_api {
       }
       if (array_key_exists('enroll-students', $group)) {
         foreach ($group['enroll-students'] as $student) {
-          $DB->update_record('tool_epman_group_student', array(
+          debugging("Advance: userid = ".$student['id'].", groupid = ".$group['id'].", period = ".$student['period']);
+          $DB->execute('update {tool_epman_group_student} set period = :period where userid = :userid and groupid = :groupid', array(
               'userid' => $student['id'],
               'groupid' => $group['id'],
               'period' => $student['period'],
