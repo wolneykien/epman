@@ -36,7 +36,7 @@ class crud_external_api extends external_api {
   public static function validate_parameters(external_description $description, $params) {
     $newparams = self::cleanup_parameters($description, $params);
     $validated = parent::validate_parameters($description, $newparams);
-    self::fillup_parameters($description, $validated);
+    $validated = self::fillup_parameters($description, $validated);
 
     return $validated;
   }
@@ -71,13 +71,18 @@ class crud_external_api extends external_api {
   }
 
   protected static function fillup_parameters(external_description $description, $params) {
+    $newparams = array();
     if ($description instanceof external_single_structure) {
       foreach ($description->keys as $key => $val_desc) {
         if (!array_key_exists($key, $params)) {
-          $params[$key] = null;
+          $newparams[$key] = null;
+        } else {
+          $newparams[$key] = $params[$key];
         }
       }
     }
+
+    return $newparams;
   }
 
 }
