@@ -376,10 +376,10 @@ function sync_new_enrolments($groupid) {
     'left join {tool_epman_module} m on m.programid = g.programid '.
     'and m.period = gs.period '.
     'left join {tool_epman_module_course} mc on mc.moduleid = m.id '.
-    'left join {enrol} e on e.courseid = mc.courseid '.
+    'left join {enrol} e on e.enrol = :name and e.courseid = mc.courseid '.
     'left join {user_enrolments} ue on ue.enrolid = e.id '.
     'and ue.userid = gs.userid '.
-    'where g.id = :groupid and e.enrol = :name and gs.userid is not null '.
+    'where g.id = :groupid and mc.courseid is not null and gs.userid is not null '.
     'and ue.userid is null',
     array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
@@ -387,19 +387,20 @@ function sync_new_enrolments($groupid) {
   foreach ($newenrols as $newenrol) {
     $userid = $newenrol->userid;
     $courseid = $newenrol->newcourseid;
-    if (!isset($newenrol->id)) {
+    $enrolinst = $newenrol;
+    if (!isset($enrolinst->id)) {
       if (!array_key_exists($courseid, $newinstances)) {
         $course = new stdObject(array('id' => $courseid));
         debugging("Add new epman enrol instance for the course $courseid");
         $enrolid = $enrol->add_instance($course);
-        $newenrol = $DB->get_record('enrol', array('id' => $enrolid));
-        $newinstances[$courseid] = $newenrol;
+        $enrolinst = $DB->get_record('enrol', array('id' => $enrolid));        
+        $newinstances[$courseid] = $enrolinst;
       } else {
-        $newenrol = $newinstances[$courseid];
+        $enrolinst = $newinstances[$courseid];
       }
     }
     debugging("Enrol the user $userid to the course $courseid");
-    $enrol->enrol_user($newenrol, $userid);
+    $enrol->enrol_user($enrolinst, $userid);
   }
   $newenrols->close();
 }
