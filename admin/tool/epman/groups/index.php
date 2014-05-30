@@ -221,7 +221,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
         </a>
       </div>
       <@ } @>
-      <@ if (!_.isEmpty(g.students && g.program.periods.length > 0)) { @>
+      <@ if (!_.isEmpty(g.students) && g.program.periods.length > 0) { @>
       <div role="advance-students-button" class="link-button light nolink advance">
         <a href="javascript:void(0)">
           <?php echo get_string('Advance_students', 'tool_epman'); ?>
