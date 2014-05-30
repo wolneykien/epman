@@ -243,7 +243,6 @@ var EducationProgramView = View.extend({
     configure : function (options) {
         this.$header = options.$header;
         this.$body = options.$body;
-        this.render();
     },
 
     render : function (options) {
@@ -448,6 +447,7 @@ var EducationProgramView = View.extend({
     },
 
     syncing : function (status) {
+        this.$body.show();
         this.$body.toggleClass("loading", status);
     },
 

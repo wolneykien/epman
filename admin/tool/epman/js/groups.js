@@ -143,7 +143,6 @@ var AcademicGroupView = View.extend({
     configure : function (options) {
         this.$header = options.$header;
         this.$body = options.$body;
-        this.render();
     },
 
     render : function (options) {
@@ -352,6 +351,7 @@ var AcademicGroupView = View.extend({
     },
 
     syncing : function (status) {
+        this.$body.show();
         this.$body.toggleClass("loading", status);
     },
 
