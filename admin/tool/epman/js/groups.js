@@ -322,7 +322,7 @@ var AcademicGroupView = View.extend({
                 });
                 $studentsHeader.find("[role='paste-students-button']").click(function (e) {
                     self.model.save({
-                        students : _.union(self.model.get("students"), clipboard.getany("students")),
+                        'add-students' : _.union(self.model.get("students"), clipboard.getany("students")),
                     }, {
                         patch : true,
                     });
