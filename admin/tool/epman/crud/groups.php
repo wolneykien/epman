@@ -299,7 +299,7 @@ class epman_group_external extends crud_external_api {
       }
 
       $students = $DB->get_records_sql(
-        'select gs.id, g.id as groupid, gs.userid, u.username, '.
+        'select gs.id, gs.period, g.id as groupid, gs.userid, u.username, '.
         'u.firstname, u.lastname, u.email '.
         'from {tool_epman_group} g left join '.
         '{tool_epman_group_student} gs '.
@@ -316,7 +316,8 @@ class epman_group_external extends crud_external_api {
           'username' => $rec->username,
           'firstname' => $rec->firstname,
           'lastname' => $rec->lastname,
-          'email' => $rec->email);
+          'email' => $rec->email,
+          'period' => $rec->period);
       }
 
       $assistants = $DB->get_records_sql(
@@ -418,6 +419,9 @@ class epman_group_external extends crud_external_api {
               PARAM_TEXT,
               'E-mail of the student user',
               VALUE_OPTIONAL),
+            'period' => new external_value(
+              PARAM_INT,
+              'Education period of the student user'),
           ))
         ),
         'assistants' => new external_multiple_structure(

@@ -173,6 +173,7 @@ var AcademicGroupView = View.extend({
                 }, this),
                 letter : letter,
                 action : options.action,
+                maxperiod : _.last(data.g.program.periods) || null,
             }));
             if (students.length > slice.length) {
                 addColumn($list, _.rest(students, size), size, _.last(slice).lastname[0]);
@@ -181,12 +182,13 @@ var AcademicGroupView = View.extend({
         $students.empty();
         var updateHeader = null;
         var addPeriod = function ($list, period, students, action) {
-            var data = {
-                action: options.action,
+            var periodData = {
+                action: data.action,
                 period : period,
                 students : students,
+                maxperiod : _.last(data.g.program.periods) || null,
             };
-            $list.append(getTemplate("#students-period-template")(data));
+            $list.append(getTemplate("#students-period-template")(periodData));
             if (!_.isEmpty(students)) {
                 var $periodList = $list.find(".period-student-list").last();
                 addColumn($periodList, students, Math.ceil(students.length / 3));
@@ -195,8 +197,8 @@ var AcademicGroupView = View.extend({
                 var updatePeriodHeader = function () {
                     var studentMarkers = getMarkers($studentMarkers);
                     $periodHeader.html(getTemplate("#students-period-template .students-period-header")(
-                        _.extend({}, data, {
-                            action : _.extend({}, data.action, {
+                        _.extend({}, periodData, {
+                            action : _.extend({}, periodData.action, {
                                 markers : studentMarkers,
                             }),
                         })
@@ -218,7 +220,7 @@ var AcademicGroupView = View.extend({
         addPeriod($students, null, _.filter(data.g.students, function (s) {
             return s.period == null;
         }), options.action);
-        _.each(options.action.advanceStudents ? _.initial(data.g.program.periods) : data.g.program.periods, function (period) {
+        _.each(data.g.program.periods, function (period) {
             addPeriod($students, period, _.filter(data.g.students, function (s) {
                 return s.period == period;
             }), options.action);

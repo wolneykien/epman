@@ -263,7 +263,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
     <@ } @>
   <@ } else { @>
     <span><@= decline('Nth_period', period + 1) @></span>
-    <@ if (!_.isEmpty(students) && (action.advanceStudents || action.deleteStudents || action.copyStudents)) { @>
+    <@ if (!_.isEmpty(students) && ((action.advanceStudents && (!maxperiod || period < maxperiod)) || action.deleteStudents || action.copyStudents)) { @>
     <div class="button-set small-buttons right">
       <?php echo get_string('select_', 'tool_epman'); ?>:
       <span role="select-all-button" class="link-button nolink">
@@ -303,7 +303,7 @@ echo $OUTPUT->heading(get_string('grouplistheading', 'tool_epman'));
     </div>
     <@ } @>
     <div class="selectable-box">
-    <@ if (action.deleteStudents || action.copyStudents || action.advanceStudents) { @>
+       <@ if (action.deleteStudents || action.copyStudents || (action.advanceStudents && (!maxperiod || s.period < maxperiod))) { @>
     <div class="selector">
       <input role="marker" data-id="<@= s.id @>" type="checkbox" name="selectedStudents"></input>
     </div>
