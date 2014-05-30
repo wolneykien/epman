@@ -416,20 +416,19 @@ function sync_old_enrolments($groupid) {
   $enrol = get_enrol();
 
   $oldenrols = $DB->get_recordset_sql(
-    'select e.*, gs.userid from '.
-    '{enrol} e '.
-    'left join {user_enrolments} ue on ue.enrolid = e.id '.
+    'select e.*, ue.userid from '.
+    '{user_enrolments} ue '.
+    'left join {enrol} e on ue.enrolid = e.id '.
     'left join {tool_epman_module_course} mc on mc.courseid = e.courseid '.
     'left join {tool_epman_module} m on m.id = mc.moduleid '.
     'left join {tool_epman_group} g on g.programid = m.programid '.
-    'left join {tool_epman_group_student} gs on gs.groupid = g.id '.
-    'and gs.period = m.period '.
+    'left join {tool_epman_group_student} gs on gs.groupid = g.id and gs.period = m.period and gs.userid = ue.userid '.
     'where g.id = :groupid and e.enrol = :name and ue.userid is not null '.
     'and gs.userid is null',
     array('groupid' => $groupid, 'name' => $enrol->get_name()));
 
   foreach ($oldenrols as $oldenrol) {
-    debugging("Un-enrol the user $userid from the course $courseid");
+    debugging("Un-enrol the user ".$oldenrol->userid." from the course ".$oldenrol->courseid);
     $enrol->unenrol_user($oldenrol, $oldenrol->userid);
   }
   $oldenrols->close();
