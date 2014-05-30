@@ -280,7 +280,7 @@ var AcademicGroupView = View.extend({
                         }));
                         self.render({ action : { "return" : true } });
                     });
-                } else if (options.action.deleteStudents) {
+                } else if (options.action.advanceStudents) {
                     $studentsHeader.find("[role='advance-students-button']").click(function (e) {
                         (new YesNoDialog({
                             yes : function () {
