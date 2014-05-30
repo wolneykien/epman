@@ -289,6 +289,7 @@ class epman_module_external extends crud_external_api {
         foreach ($module['courses'] as $course) {
           $DB->insert_record('tool_epman_module_course', array('moduleid' => $module['id'], 'courseid' => $course['id'], 'coursetype' => $course['type']), false);
         }
+        sync_enrolments(null);
       }
 
       return self::get_module($programid, $module['id']);
@@ -387,6 +388,7 @@ class epman_module_external extends crud_external_api {
         foreach ($module['courses'] as $course) {
           $DB->insert_record('tool_epman_module_course', array('moduleid' => $module['id'], 'courseid' => $course['id'], 'coursetype' => $course['type']), false);
         }
+        sync_enrolments(null);
       }
 
       return self::get_module($programid, $module['id']);
@@ -450,6 +452,7 @@ class epman_module_external extends crud_external_api {
 
       clear_module_courses($id);
       $DB->delete_records('tool_epman_module', array('id' => $id));
+      sync_enrolments(null);
       
       return true;
     }
