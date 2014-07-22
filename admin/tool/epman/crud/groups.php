@@ -308,6 +308,12 @@ class epman_group_external extends crud_external_api {
         'where g.id = :id and gs.userid is not null '.
         'order by gs.period, u.lastname',
         array('id' => $id));
+      
+      if ($group['programid']) {
+        $courseids = get_program_courses($group['programid']);
+      } else {
+        $courseids = null;
+      }
 
       $group['students'] = array();
       foreach ($students as $rec) {
@@ -317,7 +323,18 @@ class epman_group_external extends crud_external_api {
           'firstname' => $rec->firstname,
           'lastname' => $rec->lastname,
           'email' => $rec->email,
-          'period' => $rec->period);
+          'period' => $rec->period,
+          'grades' => !empty($courseids) ?
+            array_map(function($grade, $courseid) {
+                return array('courseid' => $courseid,
+                             'date' => $grade->dategraded,
+                             'grade' => $grade->grade,
+                             'text' => $grade->str_grade,
+                             'long-text' => $grade->str_long_grade);
+              },
+              grade_get_course_grade($rec->userid, $courseids)) :
+            array(),
+        );
       }
 
       $assistants = $DB->get_records_sql(
@@ -422,6 +439,29 @@ class epman_group_external extends crud_external_api {
             'period' => new external_value(
               PARAM_INT,
               'Education period of the student user'),
+            'grades' => new external_multiple_structure(
+              new external_single_structure(array(
+                'courseid' => new external_value(
+                  PARAM_INT,
+                  'Course ID'),
+                'grade' => new external_value(
+                  PARAM_FLOAT,
+                  'Grade value',
+                  VALUE_OPTIONAL),
+                'date' => new external_value(
+                  PARAM_INT,
+                  'Grade date',
+                  VALUE_OPTIONAL),
+                'text' => new external_value(
+                  PARAM_TEXT,
+                  'Grade value short textual representation',
+                  VALUE_OPTIONAL),
+                'long-text' => new external_value(
+                  PARAM_TEXT,
+                  'Grade value full textual representation',
+                  VALUE_OPTIONAL),
+              ))
+            ),
           ))
         ),
         'assistants' => new external_multiple_structure(

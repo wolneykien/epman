@@ -435,6 +435,36 @@ function sync_old_enrolments($groupid) {
 }
 
 /**
+ * Returns the set of course IDs for the given education program module.
+ */
+function get_module_courses($moduleid) {
+  global $DB;
+  
+  module_exists($moduleid);
+  $DB->get_fieldset_select('tool_epman_module_course', 'courseid', 'moduleid = :moduleid', array('moduleid' => $moduleid));
+}
+
+/**
+ * Returns the set of course IDs for the given education program
+ * and optional period number.
+ */
+function get_program_courses($programid, $period = 0) {
+  global $DB;
+  
+  program_exists($programid);
+  $DB->get_fieldset_sql(
+      'select courseid from {tool_epman_module} m '.
+      'left join {tool_epman_module_course} mc '.
+          'on m.id = mc.moduleid '.
+      'where m.programid = :programid'.
+          ($period ? ' and period = :period ' : ' ').
+      'order by m.period, mc.courseid',
+      array_merge(array('programid' => $programid),
+                  ($period ? array('period' => $period) : array()))
+  );
+}
+
+/**
  * Synchronize the enrolment data in accordance with the group
  * membership data.
  */
